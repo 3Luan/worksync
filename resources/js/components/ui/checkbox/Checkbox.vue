@@ -1,0 +1,35 @@
+<script setup lang="ts">
+import { computed } from 'vue';
+import type { CheckboxRootEmits, CheckboxRootProps } from 'reka-ui';
+import { cn } from '@/lib/utils';
+import { Minus, Check } from 'lucide-vue-next';
+import { CheckboxIndicator, CheckboxRoot, useForwardPropsEmits } from 'reka-ui';
+import { type HTMLAttributes } from 'vue';
+
+const props = defineProps<CheckboxRootProps & { class?: HTMLAttributes['class'] }>();
+const emits = defineEmits<CheckboxRootEmits>();
+
+const modelValue = computed(() => props.modelValue);
+
+const forwarded = useForwardPropsEmits(props, emits);
+</script>
+
+<template>
+  <CheckboxRoot
+    data-slot="checkbox"
+    v-bind="forwarded"
+    :class="
+      cn('peer border-input data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[state=checked]:border-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive size-4 shrink-0 rounded-[4px] border shadow-xs transition-shadow outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer',
+         props.class)"
+  >
+    <CheckboxIndicator
+      data-slot="checkbox-indicator"
+      class="flex items-center justify-center text-current transition-none"
+    >
+      <slot>
+        <Minus v-if="modelValue === 'indeterminate'" class="size-3.5"/>
+        <Check v-if="modelValue === true" class="size-3.5" />
+      </slot>
+    </CheckboxIndicator>
+  </CheckboxRoot>
+</template>

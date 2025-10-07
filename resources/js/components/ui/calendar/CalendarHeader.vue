@@ -1,0 +1,15 @@
+<script lang="ts" setup>
+import { cn } from '@/lib/utils';
+import { CalendarHeader, type CalendarHeaderProps, useForwardProps } from 'reka-ui';
+import { type HTMLAttributes } from 'vue';
+
+const props = defineProps<CalendarHeaderProps & { class?: HTMLAttributes['class'] }>();
+
+const forwardedProps = useForwardProps(props);
+</script>
+
+<template>
+  <CalendarHeader data-slot="calendar-header" :class="cn('flex justify-center pt-1 relative items-center w-full', props.class)" v-bind="forwardedProps">
+    <slot />
+  </CalendarHeader>
+</template>

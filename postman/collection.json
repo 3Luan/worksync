@@ -1,0 +1,813 @@
+{
+	"info": {
+		"_postman_id": "6e3cece4-ea4c-4a18-a682-9733a787d5b0",
+		"name": "Worksync API Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42610272"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "POST /login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"if (response.access_token) {",
+									"    pm.environment.set(\"access_token\", response.access_token);",
+									"}",
+									"if (response.refresh_token) {",
+									"    pm.environment.set(\"refresh_token\", response.refresh_token);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@example.com\", //required|email\n  \"password\": \"password\" //required|min:6\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"login"
+							]
+						},
+						"description": "#### 📌 **Description:**  \nĐăng nhập người dùng bằng email và mật khẩu. Trả về access token và thông tin người dùng nếu thành công.\n\n#### **🔐Authentication:**  \nKhông\n\n🔢 HTTP Method:  \nPOST\n\n❗ Caution:  \nCó giới hạn số lần login sai.\n\n#### **📥 Response:**\n\n- **HTTP Status:** `200`\n    \n- Trả về access_token, refresh_token, user info"
+					},
+					"response": []
+				},
+				{
+					"name": "POST /refresh_token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"if (response.access_token) {",
+									"    pm.environment.set(\"access_token\", response.access_token);",
+									"}",
+									"if (response.refresh_token) {",
+									"    pm.environment.set(\"refresh_token\", response.refresh_token);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"refresh_token\": \"{{refresh_token}}\"  //required|string\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/refresh_token",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"refresh_token"
+							]
+						},
+						"description": "#### 📌 **Description:**  \nLàm mới access token bằng refresh token hiện tại.\n\n#### **🔐Authentication:**  \nKhông\n\n🔢 HTTP Method:  \nPOST\n\n#### **📥 Response:**\n\n- **HTTP Status:** **`200`** và message tương ứng\n    \n- **Body(**access_token, refresh_token mới nếu thành công)\n    \n\n``` json\n{\n    \"token_type\": \"Bearer\",\n    \"expires_in\": 31536000,\n    \"access_token\": \"\",\n    \"refresh_token\": \"\"\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "POST /forgot-password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"staff2@example.com\" // required|email|max:255\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/forgot-password",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"forgot-password"
+							]
+						},
+						"description": "#### 📌 Description:\nGửi yêu cầu quên mật khẩu theo email\n\n#### 🔐 Authentication:\nCó (Bearer token)\n\n🔢 HTTP Method:\nPOST\n\n#### 📥 Response:\n- HTTP Code: 200 và message tương ứng\n- Email có link reset-password\n\n❗ Caution:\n- Link reset-password chỉ khả dụng trong 60 phút"
+					},
+					"response": []
+				},
+				{
+					"name": "GET /check-forgot-password-token",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"token\": \"reset_token_here\" // required\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/check-forgot-password-token",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"check-forgot-password-token"
+							]
+						},
+						"description": "#### 📌 **Description:**  \nKiểm tra reset passord token\n\n#### **🔐Authentication:**  \nKhông\n\n🔢 HTTP Method:  \nGet\n\n#### **📥 Response:**\n\n- HTTP Code: 200 và message tương ứng"
+					},
+					"response": []
+				},
+				{
+					"name": "POST /reset-password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"token\": \"reset_token_here\", // required\r\n  \"password\": \"password\"  // required|min:6\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/reset-password",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reset-password"
+							]
+						},
+						"description": "#### 📌 **Description:**  \nCập nhật mật khẩu mới(trường hợp quên mật khẩu)\n\n#### **🔐Authentication:**  \nKhông\n\n🔢 HTTP Method:  \nPOST\n\n#### **📥 Response:**\n\n- HTTP Code: 200 và message\n    \n\n❗ Caution:  \n\\- Link reset-password chỉ khả dụng trong 60p"
+					},
+					"response": []
+				},
+				{
+					"name": "POST /logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"logout"
+							]
+						},
+						"description": "#### 📌 **Description:**  \nĐăng xuất khỏi tài khoản\n\n#### **🔐Authentication:**  \nCó (Bearer token)\n\n🔢 HTTP Method:  \nPOST\n\n#### **📥 Response:**\n\n- HTTP Code: 200 và message"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "GET /user/current-time-card",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user/current-time-card",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"current-time-card"
+							]
+						},
+						"description": "#### 📌 **Description:**  \nChi tiết về timecard ngày hiện tại bao gồm checkin, checkout, start_break và end_break . Các giá trị có thể trống hoặc null nếu hành động tương ứng chưa được thực hiện.\n\n#### **🔐Authentication:**  \nCó (Bearer token)\n\n🔢 HTTP Method:  \nGET\n\n📥 Tham số yêu cầu:  \n\\- Không yêu cầu body.\n\n#### **📥 Response:**  \n\\- Dữ liệu của timecard bao gồm break_time."
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /user/update-password",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"current_password\": \"password1\", //required|string\r\n  \"new_password\": \"password2\", //required|string|min:8|different:current_password\r\n  \"confirm_password\": \"password2\" //required|string|same:new_password\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user/update-password",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"update-password"
+							]
+						},
+						"description": "#### 📌 **Description:**  \nCập nhật mật khẩu của tài khoản đang đăng nhập.\n\n#### **🔐Authentication:**  \nCó (Bearer token), admin role\n\n🔢 HTTP Method:  \nPUT\n\n#### **📥 Response:**\n\n- HTTP Code: `200`\n    \n- Body\n    \n\n``` json\n{\n    \"message\": \"Cập nhật mật khẩu thành công.\"\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "POST /user/location-access-denied",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user/location-access-denied",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"location-access-denied"
+							]
+						},
+						"description": "#### 📌 **Description:**\n\nGửi email khi nhân viên từ chối chia sẻ vị trí\n\n#### **🔐Authentication:**\n\nCó (Bearer token), staff, leader role\n\n🔢 HTTP Method:  \nPOST\n\n#### **📥 Response:**\n\n- HTTP Code: `200`\n    \n- Body\n    \n\n``` json\n{\n    \"message\": \"Đã gửi email khi nhân viên từ chối truy cập vị trí thành công.\"\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "GET /active-staffs",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"roles\": [1] //required|array\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/active-staffs",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"active-staffs"
+							]
+						},
+						"description": "#### 📌 **Description:**\n\nDanh sách nhân viên trạng thái hoạt động.\n\n#### **🔐Authentication:**\n\nCó (Bearer token), role leader\n\n🔢 HTTP Method:  \nGet\n\n📥 Tham số yêu cầu:  \n\\- Không yêu cầu body.\n\n#### **📥 Response:**\n\n- HTTP code: 200\n    \n- Body\n    \n\n``` json\n{\n    \"success\": true,\n    \"message\": null,\n    \"data\": {\n        \"current_page\": 1,\n        \"data\": [\n            {\n                \"id\": 2,\n                \"last_name\": \"Nguyễn Xuân\",\n                \"first_name\": \"Tài\",\n                \"email\": \"staff@example.com\",\n                \"role\": 1,\n                \"status\": 1,\n                \"created_at\": \"2025-04-18T05:38:10.000000Z\",\n                \"updated_at\": \"2025-05-07T08:27:07.000000Z\",\n                \"deleted_at\": null\n            },\n            {\n                \"id\": 3,\n                \"last_name\": \"Staff\",\n                \"first_name\": \"Staff\",\n                \"email\": \"staff2@example.com\",\n                \"role\": 1,\n                \"status\": 1,\n                \"created_at\": \"2025-04-18T05:38:10.000000Z\",\n                \"updated_at\": \"2025-04-18T05:38:10.000000Z\",\n                \"deleted_at\": null\n            },\n            {\n                \"id\": 5,\n                \"last_name\": \"Johnston\",\n                \"first_name\": \"Enid\",\n                \"email\": \"mcglynn.nicolette@example.net\",\n                \"role\": 1,\n                \"status\": 1,\n                \"created_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"updated_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"deleted_at\": null\n            },\n            {\n                \"id\": 6,\n                \"last_name\": \"Bailey\",\n                \"first_name\": \"Floyd\",\n                \"email\": \"egibson@example.net\",\n                \"role\": 1,\n                \"status\": 1,\n                \"created_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"updated_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"deleted_at\": null\n            },\n            {\n                \"id\": 7,\n                \"last_name\": \"Jakubowski\",\n                \"first_name\": \"Kody\",\n                \"email\": \"mills.shemar@example.net\",\n                \"role\": 1,\n                \"status\": 1,\n                \"created_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"updated_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"deleted_at\": null\n            },\n            {\n                \"id\": 8,\n                \"last_name\": \"Lang\",\n                \"first_name\": \"Reagan\",\n                \"email\": \"gertrude29@example.net\",\n                \"role\": 1,\n                \"status\": 1,\n                \"created_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"updated_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"deleted_at\": null\n            },\n            {\n                \"id\": 10,\n                \"last_name\": \"Sawayn\",\n                \"first_name\": \"Jarrod\",\n                \"email\": \"qhickle@example.com\",\n                \"role\": 1,\n                \"status\": 1,\n                \"created_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"updated_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"deleted_at\": null\n            },\n            {\n                \"id\": 11,\n                \"last_name\": \"Windler\",\n                \"first_name\": \"Fabiola\",\n                \"email\": \"kwisoky@example.com\",\n                \"role\": 1,\n                \"status\": 1,\n                \"created_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"updated_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"deleted_at\": null\n            },\n            {\n                \"id\": 12,\n                \"last_name\": \"Hammes\",\n                \"first_name\": \"Gerson\",\n                \"email\": \"elza37@example.org\",\n                \"role\": 1,\n                \"status\": 1,\n                \"created_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"updated_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"deleted_at\": null\n            },\n            {\n                \"id\": 18,\n                \"last_name\": \"Weber\",\n                \"first_name\": \"Tanya\",\n                \"email\": \"aschulist@example.org\",\n                \"role\": 1,\n                \"status\": 1,\n                \"created_at\": \"2025-04-18T05:38:15.000000Z\",\n                \"updated_at\": \"2025-04-18T05:38:15.000000Z\",\n                \"deleted_at\": null\n            }\n        ],\n        \"first_page_url\": \"http://localhost:8088/api/v1/active-staffs?page=1\",\n        \"from\": 1,\n        \"last_page\": 2,\n        \"last_page_url\": \"http://localhost:8088/api/v1/active-staffs?page=2\",\n        \"links\": [\n            {\n                \"url\": null,\n                \"label\": \"pagination.previous\",\n                \"active\": false\n            },\n            {\n                \"url\": \"http://localhost:8088/api/v1/active-staffs?page=1\",\n                \"label\": \"1\",\n                \"active\": true\n            },\n            {\n                \"url\": \"http://localhost:8088/api/v1/active-staffs?page=2\",\n                \"label\": \"2\",\n                \"active\": false\n            },\n            {\n                \"url\": \"http://localhost:8088/api/v1/active-staffs?page=2\",\n                \"label\": \"pagination.next\",\n                \"active\": false\n            }\n        ],\n        \"next_page_url\": \"http://localhost:8088/api/v1/active-staffs?page=2\",\n        \"path\": \"http://localhost:8088/api/v1/active-staffs\",\n        \"per_page\": 10,\n        \"prev_page_url\": null,\n        \"to\": 10,\n        \"total\": 14\n    },\n    \"errors\": null\n}\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "GET /user/checkin/date",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/user/checkin/date?date=2025-05-20",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"checkin",
+								"date"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "2025-05-20",
+									"description": "nullable|date_format:Y-m-d"
+								}
+							]
+						},
+						"description": "#### 📌 **Description:**\n\nLấy danh sách các bản ghi checkin theo ngày cụ thể, mặc định là lấy theo ngày hiện tại\n\n#### **🔐Authentication:**\n\nCó (Bearer Token với quyền Leader, Staff)\n\n🔢 HTTP Method:  \nGet\n\n#### **📥 Response:**\n\n- HTTP code: 200\n    \n- Body\n    \n\n``` json\n{\n    \"current_page\": 1,\n    \"data\": [\n        {\n            \"id\": 22,\n            \"user_id\": 25,\n            \"date\": \"2025-05-21\",\n            \"checkin_time\": \"08:30:00\",\n            \"checkout_time\": \"15:45:00\",\n            \"late_hours\": \"00:00:00\",\n            \"early_hours\": \"00:30:00\",\n            \"overtime_hours\": \"00:00:00\",\n            \"report_note\": \"Tăng ca do họp gấp cuối ngày\",\n            \"created_at\": \"2025-05-20T08:41:40.000000Z\",\n            \"updated_at\": \"2025-05-20T09:13:11.000000Z\",\n            \"deleted_at\": null,\n            \"formatted_date\": \"21-05-2025\",\n            \"user\": {\n                \"id\": 25,\n                \"last_name\": \"Nguyễn\",\n                \"first_name\": \"Văn A\",\n                \"email\": \"vana@example.com\",\n                \"role\": 2,\n                \"status\": 1,\n                \"created_at\": \"2025-05-20T03:52:50.000000Z\",\n                \"updated_at\": \"2025-05-20T04:26:56.000000Z\",\n                \"deleted_at\": null\n            },\n            \"break_times\": [\n                {\n                    \"id\": 6,\n                    \"time_card_id\": 22,\n                    \"date\": \"2025-05-21\",\n                    \"start_at\": \"12:00:00\",\n                    \"end_at\": \"13:00:00\",\n                    \"note\": null,\n                    \"created_at\": \"2025-05-20T08:41:40.000000Z\",\n                    \"updated_at\": \"2025-05-20T08:41:40.000000Z\",\n                    \"deleted_at\": null\n                }\n            ]\n        }\n    ],\n    \"first_page_url\": \"http://localhost:8088/api/v1/admin/user/checkin/date?page=1\",\n    \"from\": 1,\n    \"last_page\": 1,\n    \"last_page_url\": \"http://localhost:8088/api/v1/admin/user/checkin/date?page=1\",\n    \"links\": [\n        {\n            \"url\": null,\n            \"label\": \"pagination.previous\",\n            \"active\": false\n        },\n        {\n            \"url\": \"http://localhost:8088/api/v1/admin/user/checkin/date?page=1\",\n            \"label\": \"1\",\n            \"active\": true\n        },\n        {\n            \"url\": null,\n            \"label\": \"pagination.next\",\n            \"active\": false\n        }\n    ],\n    \"next_page_url\": null,\n    \"path\": \"http://localhost:8088/api/v1/admin/user/checkin/date\",\n    \"per_page\": 10,\n    \"prev_page_url\": null,\n    \"to\": 1,\n    \"total\": 1\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "POST /user/location-access-denied",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user/location-access-denied",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"location-access-denied"
+							]
+						},
+						"description": "#### 📌 **Description:**\n\nGửi email khi nhân viên từ chối chia sẻ vị trí\n\n#### **🔐Authentication:**\n\nCó (Bearer token), staff, leader role\n\n🔢 HTTP Method:  \nPOST\n\n#### **📥 Response:**\n\n- HTTP Code: `200`\n    \n- Body\n    \n\n``` json\n{\n    \"message\": \"Đã gửi email khi nhân viên từ chối truy cập vị trí thành công.\"\n}\n\n ```"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin User",
+			"item": [
+				{
+					"name": "GET /admin/user",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/admin/user/?name&status&is_delete&is_checking_today&get_all",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"user",
+								""
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": null,
+									"description": "nullable|string|max:255"
+								},
+								{
+									"key": "status",
+									"value": null,
+									"description": "nullable|string|max:255"
+								},
+								{
+									"key": "is_delete",
+									"value": null,
+									"description": "nullable|in:true,false"
+								},
+								{
+									"key": "is_checking_today",
+									"value": null,
+									"description": "nullable|in:true,false"
+								},
+								{
+									"key": "get_all",
+									"value": null,
+									"description": "nullable|in:true,false"
+								}
+							]
+						},
+						"description": "#### 📌 **Description:**  \nDanh sách user, bao gồm bản ghi đã xoá, phân trang qua get_all.\n\n#### **🔐Authentication:**  \nCó (Bearer Token với quyền Admin)\n\n🔢 HTTP Method:  \nGet\n\n#### **📥 Response:**  \n\\- Danh sách user, bao gồm bản ghi đã xoá dựa theo điều kiện tìm kiếm.\n\n``` json\n{\n  \"type\": \"object\",\n  \"properties\": {\n    \"user_id\": {\n      \"type\": \"string\",\n      \"description\": \"The unique identifier for the user\"\n    },\n    \"username\": {\n      \"type\": \"string\",\n      \"description\": \"The username of the user\"\n    },\n    \"email\": {\n      \"type\": \"string\",\n      \"description\": \"The email address of the user\"\n    },\n    \"role\": {\n      \"type\": \"string\",\n      \"description\": \"The role of the user\"\n    }\n  }\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "GET /admin/user/:user/detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/admin/user/:user/detail",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"user",
+								":user",
+								"detail"
+							],
+							"variable": [
+								{
+									"key": "user",
+									"value": "1",
+									"description": "id user, required"
+								}
+							]
+						},
+						"description": "#### 📌 **Description:**\n\nThông tin của user.\n\n#### **🔐Authentication:**\n\nCó (Bearer Token với quyền Admin)\n\n🔢 HTTP Method:  \nGet\n\n#### **📥 Response:**\n\n\\-Thông tin của user có id được truyền vào url\n\n``` json\n{\n    \"id\": 1,\n    \"last_name\": \"Admin\",\n    \"first_name\": \"Admin\",\n    \"email\": \"admin@example.com\",\n    \"role\": 0,\n    \"status\": 1,\n    \"created_at\": \"2025-05-05T03:04:49.000000Z\",\n    \"updated_at\": \"2025-05-20T05:19:16.000000Z\",\n    \"deleted_at\": null\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "POST /admin/user/create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"last_name\": \"Nguyễn\", //required|string|max:255\r\n    \"first_name\": \"Văn A\", //required|string|max:255\r\n    \"email\": \"vana@example.com\", //required|email|max:255\r\n    \"password\": \"password123\", //required|string|min:8\r\n    \"role\": 2, //required|integer|in:' . implode(',', User::ROLES)\r\n    \"status\": 1 //required|integer|in:' . implode(',', User::STATUSES)\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/user/create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"user",
+								"create"
+							]
+						},
+						"description": "📌 **Description:**\n\nTạo tài khoản cho user bao gồm họ tên, email, mật khẩu, vai trò và trạng thái hoạt động.\n\n#### **🔐Authentication:**\n\nCó (Bearer Token với quyền Admin)\n\n🔢 **HTTP Method:**\n\nPOST\n\n📛 **Trường hợp lỗi (Email đã tồn tại):**\n\n- **HTTP Status:** `409`\n    \n- **Body:**\n    \n\n``` json\n{\n    \"message\": \"Mail này đã được sử dụng\"\n}\n\n ```\n\n#### **📥 Response:**\n\n\\-Thông tin của user mới được tạo.\n\n- **HTTP Status:** **`200`**\n    \n- **Body:**\n    \n\n``` json\n{\n    \"last_name\": \"Nguyễn\",\n    \"first_name\": \"Văn A\",\n    \"email\": \"vana@example.com\",\n    \"password\": \"$2y$12$hR8ef7UF3BkGf7zTz0DQCeGFyf25g5xugy076kgV5CNo.WEURNVaO\",\n    \"role\": 2,\n    \"status\": 1\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /admin/user/:user/update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"last_name\": \"Nguyễn\", //nullable|string|max:255\r\n    \"first_name\": \"Văn A\", //nullable|string|max:255\r\n    \"email\": \"vana@example.com\", //nullable|email|max:255\r\n    \"password\": \"password123\", //nullable|string|min:8\r\n    \"role\": 1, //nullable|integer|in:' . implode(',', User::ROLES)\r\n    \"status\": 1 //nullable|integer|in:' . implode(',', User::STATUSES)\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/user/:user/update",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"user",
+								":user",
+								"update"
+							],
+							"variable": [
+								{
+									"key": "user",
+									"value": "25",
+									"description": "user id, required"
+								}
+							]
+						},
+						"description": "#### 📌 **Description:**\n\nCập nhật thông tin tài khoản người dùng bao gồm họ tên, email, mật khẩu, vai trò và trạng thái.\n\nEmail sẽ bị kiểm tra trùng (kể cả user đã xóa mềm).\n\n#### **🔐Authentication:**  \nCó (Bearer Token với quyền Admin)\n\n🔢 **HTTP Method:**  \nPUT\n\n📛 **Trường hợp lỗi (Email đã tồn tại):**\n\n- **HTTP Status:** `409`\n    \n- **Body:**\n    \n\n``` json\n{\n    \"message\": \"This email is already in use\"\n}\n\n ```\n\n#### **📥 Response:**  \n\\-Thông tin của user mới được cập nhật.\n\n- **HTTP Status:** **`200`**\n    \n- **Body:**\n    \n\n``` json\n{\n    \"id\": 25,\n    \"last_name\": \"Nguyễn\",\n    \"first_name\": \"Văn A\",\n    \"email\": \"vana@example.com\",\n    \"password\": \"$2y$12$hR8ef7UF3BkGf7zTz0DQCeGFyf25g5xugy076kgV5CNo.WEURNVaO\",\n    \"role\": 2,\n    \"status\": 1\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /admin/user/:user/delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/admin/user/:user/delete",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"user",
+								":user",
+								"delete"
+							],
+							"variable": [
+								{
+									"key": "user",
+									"value": "25",
+									"description": "user id, require"
+								}
+							]
+						},
+						"description": "#### 📌 **Description:**\n\nXóa mềm người dùng khỏi hệ thống. Không thể tự xóa chính tài khoản đang đăng nhập.\n\n#### **🔐Authentication:**\n\nCó (Bearer Token với quyền Admin)\n\n🔢 **HTTP Method:**  \nDELETE\n\n#### **📥 Response:**\n\n- **HTTP Status:** `200`\n    \n- _Trả về_ `_true_` _nếu xóa thành công_\n    \n\n📛 **Trường hợp lỗi (Xóa chính mình):**\n\n- **HTTP Status:** `400 Bad Request`\n    \n- **Body:**\n    \n\n``` json\n{\n    \"message\": \"Bạn không thể xoá chính tài khoản của bạn\"\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE /admin/user/:userWithTrashed/force-delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/admin/user/:userWithTrashed/force-delete",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"user",
+								":userWithTrashed",
+								"force-delete"
+							],
+							"variable": [
+								{
+									"key": "userWithTrashed"
+								}
+							]
+						},
+						"description": "#### 📌 **Description:**\n\nXóa vĩnh viễn người dùng khỏi hệ thống. Không thể xóa chính tài khoản đang đăng nhập. Không thể khôi phục sau khi xóa.\n\n#### **🔐Authentication:**\n\nCó (Bearer Token với quyền Admin)\n\n🔢 **HTTP Method:**  \nDELETE\n\n#### **📥 Response:**\n\n- **HTTP Status:** `200`\n    \n- _Trả về_ `_true_` _nếu xóa thành công_\n    \n\n📛 **Trường hợp lỗi (Xóa chính mình):**\n\n- **HTTP Status:** `400 Bad Request`\n    \n- **Body:**\n    \n\n``` json\n{\n    \"message\": \"Bạn không thể xoá chính tài khoản của bạn\"\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "POST /admin/user/:userWithTrashed/restore",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/admin/user/:userWithTrashed/restore",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"user",
+								":userWithTrashed",
+								"restore"
+							],
+							"variable": [
+								{
+									"key": "userWithTrashed",
+									"description": "user id, required"
+								}
+							]
+						},
+						"description": "#### 📌 **Description:**  \nKhôi phục tài khoản người dùng đã bị xóa mềm trước đó (soft delete).\n\n#### **🔐Authentication:**  \nCó (Bearer Token với quyền Admin)\n\n🔢 **HTTP Method:**  \nPOST\n\n#### **📥 Response:**\n\n- **HTTP Status:** `200`\n    \n- Trả về `_true_` nếu khôi phục thành công."
+					},
+					"response": []
+				},
+				{
+					"name": "GET /admin/user/active-staffs",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"roles\": [1, 2] //required|array\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/user/active-staffs",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"user",
+								"active-staffs"
+							]
+						},
+						"description": "#### 📌 **Description:**\n\nDanh sách nhân viên trạng thái hoạt động.\n\n#### **🔐Authentication:**\n\nCó (Bearer Token với quyền Admin)\n\n🔢 HTTP Method:  \nGet\n\n#### **📥 Response:**\n\n- HTTP code: 200\n    \n- Body\n    \n\n``` json\n{\n    \"success\": true,\n    \"message\": null,\n    \"data\": {\n        \"current_page\": 1,\n        \"data\": [\n            {\n                \"id\": 2,\n                \"last_name\": \"Nguyễn Xuân\",\n                \"first_name\": \"Tài\",\n                \"email\": \"staff@example.com\",\n                \"role\": 1,\n                \"status\": 1,\n                \"created_at\": \"2025-04-18T05:38:10.000000Z\",\n                \"updated_at\": \"2025-05-07T08:27:07.000000Z\",\n                \"deleted_at\": null\n            },\n            {\n                \"id\": 3,\n                \"last_name\": \"Staff\",\n                \"first_name\": \"Staff\",\n                \"email\": \"staff2@example.com\",\n                \"role\": 1,\n                \"status\": 1,\n                \"created_at\": \"2025-04-18T05:38:10.000000Z\",\n                \"updated_at\": \"2025-04-18T05:38:10.000000Z\",\n                \"deleted_at\": null\n            },\n            {\n                \"id\": 4,\n                \"last_name\": \"Leader\",\n                \"first_name\": \"Leader\",\n                \"email\": \"leader@example.com\",\n                \"role\": 2,\n                \"status\": 1,\n                \"created_at\": \"2025-04-18T05:38:11.000000Z\",\n                \"updated_at\": \"2025-05-07T05:12:25.000000Z\",\n                \"deleted_at\": null\n            },\n            {\n                \"id\": 5,\n                \"last_name\": \"Johnston\",\n                \"first_name\": \"Enid\",\n                \"email\": \"mcglynn.nicolette@example.net\",\n                \"role\": 1,\n                \"status\": 1,\n                \"created_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"updated_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"deleted_at\": null\n            },\n            {\n                \"id\": 6,\n                \"last_name\": \"Bailey\",\n                \"first_name\": \"Floyd\",\n                \"email\": \"egibson@example.net\",\n                \"role\": 1,\n                \"status\": 1,\n                \"created_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"updated_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"deleted_at\": null\n            },\n            {\n                \"id\": 7,\n                \"last_name\": \"Jakubowski\",\n                \"first_name\": \"Kody\",\n                \"email\": \"mills.shemar@example.net\",\n                \"role\": 1,\n                \"status\": 1,\n                \"created_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"updated_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"deleted_at\": null\n            },\n            {\n                \"id\": 8,\n                \"last_name\": \"Lang\",\n                \"first_name\": \"Reagan\",\n                \"email\": \"gertrude29@example.net\",\n                \"role\": 1,\n                \"status\": 1,\n                \"created_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"updated_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"deleted_at\": null\n            },\n            {\n                \"id\": 10,\n                \"last_name\": \"Sawayn\",\n                \"first_name\": \"Jarrod\",\n                \"email\": \"qhickle@example.com\",\n                \"role\": 1,\n                \"status\": 1,\n                \"created_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"updated_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"deleted_at\": null\n            },\n            {\n                \"id\": 11,\n                \"last_name\": \"Windler\",\n                \"first_name\": \"Fabiola\",\n                \"email\": \"kwisoky@example.com\",\n                \"role\": 1,\n                \"status\": 1,\n                \"created_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"updated_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"deleted_at\": null\n            },\n            {\n                \"id\": 12,\n                \"last_name\": \"Hammes\",\n                \"first_name\": \"Gerson\",\n                \"email\": \"elza37@example.org\",\n                \"role\": 1,\n                \"status\": 1,\n                \"created_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"updated_at\": \"2025-04-18T05:38:14.000000Z\",\n                \"deleted_at\": null\n            }\n        ],\n        \"first_page_url\": \"http://localhost:8088/api/v1/admin/user/active-staffs?page=1\",\n        \"from\": 1,\n        \"last_page\": 2,\n        \"last_page_url\": \"http://localhost:8088/api/v1/admin/user/active-staffs?page=2\",\n        \"links\": [\n            {\n                \"url\": null,\n                \"label\": \"pagination.previous\",\n                \"active\": false\n            },\n            {\n                \"url\": \"http://localhost:8088/api/v1/admin/user/active-staffs?page=1\",\n                \"label\": \"1\",\n                \"active\": true\n            },\n            {\n                \"url\": \"http://localhost:8088/api/v1/admin/user/active-staffs?page=2\",\n                \"label\": \"2\",\n                \"active\": false\n            },\n            {\n                \"url\": \"http://localhost:8088/api/v1/admin/user/active-staffs?page=2\",\n                \"label\": \"pagination.next\",\n                \"active\": false\n            }\n        ],\n        \"next_page_url\": \"http://localhost:8088/api/v1/admin/user/active-staffs?page=2\",\n        \"path\": \"http://localhost:8088/api/v1/admin/user/active-staffs\",\n        \"per_page\": 10,\n        \"prev_page_url\": null,\n        \"to\": 10,\n        \"total\": 15\n    },\n    \"errors\": null\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "GET /admin/user/checkin/date",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/admin/user/checkin/date?date=2025-05-20",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"user",
+								"checkin",
+								"date"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "2025-05-20",
+									"description": "nullable|date_format:Y-m-d"
+								}
+							]
+						},
+						"description": "#### 📌 **Description:**\n\nLấy danh sách các bản ghi checkin theo ngày cụ thể, mặc định là lấy theo ngày hiện tại\n\n#### **🔐Authentication:**\n\nCó (Bearer Token với quyền Admin)\n\n🔢 HTTP Method:  \nGet\n\n#### **📥 Response:**\n\n- HTTP code: 200\n    \n- Body\n    \n\n``` json\n{\n    \"current_page\": 1,\n    \"data\": [\n        {\n            \"id\": 22,\n            \"user_id\": 25,\n            \"date\": \"2025-05-21\",\n            \"checkin_time\": \"08:30:00\",\n            \"checkout_time\": \"15:45:00\",\n            \"late_hours\": \"00:00:00\",\n            \"early_hours\": \"00:30:00\",\n            \"overtime_hours\": \"00:00:00\",\n            \"report_note\": \"Tăng ca do họp gấp cuối ngày\",\n            \"created_at\": \"2025-05-20T08:41:40.000000Z\",\n            \"updated_at\": \"2025-05-20T09:13:11.000000Z\",\n            \"deleted_at\": null,\n            \"formatted_date\": \"21-05-2025\",\n            \"user\": {\n                \"id\": 25,\n                \"last_name\": \"Nguyễn\",\n                \"first_name\": \"Văn A\",\n                \"email\": \"vana@example.com\",\n                \"role\": 2,\n                \"status\": 1,\n                \"created_at\": \"2025-05-20T03:52:50.000000Z\",\n                \"updated_at\": \"2025-05-20T04:26:56.000000Z\",\n                \"deleted_at\": null\n            },\n            \"break_times\": [\n                {\n                    \"id\": 6,\n                    \"time_card_id\": 22,\n                    \"date\": \"2025-05-21\",\n                    \"start_at\": \"12:00:00\",\n                    \"end_at\": \"13:00:00\",\n                    \"note\": null,\n                    \"created_at\": \"2025-05-20T08:41:40.000000Z\",\n                    \"updated_at\": \"2025-05-20T08:41:40.000000Z\",\n                    \"deleted_at\": null\n                }\n            ]\n        }\n    ],\n    \"first_page_url\": \"http://localhost:8088/api/v1/admin/user/checkin/date?page=1\",\n    \"from\": 1,\n    \"last_page\": 1,\n    \"last_page_url\": \"http://localhost:8088/api/v1/admin/user/checkin/date?page=1\",\n    \"links\": [\n        {\n            \"url\": null,\n            \"label\": \"pagination.previous\",\n            \"active\": false\n        },\n        {\n            \"url\": \"http://localhost:8088/api/v1/admin/user/checkin/date?page=1\",\n            \"label\": \"1\",\n            \"active\": true\n        },\n        {\n            \"url\": null,\n            \"label\": \"pagination.next\",\n            \"active\": false\n        }\n    ],\n    \"next_page_url\": null,\n    \"path\": \"http://localhost:8088/api/v1/admin/user/checkin/date\",\n    \"per_page\": 10,\n    \"prev_page_url\": null,\n    \"to\": 1,\n    \"total\": 1\n}\n\n ```"
+					},
+					"response": []
+				},
+				{
+					"name": "PUT /admin/update-password",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"current_password\": \"password\", //required|string\r\n  \"new_password\": \"password2\", //required|string|min:8|different:current_password\r\n  \"confirm_password\": \"password2\" //required|string|same:new_password\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/update-password",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"update-password"
+							]
+						},
+						"description": "#### 📌 **Description:**  \nCập nhật mật khẩu của tài khoản đang đăng nhập.\n\n#### **🔐Authentication:**  \nCó (Bearer Token với quyền Admin)\n\n🔢 HTTP Method:  \nPUT\n\n#### **📥 Response:**\n\n- HTTP Code: `200`\n    \n- Body\n    \n\n``` json\n{\n    \"message\": \"Cập nhật mật khẩu thành công.\"\n}\n\n ```"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "{{base_url}}"
+		},
+		{
+			"key": "access_token",
+			"value": "{{access_token}}"
+		}
+	]
+}

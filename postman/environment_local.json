@@ -1,0 +1,25 @@
+{
+	"id": "bc323709-fc91-44c6-97cd-f5ab3e2b0e28",
+	"name": "Local",
+	"values": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8088/api/v1",
+			"enabled": true
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"enabled": true
+		},
+		{
+			"key": "refresh_token",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2025-05-20T09:41:17.458Z",
+	"_postman_exported_using": "Postman/11.46.2"
+}

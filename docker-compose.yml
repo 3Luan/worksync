@@ -1,0 +1,71 @@
+version: "3"
+services:
+  # The Application
+  app:
+    container_name: "${APP_NAME}_app"
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    working_dir: /var/www/html
+    restart: always
+    volumes:
+      - .:/var/www/html
+    ports:
+      - 5173:5173
+    networks:
+      - sail
+
+  # The Web Server
+  web:
+    container_name: "${APP_NAME}_web"
+    build:
+      context: ./docker/web/
+      dockerfile: web.dockerfile
+    working_dir: /var/www/html
+    # restart: always
+    environment:
+      TZ: "Asia/Tokyo"
+    volumes:
+      - ./public:/var/www/html/public
+    ports:
+      - 8088:80
+    networks:
+      - sail
+
+  # The Node Server
+  node:
+    container_name: "${APP_NAME}_node"
+    build:
+      context: .
+      dockerfile: docker/node/Dockerfile
+    working_dir: /var/www/html
+    restart: always
+    volumes:
+      - .:/var/www/html
+    ports:
+      - 5173:5173
+    networks:
+      - sail
+
+  # The Database
+  database:
+    container_name: "${APP_NAME}_database"
+    image: mysql:8.0.34
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_USER: ${DB_USERNAME}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      TZ: "Asia/Tokyo"
+    ports:
+      - "3313:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - sail
+
+networks:
+  sail:
+
+volumes:
+  dbdata:
