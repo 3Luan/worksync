@@ -1,5 +1,9 @@
 {
   "day": "{count} ngày",
   "month": "tháng",
-  "year": "năm"
+  "year": "năm",
+
+  "loadLanguageError": "Không thể tải ngôn ngữ",
+  "missingLocale": "Không tìm thấy bản dịch",
+  "generalError": "Đã xảy ra lỗi, vui lòng thử lại sau"
 }

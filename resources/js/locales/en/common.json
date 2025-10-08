@@ -1,5 +1,9 @@
 {
   "day": "1 day | {count} days",
   "month": "month",
-  "year": "year"
+  "year": "year",
+
+  "loadLanguageError": "Cannot load language",
+  "missingLocale": "Translation not found",
+  "generalError": "An error occurred, please try again later"
 }
