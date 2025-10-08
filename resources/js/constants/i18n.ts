@@ -10,7 +10,7 @@ export const LANGUAGE_OPTIONS: LanguageOption[] = [
 ];
 
 // List of supported modules
-export const SUPPORTED_MODULES = ['auth', 'calendar', 'common', 'user'];
+export const SUPPORTED_MODULES = ['auth', 'common'];
 
 // List of supported locales
 export const SUPPORTED_LOCALES = LANGUAGE_OPTIONS.map((lang) => lang.value);

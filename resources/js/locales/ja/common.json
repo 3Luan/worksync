@@ -1,5 +1,9 @@
 {
   "day": "{count}日",
   "month": "月",
-  "year": "年"
+  "year": "年",
+
+  "loadLanguageError": "言語を読み込めません",
+  "missingLocale": "翻訳が見つかりません",
+  "generalError": "エラーが発生しました。後でもう一度お試しください"
 }

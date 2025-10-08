@@ -1,21 +1,22 @@
 version: "3"
+
 services:
-  # The Application
+  # The Application Server
   app:
     container_name: "${APP_NAME}_app"
     build:
       context: .
       dockerfile: docker/php/Dockerfile
     working_dir: /var/www/html
-    restart: always
+    # restart: always
     volumes:
       - .:/var/www/html
-    ports:
-      - 5173:5173
     networks:
       - sail
+    depends_on:
+      - database
 
-  # The Web Server
+  # The Web Server (Nginx)
   web:
     container_name: "${APP_NAME}_web"
     build:
@@ -24,41 +25,45 @@ services:
     working_dir: /var/www/html
     # restart: always
     environment:
-      TZ: "Asia/Tokyo"
+      TZ: "Asia/Ho_Chi_Minh"
     volumes:
-      - ./public:/var/www/html/public
+      - .:/var/www/html
     ports:
       - 8088:80
     networks:
       - sail
+    depends_on:
+      - app
 
-  # The Node Server
+  # The Node Server (for Vite)
   node:
     container_name: "${APP_NAME}_node"
-    build:
-      context: .
-      dockerfile: docker/node/Dockerfile
+    image: node:20.19.0
     working_dir: /var/www/html
-    restart: always
+    # restart: always
     volumes:
       - .:/var/www/html
+    command: sh -c "yarn install && yarn dev"
     ports:
       - 5173:5173
+    environment:
+      - CHOKIDAR_USEPOLLING=true
     networks:
       - sail
 
-  # The Database
+  # The Database Server (MySQL)
   database:
     container_name: "${APP_NAME}_database"
     image: mysql:8.0.34
+    # restart: always
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_ROOT_USER: ${DB_USERNAME}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-      TZ: "Asia/Tokyo"
+      TZ: "Asia/Ho_Chi_Minh"
     ports:
-      - "3313:3306"
+      - "3301:3306"
     volumes:
       - dbdata:/var/lib/mysql
     networks:
