@@ -15,7 +15,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar/index';
 import SidebarHeader from '@/components/ui/sidebar/SidebarHeader.vue';
-import { LOGO_GREEN, LOGO_STIKY } from '@/settings/image';
+// import { LOGO_GREEN, LOGO_STIKY } from '@/settings/image';
 import type { NavItem } from '@/types/component';
 import { ChevronRight } from 'lucide-vue-next';
 import { useRouter, useRoute } from 'vue-router';
@@ -84,8 +84,8 @@ watch(open, async (val) => {
     <SidebarHeader>
       <Collapsible>
         <div :class="[' w-full flex flex-row justify-center items-center py-3', { 'h-28': open }]">
-          <img :src="LOGO_GREEN" class="h-[100%] max-h-20 cursor-pointer" v-if="open" @click="() => router.push(APP_URL.ADMIN.DASHBOARD)" />
-          <img :src="LOGO_STIKY" class="min-w-[30px] w-[20%] cursor-pointer" v-else @click="() => router.push(APP_URL.ADMIN.DASHBOARD)" />
+          <!-- <img :src="LOGO_GREEN" class="h-[100%] max-h-20 cursor-pointer" v-if="open" @click="() => router.push(APP_URL.ADMIN.DASHBOARD)" />
+          <img :src="LOGO_STIKY" class="min-w-[30px] w-[20%] cursor-pointer" v-else @click="() => router.push(APP_URL.ADMIN.DASHBOARD)" /> -->
         </div>
       </Collapsible>
     </SidebarHeader>
