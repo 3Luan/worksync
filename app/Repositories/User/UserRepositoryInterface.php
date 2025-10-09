@@ -46,12 +46,6 @@ interface UserRepositoryInterface
     public function createUser(array $validatedData);
 
     /**
-     * Retrieve the current time card to check user status.
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function getCurrentTimeCard();
-
-    /**
      * Get a single user by ID.
      * @param User $user
      * @return User
@@ -92,13 +86,6 @@ interface UserRepositoryInterface
      * @return bool
      */
     public function resetPassword(Request $request);
-
-    /**
-     * Get list checkin by date.
-     * @param Request $request
-     * @return $data
-     */
-    public function getCheckinsByDate(Request $request);
 
     /**
      * Summary of locationAccessDenied

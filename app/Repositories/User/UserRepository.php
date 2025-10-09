@@ -52,8 +52,7 @@ class UserRepository implements UserRepositoryInterface
                 $searchLower = strtolower($search);
 
                 $query->where(function ($q) use ($searchLower) {
-                    $q->whereRaw("LOWER(CONCAT(last_name, ' ', first_name)) LIKE ?", [$searchLower])
-                        ->orWhereRaw("LOWER(CONCAT(first_name, ' ', last_name)) LIKE ?", [$searchLower]);
+                    $q->whereRaw("LOWER(CONCAT(name)) LIKE ?", [$searchLower]);
                 });
             });
 
@@ -70,8 +69,7 @@ class UserRepository implements UserRepositoryInterface
 
             if ($sortBy) {
                 $query->orderBy($sortBy, $sortDirection)
-                    ->orderBy('first_name')
-                    ->orderBy('last_name');
+                    ->orderBy('name');
             }
 
             $query->orderByDesc('id');
@@ -199,32 +197,6 @@ class UserRepository implements UserRepositoryInterface
     }
 
     /**
-     * Retrieve the current time card to check user status.
-     * @return mixed
-     */
-    public function getCurrentTimeCard()
-    {
-        try {
-            $timeCard = TimeCard::get_current_time_card(false);
-            $breakTime = BreakTime::where('time_card_id', $timeCard->id)
-                ->where('date', now()->toDateString())
-                ->orderBy('start_at', 'desc')
-                ->first();
-
-            return [
-                'checkin_time' => $timeCard->checkin_time ?? null,
-                'checkout_time' => $timeCard->checkout_time ?? null,
-                'break_start' => $breakTime ? $breakTime->start_at : null,
-                'break_end' => $breakTime ? $breakTime->end_at : null,
-            ];
-        } catch (\Exception $e) {
-            Log::error('Lấy thẻ thời gian thất bại' . $e->getMessage());
-            return false;
-        }
-    }
-
-
-    /**
      * Get a single user by ID.
      * @param User $user
      * @return User
@@ -305,7 +277,7 @@ class UserRepository implements UserRepositoryInterface
                 ]);
                 $resetPath = config('app.url') . "/auth/reset-password?token=" . $key;
                 $data = [
-                    'fullname' => "{$user->last_name} {$user->first_name}",
+                    'fullname' => $user->name,
                     'reset_path' => $resetPath,
                 ];
                 Mail::to($request->email)->send(new ResetPasswordMail($data));
@@ -372,35 +344,6 @@ class UserRepository implements UserRepositoryInterface
             DB::rollBack();
             Log::error('Reset password handle error: ' . $e);
             throw $e;
-        }
-    }
-
-    /**
-     * Get list checkin by date.
-     * @param Request $request
-     * @return $data
-     */
-    public function getCheckinsByDate(Request $request)
-    {
-        try {
-            $date = $request->query('date');
-
-            if (!$date) {
-                $date = now()->toDateString();
-            }
-
-            $query = TimeCard::with(['user', 'break_times'])
-                ->where('date', $date)
-                ->whereNotNull('checkin_time');
-
-            $query->orderBy('id', 'desc');
-            if ($request->get('get_all') === 'true') {
-                return $query->get();
-            }
-            return $query->paginate($this->getPerPage());
-        } catch (\Exception $e) {
-            Log::error('Error retrieving agents: ' . $e->getMessage());
-            return null;
         }
     }
 

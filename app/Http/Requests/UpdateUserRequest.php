@@ -23,8 +23,7 @@ class UpdateUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'last_name' => 'nullable|string|max:255',
-            'first_name' => 'nullable|string|max:255',
+            'name' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255',
             'password' => 'nullable|string|min:8',
             'role' => 'nullable|integer|in:' . implode(',', User::ROLES),
