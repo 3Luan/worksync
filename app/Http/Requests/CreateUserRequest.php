@@ -23,8 +23,7 @@ class CreateUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'last_name' => 'required|string|max:255',
-            'first_name' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'password' => 'required|string|min:8',
             'role' => 'required|integer|in:' . implode(',', User::ROLES),
