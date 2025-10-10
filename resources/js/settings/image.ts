@@ -1,4 +1,3 @@
-// import LOGO_GREEN from '@/assets/img/log_green.png';
-// import LOGO_STIKY from '@/assets/img/logo-stiky.png';
+import LOGO_GOOGLE from '@/assets/img/icons/google.png';
 
-// export { LOGO_GREEN, LOGO_STIKY };
+export { LOGO_GOOGLE };

@@ -24,6 +24,7 @@ import { nextTick, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Tooltip from '../tooltip/Tooltip.vue';
 import { useSidebarTooltip } from '@/composables/useSidebarTooltip';
+import { LOGO_GOOGLE } from '@/settings/image';
 
 const { tooltipShown, createLabelRef, measureAll } = useSidebarTooltip();
 
@@ -80,12 +81,12 @@ watch(open, async (val) => {
 </script>
 
 <template>
-  <Sidebar v-bind="props" data-sidebar-root>
+  <Sidebar v-bind="props" data-sidebar-root class="border-r transition-colors duration-300 border-b border-gray-300 dark:border-gray-600">
     <SidebarHeader>
       <Collapsible>
         <div :class="[' w-full flex flex-row justify-center items-center py-3', { 'h-28': open }]">
-          <!-- <img :src="LOGO_GREEN" class="h-[100%] max-h-20 cursor-pointer" v-if="open" @click="() => router.push(APP_URL.ADMIN.DASHBOARD)" />
-          <img :src="LOGO_STIKY" class="min-w-[30px] w-[20%] cursor-pointer" v-else @click="() => router.push(APP_URL.ADMIN.DASHBOARD)" /> -->
+          <img :src="LOGO_GOOGLE" class="h-[100%] max-h-20 cursor-pointer" v-if="open" @click="() => router.push(APP_URL.ADMIN.DASHBOARD)" />
+          <img :src="LOGO_GOOGLE" class="min-w-[30px] w-[20%] cursor-pointer" v-else @click="() => router.push(APP_URL.ADMIN.DASHBOARD)" />
         </div>
       </Collapsible>
     </SidebarHeader>
@@ -158,6 +159,6 @@ watch(open, async (val) => {
         </SidebarMenu>
       </SidebarGroup>
     </SidebarContent>
-    <SidebarRail />
+    <!-- <SidebarRail /> -->
   </Sidebar>
 </template>

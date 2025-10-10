@@ -1,9 +1,8 @@
 <template>
   <SidebarProvider>
-    <!-- Temporarily Dashboard and Timesheet pageshidden -->
     <AppSidebar :data="sidebarDataWithCounts" />
     <SidebarInset class="h-[calc(100vh-0.1rem)] w-[calc(100%-48px)] transition-colors duration-300 overflow-y-auto">
-      <header class="flex h-12 shrink-0 items-center gap-2 px-4 shadow-2xl justify-between transition-colors duration-300">
+      <header class="bg-[#FAFAFA] flex h-12 shrink-0 items-center gap-2 px-4 shadow-2xl justify-between transition-colors duration-300 border-b border-gray-300 dark:border-gray-600 dark:bg-[#171717]">
         <div class="w-fit flex items-center">
           <SidebarTrigger class="mr-2 cursor-pointer" />
           <Breadcrumb class="">
@@ -28,10 +27,10 @@
             <Moon v-else class="h-5 w-5" />
           </button>
           <!-- User Profile Dropdown -->
-          <UserProfile />
+          <ProfilePopup />
         </div>
       </header>
-      <div class="bg-[#e9e9e9] dark:bg-black w-full h-full p-2 sm:p-6 overflow-auto transition-colors duration-300">
+      <div class="bg-[#FAFAFA] dark:bg-[#171717] w-full h-full p-2 sm:p-6 overflow-auto transition-colors duration-300">
         <RouterView />
       </div>
     </SidebarInset>
@@ -43,24 +42,16 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import AppSidebar from '@/components/ui/sidebar/AppSidebar.vue';
 import type { NavItem } from '@/types/component';
-import { Contact, LayoutDashboard, Moon, Scaling, Sun, Laptop } from 'lucide-vue-next';
+import { Contact, LayoutDashboard, Moon, Sun } from 'lucide-vue-next';
 import { RouteRecord, useRoute } from 'vue-router';
-import { computed, onMounted, provide, ref } from 'vue';
-import UserProfile from '@/components/layouts/UserProfile.vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useDarkMode } from '@/composables/useDarkMode';
 import { APP_ROUTE_NAME } from '@/constants/url';
+import ProfilePopup from '@/components/common/ProfilePopup.vue';
 
 const { t: $t } = useI18n();
 const { isDark, toggleDarkMode } = useDarkMode();
-const pendingCounts = ref({
-  pending_leaves: 0,
-  pending_changes: 0,
-  pending_special_works: 0,
-  pending_compensation_work: 0,
-  pending_special_remote_works: 0,
-});
-
 const route = useRoute();
 
 const data: NavItem[] = [

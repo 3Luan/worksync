@@ -34,6 +34,7 @@ export const APP_ROUTE_NAME = {
       EDIT: 'admin.user.edit',
     },
     UPDATE_PASSWORD: 'admin.update-password.index',
+    PROFILE: 'admin.profile.index',
   },
   USER: {
     INDEX: 'user.index',
