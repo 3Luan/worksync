@@ -1,53 +1,49 @@
 <script setup lang="ts">
-import { LOGO_GOOGLE } from '@/settings/image'
-import { useAuthStore } from '@/stores/authStore'
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { LOGO_GOOGLE } from '@/settings/image';
+import { useAuthStore } from '@/stores/authStore';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-const router = useRouter()
-const email = ref('')
-const password = ref('')
-const loading = ref(false)
-const auth = useAuthStore()
+const router = useRouter();
+const email = ref('');
+const password = ref('');
+const loading = ref(false);
+const auth = useAuthStore();
 
 const handleLogin = async () => {
   try {
-    loading.value = true
+    loading.value = true;
 
     const payload = {
       email: email.value,
       password: password.value,
-    }
+    };
 
     const response = await auth.handleLogin(payload);
     if (response) {
-      router.push('/')
+      router.push('/');
     }
 
-
     console.log('s:', auth.error);
-
   } catch (e) {
-    console.error('Login error:', e)
+    console.error('Login error:', e);
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const handleForgotPassword = () => {
-  router.push('/forgot-password')
-}
+  router.push('/forgot-password');
+};
 
 const handleGoogleLogin = () => {
-  window.location.href = '/api/auth/google'
-}
+  window.location.href = '/api/auth/google';
+};
 </script>
 
 <template>
   <div>
-    <h1 class="text-2xl font-bold text-center text-gray-800 dark:text-gray-100 mb-6">
-      Đăng nhập WorkSync
-    </h1>
+    <h1 class="text-2xl font-bold text-center text-gray-800 dark:text-gray-100 mb-6">Đăng nhập WorkSync</h1>
 
     <form @submit.prevent="handleLogin" class="space-y-5">
       <div>
@@ -85,24 +81,13 @@ const handleGoogleLogin = () => {
       </button>
     </form>
 
-    <!-- Quên mật khẩu -->
-    <div class="flex justify-between items-center mt-4 text-sm">
-      <button
-        @click="handleForgotPassword"
-        class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400"
-      >
-        Quên mật khẩu?
-      </button>
+    <div v-if="!auth.isAdmin" class="flex justify-between items-center mt-4 text-sm">
+      <button @click="handleForgotPassword" class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400">Quên mật khẩu?</button>
 
-      <router-link
-        to="/register"
-        class="text-gray-600 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400"
-      >
-        Đăng ký tài khoản
-      </router-link>
+      <router-link to="/register" class="text-gray-600 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400"> Đăng ký tài khoản </router-link>
     </div>
 
-    <div class="mt-8">
+    <div v-if="!auth.isAdmin" class="mt-8">
       <div class="flex items-center mb-4">
         <hr class="flex-grow border-gray-300 dark:border-gray-700" />
         <span class="px-3 text-gray-500 dark:text-gray-400 text-sm">Hoặc</span>

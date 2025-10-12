@@ -14,8 +14,9 @@ export const APP_URL = {
     UPDATE_PASSWORD: '/admin/update-password',
   },
   USER: {
+    HOME: '/home',
     DASHBOARD: '/dashboard',
-    WORKSYNC: '/worksync',
+    MESSAGES: '/messages',
     UPDATE_PASSWORD: '/update-password',
   },
 } as const;
@@ -38,16 +39,16 @@ export const APP_ROUTE_NAME = {
   },
   USER: {
     INDEX: 'user.index',
-    DASHBOARD: 'dashboard.index',
     WORKSYNC: 'worksync.index',
     UPDATE_PASSWORD: 'update-password.index',
+    PROFILE: 'user.profile.index',
+    MESSAGES: 'user.messages.index',
   },
   NOT_FOUND: 'not-found',
 } as const;
 
 export const ENTRY_URL = {
   ADMIN: APP_URL.ADMIN.DASHBOARD,
-  USER: APP_URL.USER.WORKSYNC,
   AUTH: APP_URL.AUTH.LOGIN,
-  DASHBOARD: APP_URL.USER.DASHBOARD
+  USER: APP_URL.USER.MESSAGES,
 } as const;
