@@ -58,9 +58,9 @@ window.addEventListener('resize', () => {
 </script>
 
 <template>
-  <div class="flex h-[calc(100vh-56px)] bg-[#FAFAFA] dark:bg-gray-900 rounded-lg overflow-hidden relative">
+  <div class="flex h-[calc(100vh-56px)] bg-[#FAFAFA] dark:bg-[#171717] rounded-lg overflow-hidden relative">
     <!-- SIDEBAR (Danh sách bạn bè) -->
-    <aside v-if="!isChatOpen || !isMobile" class="w-full md:w-1/4 flex flex-col border-r border-gray-200 dark:border-gray-700 bg-[#FAFAFA] dark:bg-gray-800">
+    <aside v-if="!isChatOpen || !isMobile" class="w-full md:w-1/4 flex flex-col border-r border-gray-200 dark:border-gray-700 bg-[#FAFAFA] dark:bg-[#171717]">
       <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
         <h2 class="font-bold text-lg">Tin nhắn</h2>
         <Search class="w-5 h-5 text-gray-500" />
@@ -87,11 +87,11 @@ window.addEventListener('resize', () => {
     </aside>
 
     <!-- CHAT MAIN -->
-    <section v-if="activeFriend && (isChatOpen || !isMobile)" class="flex-1 flex flex-col bg-gray-50 dark:bg-gray-900 transition-all duration-300">
+    <section v-if="activeFriend && (isChatOpen || !isMobile)" class="flex-1 flex flex-col bg-gray-50 dark:bg-[#171717] transition-all duration-300">
       <!-- Header -->
       <header
         v-if="activeFriend"
-        class="flex items-center justify-between p-2 border-b border-gray-200 dark:border-gray-700 bg-[#FAFAFA] dark:bg-gray-800 shrink-0"
+        class="flex items-center justify-between p-2 border-b border-gray-200 dark:border-gray-700 bg-[#FAFAFA] dark:bg-[#171717] shrink-0"
       >
         <div class="flex items-center gap-3">
           <!-- ✅ Nút quay lại chỉ hiện ở mobile -->
@@ -118,7 +118,7 @@ window.addEventListener('resize', () => {
           :key="msg.id"
           :class="[
             'max-w-[70%] px-4 py-2 rounded-2xl text-sm',
-            msg.from === 'me' ? 'ml-auto bg-indigo-500 text-white' : 'bg-[#FAFAFA] dark:bg-gray-800 border border-gray-200 dark:border-gray-700',
+            msg.from === 'me' ? 'ml-auto bg-indigo-500 text-white' : 'bg-[#FAFAFA] dark:bg-[#171717] border border-gray-200 dark:border-gray-700',
           ]"
         >
           {{ msg.text }}
@@ -126,7 +126,7 @@ window.addEventListener('resize', () => {
       </main>
 
       <!-- Input -->
-      <footer class="p-4 border-t border-gray-200 dark:border-gray-700 bg-[#FAFAFA] dark:bg-gray-800 flex items-center gap-2 shrink-0">
+      <footer class="p-4 border-t border-gray-200 dark:border-gray-700 bg-[#FAFAFA] dark:bg-[#171717] flex items-center gap-2 shrink-0">
         <button class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition">
           <Smile class="w-5 h-5" />
         </button>
@@ -134,7 +134,7 @@ window.addEventListener('resize', () => {
           v-model="input"
           type="text"
           placeholder="Nhập tin nhắn..."
-          class="flex-1 p-2 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-indigo-500 outline-none dark:bg-gray-900"
+          class="flex-1 p-2 rounded-lg border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-indigo-500 outline-none dark:bg-[#171717] dark:text-white"
           @keyup.enter="sendMessage"
         />
         <button class="p-2 bg-indigo-500 text-white rounded-full hover:bg-indigo-600 transition" @click="sendMessage">
@@ -147,12 +147,12 @@ window.addEventListener('resize', () => {
     <transition name="slide">
       <aside
         v-if="showInfoPanel"
-        class="absolute md:static right-0 top-0 h-full w-full md:w-1/4 border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex flex-col z-20"
+        class="absolute md:static right-0 top-0 h-full w-full md:w-1/4 border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-[#171717] flex flex-col z-20"
       >
-        <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
+        <div class="flex justify-between items-center p-4.5 border-b border-gray-200 dark:border-gray-700">
           <div class="flex items-center gap-2">
             <ArrowLeft v-if="isMobile" class="w-5 h-5 cursor-pointer hover:text-indigo-500" @click="showInfoPanel = false" />
-            <h2 class="font-semibold">Thông tin đoạn chat</h2>
+            <h1 class="font-semibold">Thông tin đoạn chat</h1>
           </div>
           <X v-if="!isMobile" class="w-5 h-5 cursor-pointer hover:text-indigo-500" @click="showInfoPanel = false" />
         </div>
