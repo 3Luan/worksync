@@ -45,5 +45,14 @@ const adminChildRoutes = [
       breadcrumb: 'auth.changePassword',
     },
   },
+  {
+    path: 'profile',
+    name: APP_ROUTE_NAME.ADMIN.PROFILE,
+    component: () => import('@/pages/admin/profile/index.vue'),
+    meta: {
+      title: 'common.profile',
+      breadcrumb: 'common.profile',
+    },
+  },
 ];
 export default adminChildRoutes;

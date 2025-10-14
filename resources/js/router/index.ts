@@ -51,14 +51,14 @@ router.beforeEach((to, _, next) => {
 
   // Guest-only route but already logged in
   if (guestOnly && user) {
-    return next(isAdminRole(user.role) ? ENTRY_URL.ADMIN : ENTRY_URL.DASHBOARD);
+    return next(isAdminRole(user.role) ? ENTRY_URL.ADMIN : ENTRY_URL.USER);
   }
 
   // Check if route has required roles
   const requiredRoles = to.matched.flatMap((record) => record.meta.requiredRoles || []);
 
   if (requiredRoles.length > 0 && user && !requiredRoles.includes(userRole)) {
-    return next(ENTRY_URL.DASHBOARD);
+    return next(ENTRY_URL.USER);
   }
 
   if (user) {
