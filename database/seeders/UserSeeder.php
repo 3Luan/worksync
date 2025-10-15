@@ -14,34 +14,42 @@ class UserSeeder extends Seeder
     {
         User::create([
             'name' => 'Admin',
+            'username' => 'admin',
+            'avatar' => 'https://i.pravatar.cc/200?img=1',
             'email' => 'admin@example.com',
             'password' => bcrypt('password'),
             'role' => User::ROLE_ADMIN,
-            'status' => User::STATUS_ACTIVE,
+            'status' => User::STATUS_ONLINE,
         ]);
 
-          User::create([
+        User::create([
             'name' => 'Leader',
+            'username' => 'leader',
+            'avatar' => 'https://i.pravatar.cc/200?img=2',
             'email' => 'leader@example.com',
             'password' => bcrypt('password'),
             'role' => User::ROLE_LEADER,
-            'status' => User::STATUS_ACTIVE,
+            'status' => User::STATUS_ONLINE,
         ]);
 
         User::create([
-            'name' => 'Developer',
-            'email' => 'developer@example.com',
+            'name' => 'User',
+            'username' => 'user',
+            'avatar' => 'https://i.pravatar.cc/200?img=3',
+            'email' => 'user@example.com',
             'password' => bcrypt('password'),
-            'role' => User::ROLE_DEVELOPER,
-            'status' => User::STATUS_ACTIVE,
+            'role' => User::ROLE_MEMBER,
+            'status' => User::STATUS_ONLINE,
         ]);
 
         User::create([
-            'name' => 'Tester',
-            'email' => 'tester@example.com',
+            'name' => 'User 1',
+            'username' => 'user1',
+            'avatar' => 'https://i.pravatar.cc/200?img=4',
+            'email' => 'user1@example.com',
             'password' => bcrypt('password'),
-            'role' => User::ROLE_TESTER,
-            'status' => User::STATUS_ACTIVE,
+            'role' => User::ROLE_MEMBER,
+            'status' => User::STATUS_ONLINE,
         ]);
 
         User::factory()->count(10)->create();

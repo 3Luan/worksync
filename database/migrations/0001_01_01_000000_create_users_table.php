@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->string('avatar', 255)->nullable();
             $table->string('email', 255)->unique();
             $table->string('password', 255);
-            $table->tinyInteger('role')->default(1); // 0: admin, 1: user
+            $table->tinyInteger('role')->default(1); // 0: admin, 1: leader, 2: member
             $table->tinyInteger('status')->default(1); // 0: inactive, 1: online, 2: offline
             $table->timestamps();
             $table->softDeletes();

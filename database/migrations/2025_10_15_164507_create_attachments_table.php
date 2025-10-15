@@ -5,7 +5,8 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up(): void {
+    public function up(): void
+    {
         Schema::create('attachments', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->foreignId('message_id')->constrained('messages')->onDelete('cascade');
@@ -19,7 +20,8 @@ return new class extends Migration {
             $table->timestamps();
         });
     }
-    public function down(): void {
+    public function down(): void
+    {
         Schema::dropIfExists('attachments');
     }
 };

@@ -5,7 +5,8 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up(): void {
+    public function up(): void
+    {
         Schema::create('message_visibility', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->foreignId('message_id')->constrained('messages')->onDelete('cascade');
@@ -14,7 +15,8 @@ return new class extends Migration {
             $table->unique(['message_id', 'user_id']);
         });
     }
-    public function down(): void {
+    public function down(): void
+    {
         Schema::dropIfExists('message_visibility');
     }
 };

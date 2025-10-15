@@ -16,23 +16,25 @@ class User extends Authenticatable
     // User roles
     const ROLE_ADMIN = 0;
     const ROLE_LEADER = 1;
-    const ROLE_DEVELOPER = 2;
-    const ROLE_TESTER = 3;
+    const ROLE_MEMBER = 2;
+
 
     // Statuses
-    const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 0;
+    const STATUS_ONLINE = 1;
+    const STATUS_OFFLINE = 2;
+
     const STATUSES = [
-        self::STATUS_ACTIVE,
-        self::STATUS_INACTIVE
+        self::STATUS_ONLINE,
+        self::STATUS_INACTIVE,
+        self::STATUS_OFFLINE
     ];
 
     // Grouped roles
     const ROLES = [
         self::ROLE_ADMIN,
         self::ROLE_LEADER,
-        self::ROLE_DEVELOPER,
-        self::ROLE_TESTER,
+        self::ROLE_MEMBER,
     ];
 
     const ROLE_MANAGEMENTS = [
@@ -40,9 +42,9 @@ class User extends Authenticatable
         self::ROLE_LEADER,
     ];
 
-    const ROLE_SUPPORT = [
-        self::ROLE_DEVELOPER,
-        self::ROLE_TESTER,
+    const ROLE_USERS = [
+        self::ROLE_MEMBER,
+        self::ROLE_LEADER,
     ];
 
     /**
@@ -52,6 +54,8 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
+        'avatar',
         'email',
         'password',
         'role',
