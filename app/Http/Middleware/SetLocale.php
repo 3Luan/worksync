@@ -11,39 +11,39 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SetLocale
 {
-    /**
-     * @var LanguageService
-     */
-    protected LanguageService $languageService;
+  /**
+   * @var LanguageService
+   */
+  protected LanguageService $languageService;
 
-    /**
-     * Constructor
-     *
-     * @param LanguageService $languageService
-     */
-    public function __construct(LanguageService $languageService)
-    {
-        $this->languageService = $languageService;
+  /**
+   * Constructor
+   *
+   * @param LanguageService $languageService
+   */
+  public function __construct(LanguageService $languageService)
+  {
+    $this->languageService = $languageService;
+  }
+
+  /**
+   * Handle an incoming request.
+   *
+   * @param Request $request
+   * @param Closure $next
+   * @return Response
+   */
+  public function handle(Request $request, Closure $next): Response
+  {
+    // Default locale from config
+    $locale = Config::get('app.locale');
+
+    if ($request->hasHeader('X-Language')) {
+      $locale = $request->header('X-Language');
     }
 
-    /**
-     * Handle an incoming request.
-     *
-     * @param Request $request
-     * @param Closure $next
-     * @return Response
-     */
-    public function handle(Request $request, Closure $next): Response
-    {
-        // Default locale from config
-        $locale = Config::get('app.locale');
+    $this->languageService->setLocale($locale);
 
-        if ($request->hasHeader('X-Language')) {
-            $locale = $request->header('X-Language');
-        }
-
-        $this->languageService->setLocale($locale);
-
-        return $next($request);
-    }
+    return $next($request);
+  }
 }

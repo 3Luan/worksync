@@ -5,18 +5,18 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up(): void
-    {
-        Schema::create('message_visibility', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->foreignId('message_id')->constrained('messages')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->timestamp('hidden_at')->useCurrent();
-            $table->unique(['message_id', 'user_id']);
-        });
-    }
-    public function down(): void
-    {
-        Schema::dropIfExists('message_visibility');
-    }
+  public function up(): void
+  {
+    Schema::create('message_visibility', function (Blueprint $table) {
+      $table->bigIncrements('id');
+      $table->foreignId('message_id')->constrained('messages')->onDelete('cascade');
+      $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+      $table->timestamp('hidden_at')->useCurrent();
+      $table->unique(['message_id', 'user_id']);
+    });
+  }
+  public function down(): void
+  {
+    Schema::dropIfExists('message_visibility');
+  }
 };

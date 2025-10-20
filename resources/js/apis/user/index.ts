@@ -2,64 +2,76 @@ import type { GetUsersParams, ChangePasswordParams, getActiveStaffUsersParams, F
 import type { User } from '@/types/model';
 import axios from '@/utils/axios';
 
-export const getUsers = (params: GetUsersParams) => {
-  return axios.get('admin/user', { params });
-};
+export const userAPI = {
+  getList(params: GetUsersParams) {
+    return axios.get('user', { params });
+  },
 
-export const getUser = (userId: number) => {
-  return axios.get(`admin/user/${userId}/detail`);
-};
+  create(user: Partial<User>) {
+    return axios.post('user/create', user);
+  },
 
-export const createUser = (user: Partial<User>) => {
-  return axios.post('admin/user/create', user);
-};
+  getByID(userId: number) {
+    return axios.get(`user/${userId}/detail`);
+  },
 
-export const updateUser = (userId: number, user: Partial<User>) => {
-  return axios.put(`admin/user/${userId}/update`, user);
-};
+  update(userId: number, user: Partial<User>) {
+    return axios.put(`user/${userId}/update`, user);
+  },
 
-export const deleteUser = (userId: number) => {
-  return axios.delete(`admin/user/${userId}/delete`);
-};
+  forgotPassword(data: ForgotPasswordData) {
+    return axios.post('forgot-password', data);
+  },
 
-export const restoreUser = (userId: number) => {
-  return axios.post(`admin/user/${userId}/restore`);
-};
+  checkForgotPasswordToken(token: string) {
+    return axios.get('check-forgot-password-token', {
+      params: { token },
+    });
+  },
 
-export const forceDeleteUser = (userId: number) => {
-  return axios.delete(`admin/user/${userId}/force-delete`);
-};
+  resetPassword(token: string, password: string) {
+    return axios.post('reset-password', { token, password });
+  },
 
-export const forgotPassword = (data: ForgotPasswordData) => {
-  return axios.post('forgot-password', data);
-};
+  changePassword(params: ChangePasswordParams) {
+    return axios.put(`user/update-password`, params);
+  },
 
-export const checkForgotPasswordToken = (token: string) => {
-  return axios.get('check-forgot-password-token', {
-    params: { token },
-  });
-};
+  getActives(params: getActiveStaffUsersParams) {
+    return axios.get('user/actives', { params });
+  },
 
-export const resetPassword = (token: string, password: string) => {
-  return axios.post('reset-password', { token, password });
-};
+  // Admin
 
-export const getActiveStaffUsers = (params: getActiveStaffUsersParams) => {
-  return axios.get('active-staffs', { params });
-};
+  getListAdmin(params: GetUsersParams) {
+    return axios.get('admin/user', { params });
+  },
 
-export const adminGetActiveStaffUsers = (params: getActiveStaffUsersParams) => {
-  return axios.get('admin/user/active-staffs', { params });
-};
+  getByIDAdmin(userId: number) {
+    return axios.get(`admin/user/${userId}/detail`);
+  },
 
-export const changePassword = (password: ChangePasswordParams) => {
-  return axios.put(`user/update-password`, password);
-};
+  createAdmin(user: Partial<User>) {
+    return axios.post('admin/user/create', user);
+  },
 
-export const changePasswordAdmin = (password: ChangePasswordParams) => {
-  return axios.put(`admin/update-password`, password);
-};
+  updateAdmin(userId: number, user: Partial<User>) {
+    return axios.put(`admin/user/${userId}/update`, user);
+  },
 
-export const locationAccessDenied = () => {
-  return axios.post(`user/location-access-denied`);
+  deleteAdmin(userId: number) {
+    return axios.delete(`admin/user/${userId}/delete`);
+  },
+
+  restoreAdmin(userId: number) {
+    return axios.post(`admin/user/${userId}/restore`);
+  },
+
+  getActivesAdmin(params: getActiveStaffUsersParams) {
+    return axios.get('admin/user/actives', { params });
+  },
+
+  changePasswordAdmin(password: ChangePasswordParams) {
+    return axios.put(`admin/update-password`, password);
+  },
 };

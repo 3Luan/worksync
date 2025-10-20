@@ -13,46 +13,46 @@ use Illuminate\Support\Facades\App;
 
 class ResetPasswordMail extends Mailable
 {
-    use Queueable, SerializesModels;
-    private $data;
-    /**
-     * Create a new message instance.
-     */
-    public function __construct($data)
-    {
-        $this->data = $data;
-    }
+  use Queueable, SerializesModels;
+  private $data;
+  /**
+   * Create a new message instance.
+   */
+  public function __construct($data)
+  {
+    $this->data = $data;
+  }
 
-    /**
-     * Get the message envelope.
-     */
-    public function envelope(): Envelope
-    {
-        return new Envelope(
-            subject: __('email.reset_password.subject'),
-        );
-    }
+  /**
+   * Get the message envelope.
+   */
+  public function envelope(): Envelope
+  {
+    return new Envelope(
+      subject: __('email.reset_password.subject'),
+    );
+  }
 
-    /**
-     * Get the message content definition.
-     */
-    public function content(): Content
-    {
-        return new Content(
-            view: 'email.reset_password',
-            with: [
-                'data' => $this->data
-            ]
-        );
-    }
+  /**
+   * Get the message content definition.
+   */
+  public function content(): Content
+  {
+    return new Content(
+      view: 'email.reset_password',
+      with: [
+        'data' => $this->data
+      ]
+    );
+  }
 
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
-    public function attachments(): array
-    {
-        return [];
-    }
+  /**
+   * Get the attachments for the message.
+   *
+   * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+   */
+  public function attachments(): array
+  {
+    return [];
+  }
 }
