@@ -17,8 +17,13 @@ export const PAGINATION_INFO_DEFAULT = {
 
 // ===== User Status =====
 export const USER_STATUS = Object.freeze({
-  ACTIVE: 1,
   INACTIVE: 0,
+  ACTIVE: 1,
+});
+
+export const USER_PRESENCE = Object.freeze({
+  OFFLINE: 0,
+  ONLINE: 1,
 });
 
 export const USER_STATUS_MAP = {
@@ -103,12 +108,10 @@ export const ROLE = Object.freeze({
   ADMIN: 0,
   STAFF: 1,
   LEADER: 2,
-  ACCOUNTANT: 3
+  ACCOUNTANT: 3,
 });
 
-export const ROLE_STAFF = [
-  ROLE.LEADER, ROLE.STAFF, ROLE.ACCOUNTANT
-];
+export const ROLE_STAFF = [ROLE.LEADER, ROLE.STAFF, ROLE.ACCOUNTANT];
 
 export const USER_ROLE_MAP = {
   [ROLE.ADMIN]: 'common.admin',
@@ -198,7 +201,7 @@ export const ICON_TOOLTIP_MAP = {
     icon: h(CircleHelp, { class: 'text-red-500 w-5 h-5' }),
     titleTooltip: 'common.noLocationInfo',
   },
-   [LocationIconType.RemoteWork]: {
+  [LocationIconType.RemoteWork]: {
     icon: h(Home, { class: 'text-blue-500 w-5 h-5' }),
     titleTooltip: 'common.remoteWork',
   },
@@ -347,7 +350,6 @@ export const STATUS_EDIT_REMOTE_WORK_DETAIL = STATUS_EDIT_REQUEST_DETAIL;
 export const TAB_CALENDAR_REMOTE_WORK = TAB_CALENDAR_REQUEST;
 export const TAB_CALENDAR_SPECIAL_REMOTE_WORK = TAB_CALENDAR_REQUEST;
 
-
 export const SPECIAL_WORK_DAY_TYPE_OPTIONS = DAY_TYPE_OPTIONS;
 export const CONFIRM_DIALOG_SPECIAL_WORK = CONFIRM_DIALOG_REQUEST('SpecialWork');
 export const STATUS_EDIT_SPECIAL_WORK_DETAIL = STATUS_EDIT_REQUEST_DETAIL;
@@ -358,7 +360,7 @@ export const LOCATION_RETRY_DELAY = 10000; // 10 second
 export const MAX_LOCATION_RETRY = 3;
 export const LOCATION_MAX_AGE = 0; // Always fetch fresh location, no cache
 
-export const STATUS_EDIT_COMPENSATION_WORK_REQUEST_DETAIL = STATUS_EDIT_REQUEST_DETAIL
+export const STATUS_EDIT_COMPENSATION_WORK_REQUEST_DETAIL = STATUS_EDIT_REQUEST_DETAIL;
 
 export const DATE_FORMATS = {
   DATE: 'dd-MM-yyyy', // 29-11-2025
@@ -416,4 +418,3 @@ export const REQUEST_TYPE = {
   SPECIAL_WORK: 'SPECIAL_WORK',
   REMOTE_WORK: 'REMOTE_WORK',
 } as const;
-

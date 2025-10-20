@@ -10,23 +10,23 @@ use URL;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
-    public function register(): void
-    {
-        $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
-    }
+  /**
+   * Register any application services.
+   */
+  public function register(): void
+  {
+    $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
+  }
 
-    /**
-     * Bootstrap any application services.
-     */
-    public function boot(): void
-    {
-        if (config('app.env') === 'production') {
-            URL::forceScheme('https');
-        }
-        Passport::enablePasswordGrant();
-        // TimeCard::observe(TimeCardObserver::class);
+  /**
+   * Bootstrap any application services.
+   */
+  public function boot(): void
+  {
+    if (config('app.env') === 'production') {
+      URL::forceScheme('https');
     }
+    Passport::enablePasswordGrant();
+    // TimeCard::observe(TimeCardObserver::class);
+  }
 }

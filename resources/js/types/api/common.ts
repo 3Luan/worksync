@@ -1,5 +1,4 @@
 import { SortDirectionType } from '@/enums';
-import { EditCompensationWorkRequestDetail } from '../model';
 
 export interface PaginationParams {
   year?: number;
@@ -57,30 +56,4 @@ export interface NotificationEmailPayload {
   is_active: boolean;
   receive_all: boolean;
   events?: { id: number; is_active: boolean }[];
-}
-
-export interface CompensationWorkRequestPayload {
-  user_ids?: number[];
-  reason?: string;
-  feedback?: string;
-  details?: EditCompensationWorkRequestDetail[];
-  missing_date?: string;
-}
-
-export interface GetCompensationWorkRequestParams extends PaginationParams {
-  user_ids?: number[];
-  name?: string;
-  status?: number;
-  from_date?: string;
-  to_date?: string;
-}
-
-export interface ReviewCompensationWorkRequestPayload {
-  status: number;
-  reviewedNote?: string;
-}
-
-export interface GetCompensationWorkRequestByDateParams {
-  date: string;
-  user_id?: number;
 }

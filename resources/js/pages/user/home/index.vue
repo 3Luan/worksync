@@ -1,114 +1,127 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { MessageSquare, Users, Bell, Settings, ArrowRight } from 'lucide-vue-next';
+import { onMounted, ref } from 'vue';
+import { MessageSquare, Mail, User as UserIcon, Search, ChevronLeft, ChevronRight } from 'lucide-vue-next';
+import { userService } from '@/services/user-service';
+import type { User } from '@/types/model';
 
-const user = ref({
-  name: 'Nguyễn Thanh Luân',
-  avatar: 'https://i.pravatar.cc/150?img=64',
-  email: 'luan@example.com',
-  status: 'Đang hoạt động',
-});
+const users = ref<any>({ data: [] });
+const loading = ref(false);
+const search = ref('');
+const currentPage = ref(1);
 
-const recentChats = ref([
-  { id: 1, name: 'Nguyễn Minh', lastMessage: 'Hôm nay đi cafe nhé ☕', time: '2 phút trước', avatar: 'https://i.pravatar.cc/50?img=12' },
-  { id: 2, name: 'Trần Hà', lastMessage: 'Ok, để mình gửi file đó!', time: '15 phút trước', avatar: 'https://i.pravatar.cc/50?img=20' },
-  { id: 3, name: 'Lê Quân', lastMessage: 'Cảm ơn nhé 🙏', time: '1 giờ trước', avatar: 'https://i.pravatar.cc/50?img=33' },
-]);
+const fetchUsers = async (page = 1) => {
+  loading.value = true;
+  try {
+    const res = await userService.getList({ page });
+    users.value = res.data;
+    currentPage.value = res.data.current_page;
+  } finally {
+    setTimeout(() => (loading.value = false), 600); // tạo cảm giác mượt hơn
+  }
+};
 
-const activities = ref([
-  { id: 1, text: 'Bạn đã gửi tin nhắn cho Trần Hà', time: '15 phút trước' },
-  { id: 2, text: 'Bạn thêm nhóm “Team Dev Worksync”', time: '3 giờ trước' },
-  { id: 3, text: 'Đã cập nhật ảnh đại diện', time: 'Hôm qua' },
-]);
+onMounted(() => fetchUsers());
+
+const goToPage = (page: number) => {
+  if (page !== currentPage.value && page >= 1 && page <= users.value.last_page) {
+    fetchUsers(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+};
 </script>
 
 <template>
-  <div class="max-w-7xl mx-auto p-6 space-y-8 text-gray-900 dark:text-gray-100">
+  <div class="max-w-7xl mx-auto p-6 text-gray-900 dark:text-gray-100 space-y-8">
     <!-- Header -->
     <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
-      <div class="flex items-center gap-4">
-        <img :src="user.avatar" class="w-20 h-20 rounded-full ring-4 ring-indigo-500" />
-        <div>
-          <h1 class="text-2xl font-bold">{{ user.name }}</h1>
-          <p class="text-gray-500 dark:text-gray-400">{{ user.email }}</p>
-          <p class="text-green-500 text-sm">{{ user.status }}</p>
-        </div>
+      <h1 class="text-3xl font-bold flex items-center gap-2"><UserIcon class="w-7 h-7 text-indigo-500" /> Danh sách người dùng</h1>
+
+      <div class="relative w-full sm:w-72">
+        <Search class="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+        <input
+          v-model="search"
+          type="text"
+          placeholder="Tìm kiếm người dùng..."
+          class="pl-10 pr-4 py-2 w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500 outline-none"
+        />
       </div>
-      <button class="flex items-center gap-2 bg-indigo-500 text-white px-5 py-2 rounded-xl hover:bg-indigo-600 transition">
-        <MessageSquare class="w-4 h-4" />
-        Bắt đầu trò chuyện
-      </button>
     </div>
 
-    <!-- Stats -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
-      <div class="p-5 bg-white dark:bg-gray-800 rounded-xl shadow-md flex items-center gap-4">
-        <MessageSquare class="w-8 h-8 text-indigo-500" />
-        <div>
-          <p class="text-sm text-gray-500">Tin nhắn</p>
-          <h3 class="text-lg font-semibold">128 cuộc hội thoại</h3>
-        </div>
-      </div>
-      <div class="p-5 bg-white dark:bg-gray-800 rounded-xl shadow-md flex items-center gap-4">
-        <Users class="w-8 h-8 text-indigo-500" />
-        <div>
-          <p class="text-sm text-gray-500">Bạn bè</p>
-          <h3 class="text-lg font-semibold">52 người</h3>
-        </div>
-      </div>
-      <div class="p-5 bg-white dark:bg-gray-800 rounded-xl shadow-md flex items-center gap-4">
-        <Bell class="w-8 h-8 text-indigo-500" />
-        <div>
-          <p class="text-sm text-gray-500">Thông báo</p>
-          <h3 class="text-lg font-semibold">5 chưa đọc</h3>
+    <!-- User list -->
+    <div v-if="loading" class="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <div v-for="n in 8" :key="n" class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow animate-pulse flex flex-col items-center text-center">
+        <div class="w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded-full mb-4" />
+        <div class="h-4 bg-gray-200 dark:bg-gray-700 w-32 rounded mb-2" />
+        <div class="h-3 bg-gray-200 dark:bg-gray-700 w-20 rounded mb-1" />
+        <div class="h-3 bg-gray-200 dark:bg-gray-700 w-24 rounded" />
+        <div class="flex gap-3 mt-4 w-full justify-center">
+          <div class="h-7 w-20 bg-gray-200 dark:bg-gray-700 rounded-lg" />
+          <div class="h-7 w-20 bg-gray-200 dark:bg-gray-700 rounded-lg" />
         </div>
       </div>
     </div>
 
-    <!-- Recent chats -->
-    <section>
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-semibold">💬 Cuộc trò chuyện gần đây</h2>
-        <router-link to="/user/messages" class="text-indigo-500 hover:text-indigo-600 flex items-center gap-1 text-sm">
-          Xem tất cả <ArrowRight class="w-4 h-4" />
-        </router-link>
-      </div>
+    <div v-else class="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <div
+        v-for="user in users.data.filter((user: User) => user.name.toLowerCase().includes(search.toLowerCase()))"
+        :key="user.id"
+        class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow hover:shadow-lg transition flex flex-col items-center text-center"
+      >
+        <img :src="user.avatar" alt="avatar" class="w-20 h-20 rounded-full mb-3 ring-4 ring-indigo-500/20 object-cover" />
+        <h2 class="text-lg font-semibold mb-1">{{ user.name }}</h2>
+        <p class="text-sm text-gray-500">@{{ user.username }}</p>
+        <p class="text-sm text-gray-400 mt-1 truncate w-full">{{ user.email }}</p>
 
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md divide-y divide-gray-100 dark:divide-gray-700">
-        <div
-          v-for="chat in recentChats"
-          :key="chat.id"
-          class="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition cursor-pointer"
+        <div class="flex gap-3 mt-4">
+          <button class="flex items-center gap-1 px-3 py-1.5 text-sm bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition">
+            <MessageSquare class="w-4 h-4" /> Nhắn tin
+          </button>
+          <button
+            class="flex items-center gap-1 px-3 py-1.5 text-sm bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+          >
+            <Mail class="w-4 h-4" /> Liên hệ
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div v-if="users.last_page > 1" class="flex justify-center mt-10">
+      <nav class="inline-flex items-center gap-1 bg-white dark:bg-gray-800 rounded-xl shadow px-3 py-2">
+        <button
+          :disabled="!users.prev_page_url"
+          @click="goToPage(currentPage - 1)"
+          class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-40"
         >
-          <div class="flex items-center gap-4">
-            <img :src="chat.avatar" class="w-10 h-10 rounded-full" />
-            <div>
-              <p class="font-medium">{{ chat.name }}</p>
-              <p class="text-sm text-gray-500 dark:text-gray-400">{{ chat.lastMessage }}</p>
-            </div>
-          </div>
-          <span class="text-sm text-gray-400">{{ chat.time }}</span>
-        </div>
-      </div>
-    </section>
+          <ChevronLeft class="w-5 h-5" />
+        </button>
 
-    <!-- Activity timeline -->
-    <section>
-      <h2 class="text-xl font-semibold mb-4">🕓 Hoạt động gần đây</h2>
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md p-5 space-y-3">
-        <div v-for="act in activities" :key="act.id" class="flex justify-between border-b border-gray-100 dark:border-gray-700 pb-2 last:border-0">
-          <p>{{ act.text }}</p>
-          <span class="text-sm text-gray-400">{{ act.time }}</span>
-        </div>
-      </div>
-    </section>
+        <button
+          v-for="page in users.last_page"
+          :key="page"
+          @click="goToPage(page)"
+          class="px-3 py-1.5 rounded-lg text-sm font-medium transition"
+          :class="[page === currentPage ? 'bg-indigo-500 text-white shadow' : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200']"
+        >
+          {{ page }}
+        </button>
+
+        <button
+          :disabled="!users.next_page_url"
+          @click="goToPage(currentPage + 1)"
+          class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-40"
+        >
+          <ChevronRight class="w-5 h-5" />
+        </button>
+      </nav>
+    </div>
   </div>
 </template>
 
 <style scoped>
 @media (max-width: 640px) {
   h1 {
-    font-size: 1.4rem;
+    font-size: 1.6rem;
   }
 }
 </style>

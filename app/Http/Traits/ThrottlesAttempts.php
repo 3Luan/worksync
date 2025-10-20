@@ -20,7 +20,8 @@ trait ThrottlesAttempts
     protected function hasTooManyAttempts(Request $request): bool
     {
         return $this->limiter()->tooManyAttempts(
-            $this->throttleKey($request), $this->maxAttempts()
+            $this->throttleKey($request),
+            $this->maxAttempts()
         );
     }
 
@@ -33,7 +34,8 @@ trait ThrottlesAttempts
     protected function incrementAttempts(Request $request): void
     {
         $this->limiter()->hit(
-            $this->throttleKey($request), $this->delayMinutes() * 60
+            $this->throttleKey($request),
+            $this->delayMinutes() * 60
         );
     }
 
@@ -51,10 +53,12 @@ trait ThrottlesAttempts
         );
 
         return response()->json([
-            $this->throttleKeyName() => [Lang::get('auth.throttle', [
-                'seconds' => $seconds,
-                'minutes' => ceil($seconds / 60),
-            ])],
+            $this->throttleKeyName() => [
+                Lang::get('auth.throttle', [
+                    'seconds' => $seconds,
+                    'minutes' => ceil($seconds / 60),
+                ])
+            ],
         ], 403);
     }
 
@@ -88,7 +92,7 @@ trait ThrottlesAttempts
      */
     protected function throttleKey(Request $request): string
     {
-        return Str::lower($request->input($this->throttleKeyName())).'|'.$request->ip();
+        return Str::lower($request->input($this->throttleKeyName())) . '|' . $request->ip();
     }
 
     /**
