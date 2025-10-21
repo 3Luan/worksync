@@ -48,7 +48,7 @@ const goToPage = (page: number) => {
     </div>
 
     <!-- User list -->
-    <div v-if="loading" class="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+    <div v-if="loading" class="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
       <div v-for="n in 8" :key="n" class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow animate-pulse flex flex-col items-center text-center">
         <div class="w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded-full mb-4" />
         <div class="h-4 bg-gray-200 dark:bg-gray-700 w-32 rounded mb-2" />
@@ -61,7 +61,7 @@ const goToPage = (page: number) => {
       </div>
     </div>
 
-    <div v-else class="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+    <div v-else class="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
       <div
         v-for="user in users.data.filter((user: User) => user.name.toLowerCase().includes(search.toLowerCase()))"
         :key="user.id"

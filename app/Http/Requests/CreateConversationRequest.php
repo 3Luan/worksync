@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Conversation;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -14,7 +14,7 @@ class CreateConversationRequest extends FormRequest
   public function rules(): array
   {
     return [
-      'type' => 'required|string|in:direct,group',
+      'type' => 'required|string|in:0,1',
       'name' => 'nullable|string|max:255',
       'avatar_url' => 'nullable|url|max:255',
       'description' => 'nullable|string|max:500',

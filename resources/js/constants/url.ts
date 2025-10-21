@@ -43,6 +43,7 @@ export const APP_ROUTE_NAME = {
     UPDATE_PASSWORD: 'update-password.index',
     PROFILE: 'user.profile.index',
     MESSAGES: 'user.messages.index',
+    MESSAGE_DETAIL: 'user.message.detail',
   },
   NOT_FOUND: 'not-found',
 } as const;

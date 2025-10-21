@@ -19,6 +19,7 @@ return new class extends Migration {
       $table->boolean('is_deleted')->default(false);
       $table->timestamp('deleted_at')->nullable();
       $table->index(['conversation_id', 'user_id']);
+      $table->timestamps();
     });
   }
   public function down(): void

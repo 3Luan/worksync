@@ -85,7 +85,7 @@ class ConversationRepository implements ConversationRepositoryInterface
           ConversationMember::create([
             'conversation_id' => $conversation->id,
             'user_id' => $memberId,
-            'role' => 'member',
+            'role' => Conversation::ROLE_MEMBER,
             'joined_at' => now(),
           ]);
         }
@@ -94,7 +94,7 @@ class ConversationRepository implements ConversationRepositoryInterface
       // Add creator as owner
       ConversationMember::updateOrCreate(
         ['conversation_id' => $conversation->id, 'user_id' => Auth::id()],
-        ['role' => 'owner', 'joined_at' => now()]
+        ['role' => Conversation::ROLE_ADMIN, 'joined_at' => now()]
       );
 
       // Default settings

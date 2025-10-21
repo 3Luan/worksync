@@ -24,7 +24,7 @@ class CreateMessageRequest extends FormRequest
     return [
       'conversation_id' => 'required|integer|exists:conversations,id',
       'content' => 'nullable|string|max:2000',
-      'type' => 'required|string|in:text,image,video,file,audio,system',
+      'type' => 'required|integer|in:0,1,2,3,4,5',
       'parent_message_id' => 'nullable|integer|exists:messages,id',
       'forward_from_id' => 'nullable|integer|exists:messages,id',
       'attachments' => 'nullable|array',
@@ -32,7 +32,7 @@ class CreateMessageRequest extends FormRequest
       'attachments.*.file_url' => 'required_with:attachments|url',
       'attachments.*.file_type' => 'nullable|string|max:100',
       'attachments.*.file_size' => 'nullable|integer|min:0',
-      'metadata' => 'nullable|array', // For mentions, preview links, etc.
+      'metadata' => 'nullable|array',
     ];
   }
 

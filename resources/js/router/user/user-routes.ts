@@ -46,6 +46,14 @@ const userRoute = [
           title: 'user.messages',
           breadcrumb: 'user.messages',
         },
+        children: [
+          {
+            path: ':id',
+            name: APP_ROUTE_NAME.USER.MESSAGE_DETAIL,
+            component: () => import('@/pages/user/messages/index.vue'),
+            props: true,
+          },
+        ],
       },
     ],
   },

@@ -10,6 +10,10 @@ class Conversation extends Model
 {
   use HasFactory, SoftDeletes;
 
+  // Conversation role
+  const ROLE_ADMIN = 0;
+  const ROLE_MEMBER = 1;
+
   protected $fillable = [
     'type',
     'name',

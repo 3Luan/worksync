@@ -15,6 +15,7 @@ return new class extends Migration {
       $table->string('description')->nullable();
       $table->foreignId('created_by')->constrained('users');
       $table->boolean('is_archived')->default(false);
+      $table->softDeletes();
       $table->timestamps();
     });
   }

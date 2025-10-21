@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\API\ApiController;
-use App\Http\Requests\Conversation\CreateConversationRequest;
-use App\Http\Requests\Conversation\UpdateConversationRequest;
-use App\Http\Requests\Conversation\UpdateConversationSettingRequest;
+use App\Http\Requests\CreateConversationRequest;
+use App\Http\Requests\UpdateConversationRequest;
+use App\Http\Requests\UpdateConversationSettingRequest;
 use App\Repositories\Conversation\ConversationRepositoryInterface;
 use App\Services\LanguageService;
 use App\Models\Conversation;

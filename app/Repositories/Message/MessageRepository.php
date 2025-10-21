@@ -26,25 +26,25 @@ class MessageRepository implements MessageRepositoryInterface
   {
     try {
       $query = Message::query()
-        ->with(['sender', 'attachments', 'reactions', 'mentions'])
-        ->orderBy('created_at', 'desc');
+        ->with(['sender', 'attachments', 'reactions', 'mentions']);
 
-      // Filter by conversation
+      // Filter
       if ($request->filled('conversation_id')) {
         $query->where('conversation_id', $request->conversation_id);
       }
 
-      // Filter by sender
       if ($request->filled('sender_id')) {
         $query->where('sender_id', $request->sender_id);
       }
 
-      // Search in content
       if ($request->filled('search')) {
         $query->where('content', 'LIKE', '%' . $request->search . '%');
       }
 
-      // Pagination
+      // Sắp xếp (desc để lấy mới nhất)
+      $query->orderBy('created_at', $request->get('sort', 'desc'));
+
+      // Lấy tất cả hoặc phân trang
       if (filter_var($request->get('get_all'), FILTER_VALIDATE_BOOLEAN)) {
         return $query->get();
       }
@@ -52,7 +52,7 @@ class MessageRepository implements MessageRepositoryInterface
       return $query->paginate($this->getPerPage());
     } catch (Exception $e) {
       Log::error('Failed to retrieve messages: ' . $e->getMessage());
-      return null;
+      return response()->json(['error' => 'Server error'], 500);
     }
   }
 

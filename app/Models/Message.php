@@ -10,6 +10,13 @@ class Message extends Model
 {
   use HasFactory, SoftDeletes;
 
+  const TYPE_TEXT = 0;
+  const TYPE_IMAGE = 1;
+  const TYPE_VIDEO = 2;
+  const TYPE_FILE = 3;
+  const TYPE_AUDIO = 4;
+  const TYPE_SYSTEM = 5;
+
   protected $fillable = [
     'conversation_id',
     'sender_id',
