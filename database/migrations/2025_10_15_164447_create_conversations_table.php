@@ -9,6 +9,7 @@ return new class extends Migration {
   {
     Schema::create('conversations', function (Blueprint $table) {
       $table->bigIncrements('id');
+      $table->string('key')->unique()->after('id'); // Unique identifier for the conversation
       $table->tinyInteger('type')->default(0); // 0: private, 1: group
       $table->string('name')->nullable();
       $table->string('avatar_url')->nullable();

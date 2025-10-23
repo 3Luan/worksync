@@ -1,127 +1,149 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import { MessageSquare, Mail, User as UserIcon, Search, ChevronLeft, ChevronRight } from 'lucide-vue-next';
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
 import { userService } from '@/services/user-service';
+import { User as UserIcon, Search, MessageSquare, Users } from 'lucide-vue-next';
 import type { User } from '@/types/model';
+import { AVATAR_DEFAULT } from '@/constants/imageConst';
 
-const users = ref<any>({ data: [] });
+const users = ref<User[]>([]);
 const loading = ref(false);
 const search = ref('');
-const currentPage = ref(1);
+const page = ref(1);
+const lastPage = ref(1);
+const observer = ref<IntersectionObserver | null>(null);
+const loadMoreTrigger = ref<HTMLDivElement | null>(null);
 
-const fetchUsers = async (page = 1) => {
+const fetchUsers = async (append = false) => {
+  if (loading.value) return;
   loading.value = true;
   try {
-    const res = await userService.getList({ page });
-    users.value = res.data;
-    currentPage.value = res.data.current_page;
+    const res = await userService.getList({ page: page.value });
+    const data = res.data;
+    lastPage.value = data.last_page;
+    users.value = append ? [...users.value, ...data.data] : data.data;
   } finally {
-    setTimeout(() => (loading.value = false), 600); // tạo cảm giác mượt hơn
+    loading.value = false;
   }
 };
 
-onMounted(() => fetchUsers());
+const filteredUsers = computed(() => {
+  const keyword = search.value.toLowerCase();
+  return users.value.filter(
+    (u: User) => u.name.toLowerCase().includes(keyword) || u.username.toLowerCase().includes(keyword) || u.email.toLowerCase().includes(keyword),
+  );
+});
 
-const goToPage = (page: number) => {
-  if (page !== currentPage.value && page >= 1 && page <= users.value.last_page) {
-    fetchUsers(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+// Infinite scroll
+const setupObserver = () => {
+  observer.value = new IntersectionObserver(
+    async (entries) => {
+      if (entries[0].isIntersecting && page.value < lastPage.value && !loading.value) {
+        page.value++;
+        await fetchUsers(true);
+      }
+    },
+    { rootMargin: '200px' },
+  );
+
+  if (loadMoreTrigger.value) observer.value.observe(loadMoreTrigger.value);
 };
+
+onMounted(async () => {
+  await fetchUsers();
+  nextTick(() => setupObserver());
+});
+
+onUnmounted(() => observer.value?.disconnect());
 </script>
 
 <template>
-  <div class="max-w-7xl mx-auto p-6 text-gray-900 dark:text-gray-100 space-y-8">
-    <!-- Header -->
-    <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
-      <h1 class="text-3xl font-bold flex items-center gap-2"><UserIcon class="w-7 h-7 text-indigo-500" /> Danh sách người dùng</h1>
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div class="max-w-7xl mx-auto p-6 space-y-8">
+      <!-- Header -->
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-5">
+        <div class="flex items-center gap-3">
+          <UserIcon class="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
+          <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Khám phá bạn bè</h1>
+        </div>
 
-      <div class="relative w-full sm:w-72">
-        <Search class="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-        <input
-          v-model="search"
-          type="text"
-          placeholder="Tìm kiếm người dùng..."
-          class="pl-10 pr-4 py-2 w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500 outline-none"
-        />
-      </div>
-    </div>
-
-    <!-- User list -->
-    <div v-if="loading" class="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-      <div v-for="n in 8" :key="n" class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow animate-pulse flex flex-col items-center text-center">
-        <div class="w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded-full mb-4" />
-        <div class="h-4 bg-gray-200 dark:bg-gray-700 w-32 rounded mb-2" />
-        <div class="h-3 bg-gray-200 dark:bg-gray-700 w-20 rounded mb-1" />
-        <div class="h-3 bg-gray-200 dark:bg-gray-700 w-24 rounded" />
-        <div class="flex gap-3 mt-4 w-full justify-center">
-          <div class="h-7 w-20 bg-gray-200 dark:bg-gray-700 rounded-lg" />
-          <div class="h-7 w-20 bg-gray-200 dark:bg-gray-700 rounded-lg" />
+        <div class="relative w-full sm:w-80">
+          <Search class="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+          <input
+            v-model="search"
+            placeholder="Tìm kiếm bạn bè..."
+            class="pl-10 pr-4 py-2.5 w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500 outline-none shadow-sm"
+          />
         </div>
       </div>
-    </div>
 
-    <div v-else class="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-      <div
-        v-for="user in users.data.filter((user: User) => user.name.toLowerCase().includes(search.toLowerCase()))"
-        :key="user.id"
-        class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow hover:shadow-lg transition flex flex-col items-center text-center"
-      >
-        <img :src="user.avatar" alt="avatar" class="w-20 h-20 rounded-full mb-3 ring-4 ring-indigo-500/20 object-cover" />
-        <h2 class="text-lg font-semibold mb-1">{{ user.name }}</h2>
-        <p class="text-sm text-gray-500">@{{ user.username }}</p>
-        <p class="text-sm text-gray-400 mt-1 truncate w-full">{{ user.email }}</p>
+      <!-- User Grid -->
+      <div class="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <!-- Skeleton Loading -->
+        <template v-if="loading && users.length === 0">
+          <div v-for="n in 8" :key="n" class="bg-white dark:bg-gray-900 p-4 rounded-lg shadow animate-pulse text-center">
+            <div class="w-full aspect-square bg-gray-200 dark:bg-gray-800 rounded mb-3"></div>
+            <div class="h-4 bg-gray-200 dark:bg-gray-800 rounded w-1/2 mx-auto mb-2"></div>
+            <div class="h-8 bg-gray-200 dark:bg-gray-800 rounded w-3/4 mx-auto mt-3"></div>
+            <div class="h-8 bg-gray-200 dark:bg-gray-800 rounded w-3/4 mx-auto mt-2"></div>
+          </div>
+        </template>
 
-        <div class="flex gap-3 mt-4">
-          <button class="flex items-center gap-1 px-3 py-1.5 text-sm bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition">
-            <MessageSquare class="w-4 h-4" /> Nhắn tin
-          </button>
-          <button
-            class="flex items-center gap-1 px-3 py-1.5 text-sm bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition"
-          >
-            <Mail class="w-4 h-4" /> Liên hệ
-          </button>
+        <!-- User Cards -->
+        <div
+          v-for="user in filteredUsers"
+          :key="user.id"
+          class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-sm flex flex-col items-center text-center"
+        >
+          <img
+            :src="user?.avatar || AVATAR_DEFAULT"
+            alt="avatar"
+            class="w-full aspect-square object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+          <h2 class="font-semibold text-gray-800 dark:text-gray-100 mt-2">{{ user.name }}</h2>
+
+          <div class="p-3 mt-2 space-y-2 w-full">
+            <button
+              class="w-full py-2 text-sm font-medium bg-blue-100 hover:bg-blue-200 text-white rounded-md flex items-center justify-center gap-1 transition"
+            >
+              <MessageSquare class="w-4 h-4 text-blue-700" />
+              <span class="text-blue-700"> Nhắn tin </span>
+            </button>
+            <button
+              class="w-full py-2 text-sm font-medium bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-100 rounded-md flex items-center justify-center gap-1 transition hover:bg-gray-300 dark:hover:bg-gray-600"
+            >
+              <Users class="w-4 h-4" /> Tạo nhóm
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Pagination -->
-    <div v-if="users.last_page > 1" class="flex justify-center mt-10">
-      <nav class="inline-flex items-center gap-1 bg-white dark:bg-gray-800 rounded-xl shadow px-3 py-2">
-        <button
-          :disabled="!users.prev_page_url"
-          @click="goToPage(currentPage - 1)"
-          class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-40"
-        >
-          <ChevronLeft class="w-5 h-5" />
-        </button>
+      <!-- Infinite Scroll Trigger -->
+      <div ref="loadMoreTrigger" class="h-10"></div>
 
-        <button
-          v-for="page in users.last_page"
-          :key="page"
-          @click="goToPage(page)"
-          class="px-3 py-1.5 rounded-lg text-sm font-medium transition"
-          :class="[page === currentPage ? 'bg-indigo-500 text-white shadow' : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200']"
-        >
-          {{ page }}
-        </button>
-
-        <button
-          :disabled="!users.next_page_url"
-          @click="goToPage(currentPage + 1)"
-          class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-40"
-        >
-          <ChevronRight class="w-5 h-5" />
-        </button>
-      </nav>
+      <!-- Loading more shimmer -->
+      <div v-if="loading && users.length > 0" class="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <div v-for="n in 4" :key="'skeleton-' + n" class="bg-white dark:bg-gray-900 p-4 rounded-lg shadow animate-pulse text-center">
+          <div class="w-full aspect-square bg-gray-200 dark:bg-gray-800 rounded mb-3"></div>
+          <div class="h-4 bg-gray-200 dark:bg-gray-800 rounded w-1/2 mx-auto mb-2"></div>
+          <div class="h-8 bg-gray-200 dark:bg-gray-800 rounded w-3/4 mx-auto mt-3"></div>
+          <div class="h-8 bg-gray-200 dark:bg-gray-800 rounded w-3/4 mx-auto mt-2"></div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-@media (max-width: 640px) {
-  h1 {
-    font-size: 1.6rem;
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
   }
+  50% {
+    opacity: 0.6;
+  }
+}
+.animate-pulse {
+  animation: pulse 1.2s ease-in-out infinite;
 }
 </style>

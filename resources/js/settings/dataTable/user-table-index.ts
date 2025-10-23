@@ -17,8 +17,7 @@ const userTableConfig = (): ColumnDef<User>[] => {
       accessorKey: 'name',
       header: () => h('div', { class: 'text-left' }, $t('common.fullName')),
       cell: ({ row }) => {
-        const name: string = `${row.original.last_name} ${row.original.first_name}`;
-        return h('div', { class: 'text-left font-medium' }, name);
+        return h('div', { class: 'text-left font-medium' }, row.original.name);
       },
     },
     {

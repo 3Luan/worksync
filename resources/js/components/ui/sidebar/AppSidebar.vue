@@ -24,7 +24,7 @@ import { nextTick, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Tooltip from '../tooltip/Tooltip.vue';
 import { useSidebarTooltip } from '@/composables/useSidebarTooltip';
-import { LOGO_WORKSYNC } from '@/settings/image';
+import { LOGO_WORKSYNC } from '@/constants/imageConst';
 
 const { tooltipShown, createLabelRef, measureAll } = useSidebarTooltip();
 

@@ -15,6 +15,7 @@ class Conversation extends Model
   const ROLE_MEMBER = 1;
 
   protected $fillable = [
+    'key',
     'type',
     'name',
     'avatar_url',

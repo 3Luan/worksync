@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { LOGO_GOOGLE } from '@/settings/image';
+import { LOGO_GOOGLE } from '@/constants/imageConst';
 import { useAuthStore } from '@/stores/authStore';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
