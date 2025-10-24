@@ -127,6 +127,85 @@ export const ROLE_OPTIONS = new Set([
   { label: 'common.accountant', value: ROLE.ACCOUNTANT },
 ]);
 
+// ===== Conversation Types =====
+export const CONVERSATION_TYPE = Object.freeze({
+  DIRECT: 0,
+  GROUP: 1,
+  CHANNEL: 2,
+});
+
+export const CONVERSATION_TYPE_MAP = {
+  [CONVERSATION_TYPE.DIRECT]: 'common.direct',
+  [CONVERSATION_TYPE.GROUP]: 'common.group',
+  [CONVERSATION_TYPE.CHANNEL]: 'common.channel',
+};
+
+export const CONVERSATION_TYPE_OPTIONS = new Set([
+  { label: 'common.direct', value: CONVERSATION_TYPE.DIRECT },
+  { label: 'common.group', value: CONVERSATION_TYPE.GROUP },
+  { label: 'common.channel', value: CONVERSATION_TYPE.CHANNEL },
+]);
+
+// ===== Conversation Member Roles =====
+export const CONVERSATION_MEMBER_ROLE = Object.freeze({
+  ADMIN: 'admin',
+  MEMBER: 'member',
+});
+
+export const CONVERSATION_MEMBER_ROLE_MAP = {
+  [CONVERSATION_MEMBER_ROLE.ADMIN]: 'common.admin',
+  [CONVERSATION_MEMBER_ROLE.MEMBER]: 'common.member',
+};
+
+export const CONVERSATION_MEMBER_ROLE_OPTIONS = new Set([
+  { label: 'common.admin', value: CONVERSATION_MEMBER_ROLE.ADMIN },
+  { label: 'common.member', value: CONVERSATION_MEMBER_ROLE.MEMBER },
+]);
+
+// ===== Message Log =====
+export const MESSAGE_LOG_ACTION = Object.freeze({
+  CREATE: 'create',
+  EDIT: 'edit',
+  DELETE: 'delete',
+  RESTORE: 'restore',
+  REACT: 'react',
+});
+
+export const MESSAGE_LOG_ACTION_MAP = {
+  [MESSAGE_LOG_ACTION.CREATE]: 'messageLog.createdMessage',
+  [MESSAGE_LOG_ACTION.EDIT]: 'messageLog.editedMessage',
+  [MESSAGE_LOG_ACTION.DELETE]: 'messageLog.deletedMessage',
+  [MESSAGE_LOG_ACTION.RESTORE]: 'messageLog.restoredMessage',
+  [MESSAGE_LOG_ACTION.REACT]: 'messageLog.reactedMessage',
+};
+
+export const MESSAGE_LOG_ACTION_OPTIONS = new Set([
+  { label: 'messageLog.createdMessage', value: MESSAGE_LOG_ACTION.CREATE },
+  { label: 'messageLog.editedMessage', value: MESSAGE_LOG_ACTION.EDIT },
+  { label: 'messageLog.deletedMessage', value: MESSAGE_LOG_ACTION.DELETE },
+  { label: 'messageLog.restoredMessage', value: MESSAGE_LOG_ACTION.RESTORE },
+  { label: 'messageLog.reactedMessage', value: MESSAGE_LOG_ACTION.REACT },
+]);
+
+// ===== Device Types =====
+export const DEVICE_TYPE = Object.freeze({
+  WEB: 'web',
+  ANDROID: 'android',
+  IOS: 'ios',
+});
+
+export const DEVICE_TYPE_MAP = {
+  [DEVICE_TYPE.WEB]: 'common.web',
+  [DEVICE_TYPE.ANDROID]: 'common.android',
+  [DEVICE_TYPE.IOS]: 'common.ios',
+};
+
+export const DEVICE_TYPE_OPTIONS = new Set([
+  { label: 'common.web', value: DEVICE_TYPE.WEB },
+  { label: 'common.android', value: DEVICE_TYPE.ANDROID },
+  { label: 'common.ios', value: DEVICE_TYPE.IOS },
+]);
+
 // ===== LocalStorage Keys =====
 export const LOCAL_STORAGE_AUTH_TOKEN = 'auth_token';
 export const LOCAL_STORAGE_REFRESH_TOKEN = 'refresh_token';

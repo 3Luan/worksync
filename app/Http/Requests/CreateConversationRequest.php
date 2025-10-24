@@ -14,9 +14,9 @@ class CreateConversationRequest extends FormRequest
   public function rules(): array
   {
     return [
-      'type' => 'required|string|in:0,1',
+      'type' => 'required|int|in:0,1,2', // 0: direct, 1: group, 2: channel
       'name' => 'nullable|string|max:255',
-      'avatar_url' => 'nullable|url|max:255',
+      'avatar' => 'nullable|url|max:255',
       'description' => 'nullable|string|max:500',
       'members' => 'required|array|min:1',
       'members.*' => 'integer|exists:users,id',

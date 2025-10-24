@@ -1,20 +1,15 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { conversationService } from '@/services/conversation-service';
 import type { Conversation } from '@/types/model';
 import ConversationSearch from './ConversationSearch.vue';
 import ConversationList from './ConversationList.vue';
-
-const router = useRouter();
-const conversations = ref<Conversation[]>([]);
-const filtered = ref<Conversation[]>([]);
-const searchTerm = ref('');
 
 const props = defineProps<{
   isMobile: boolean;
   isChatOpen: boolean;
   activeFriendId?: number | null;
+  conversations: Conversation[]; // ✅ nhận từ cha
 }>();
 
 const emit = defineEmits<{
@@ -22,38 +17,39 @@ const emit = defineEmits<{
   (e: 'selectConversation', conversation: Conversation): void;
 }>();
 
-// chọn đoạn chat
-const selectFriend = (friend: Conversation) => {
-  emit('selectConversation', friend);
-  router.push(`/messages/${friend.id}`);
-  if (props.isMobile) emit('update:isChatOpen', true);
-};
+const searchTerm = ref('');
+const filtered = ref<Conversation[]>([]);
 
-// lấy danh sách
-const fetchConversations = async () => {
-  const res = await conversationService.getList();
-  conversations.value = res.data.data || [];
-  filtered.value = conversations.value;
-};
+// ✅ Khi props.conversations thay đổi → cập nhật filtered
+watch(
+  () => props.conversations,
+  (val) => {
+    filtered.value = val || [];
+  },
+  { immediate: true },
+);
 
-// lọc theo từ khóa
+// ✅ Tìm kiếm
 const handleSearch = (query: string) => {
   searchTerm.value = query;
   if (!query) {
-    filtered.value = conversations.value;
+    filtered.value = props.conversations;
   } else {
     const lower = query.toLowerCase();
-    filtered.value = conversations.value.filter((c) => (c.name ?? '').toLowerCase().includes(lower));
+    filtered.value = props.conversations.filter((c) => (c.name ?? '').toLowerCase().includes(lower));
   }
 };
 
-onMounted(fetchConversations);
+// ✅ Chọn conversation
+const selectFriend = (friend: Conversation) => {
+  emit('selectConversation', friend);
+  if (props.isMobile) emit('update:isChatOpen', true);
+};
 </script>
 
 <template>
   <aside v-if="!isChatOpen || !isMobile" class="w-full md:w-1/4 flex flex-col border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-[#171717]">
     <ConversationSearch @search="handleSearch" />
-
     <ConversationList :conversations="filtered" :activeFriendId="activeFriendId" @select="selectFriend" />
   </aside>
 </template>

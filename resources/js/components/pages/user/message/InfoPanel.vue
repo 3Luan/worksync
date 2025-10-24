@@ -30,7 +30,7 @@ const emit = defineEmits<{
 
       <!-- Content -->
       <div class="flex flex-col items-center text-center p-6 space-y-3">
-        <img :src="activeFriend?.avatar_url || 'https://i.pravatar.cc/100?img=3'" class="w-20 h-20 rounded-full border shadow-sm" />
+        <img :src="activeFriend?.avatar || 'https://i.pravatar.cc/100?img=3'" class="w-20 h-20 rounded-full border shadow-sm" />
         <h3 class="font-semibold text-lg text-gray-800 dark:text-white">
           {{ activeFriend?.name }}
         </h3>

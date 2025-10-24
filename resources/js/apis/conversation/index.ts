@@ -1,12 +1,12 @@
 import axios from '@/utils/axios';
-import type { Conversation, ConversationSetting } from '@/types/model';
+import type { Conversation, CONVERSATION_TYPE, ConversationSetting } from '@/types/model';
 
 export const conversationAPI = {
-  getList(params?: { type?: 'direct' | 'group'; search?: string; page?: number }) {
+  getList(params?: { type?: CONVERSATION_TYPE; search?: string; page?: number }) {
     return axios.get('conversations', { params });
   },
 
-  create(data: { type: 'direct' | 'group'; name?: string; avatar_url?: string; description?: string; members: number[] }) {
+  create(data: { type: CONVERSATION_TYPE; name?: string; avatar?: string; description?: string; members: number[] }) {
     return axios.post('conversations', data);
   },
 
@@ -38,7 +38,7 @@ export const conversationAPI = {
     return axios.delete(`conversations/${conversationId}/remove-member`, { data });
   },
 
-  getMyConversations(params?: { page?: number; type?: 'direct' | 'group' }) {
+  getMyConversations(params?: { page?: number; type?: CONVERSATION_TYPE }) {
     return axios.get('conversations/my', { params });
   },
 

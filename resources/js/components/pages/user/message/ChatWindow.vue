@@ -14,6 +14,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'back'): void;
   (e: 'openInfo'): void;
+  (e: 'conversation-created', conversation: Conversation): void;
 }>();
 
 const messageListRef = ref<InstanceType<typeof MessageList> | null>(null);
@@ -33,6 +34,6 @@ const handleMessageSent = (message: Message) => {
     <MessageList ref="messageListRef" :conversationId="activeFriend.id" class="chat-scroll" />
 
     <!-- Message Input -->
-    <MessageInput :conversationId="activeFriend.id" @message-sent="handleMessageSent" />
+    <MessageInput :conversation="activeFriend" @message-sent="handleMessageSent" @conversation-created="emit('conversation-created', $event)" />
   </section>
 </template>

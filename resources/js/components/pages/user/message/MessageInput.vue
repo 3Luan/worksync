@@ -2,26 +2,43 @@
 import { ref } from 'vue';
 import { Send, Smile } from 'lucide-vue-next';
 import { messageService } from '@/services/message-service';
-import type { Message } from '@/types/model';
+import type { Conversation, Message } from '@/types/model';
+import { conversationService } from '@/services/conversation-service';
+import { CONVERSATION_TYPE } from '@/constants';
 
 const props = defineProps<{
-  conversationId: number | null;
+  conversation: Conversation | null;
 }>();
 
 const emit = defineEmits<{
   (e: 'message-sent', message: Message): void;
+  // create conversation if not exist
+  (e: 'conversation-created', conversation: Conversation): void;
 }>();
 
 const input = ref('');
 
 // Send message
 const sendMessage = async () => {
-  if (!input.value.trim() || !props.conversationId) return;
+  let conversationKey = props.conversation?.key || null;
+  let conversationId = props.conversation?.id;
+
+  if (!conversationKey) {
+    const response = await conversationService.create({
+      type: CONVERSATION_TYPE.DIRECT,
+      members: props.conversation?.members?.map((member) => member.user_id) || [],
+    });
+
+    emit('conversation-created', response.data);
+    conversationId = response.data.id;
+  }
+
+  if (!input.value.trim() || !conversationId) return;
 
   const res = await messageService.create({
-    conversation_id: props.conversationId,
+    conversation_id: conversationId,
     content: input.value,
-    type: 0,
+    type: CONVERSATION_TYPE.DIRECT,
   });
 
   const newMessage = res.data;

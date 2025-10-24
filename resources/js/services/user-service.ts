@@ -15,6 +15,11 @@ export const userService = {
     return baseResponseApi(() => userAPI.getList(params), $t('common.fetchUsersError'));
   },
 
+  // Get user details
+  async getUser(params: { userId: number }): Promise<ApiResponse<any>> {
+    return baseResponseApi(() => userAPI.getByID(params.userId), $t('common.fetchUserError'));
+  },
+
   // /**
   //  * Get a single user by ID
   //  */

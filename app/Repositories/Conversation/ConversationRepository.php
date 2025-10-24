@@ -71,15 +71,17 @@ class ConversationRepository implements ConversationRepositoryInterface
   {
     DB::beginTransaction();
     try {
+      $key = $this->generateConversationKey($validatedData);
+
       $conversation = Conversation::create([
-        'type' => $validatedData['type'] ?? 'direct',
+        'type' => $validatedData['type'],
+        'key' => $key,
         'name' => $validatedData['name'] ?? null,
-        'avatar_url' => $validatedData['avatar_url'] ?? null,
+        'avatar' => $validatedData['avatar'] ?? null,
         'description' => $validatedData['description'] ?? null,
         'created_by' => Auth::id(),
       ]);
 
-      // Add members
       if (!empty($validatedData['members']) && is_array($validatedData['members'])) {
         foreach ($validatedData['members'] as $memberId) {
           ConversationMember::create([
@@ -91,16 +93,14 @@ class ConversationRepository implements ConversationRepositoryInterface
         }
       }
 
-      // Add creator as owner
       ConversationMember::updateOrCreate(
         ['conversation_id' => $conversation->id, 'user_id' => Auth::id()],
         ['role' => Conversation::ROLE_ADMIN, 'joined_at' => now()]
       );
 
-      // Default settings
       ConversationSetting::create([
         'conversation_id' => $conversation->id,
-        'theme_color' => '#6366F1', // Indigo default
+        'theme_color' => '#6366F1',
         'default_emoji' => '💬',
         'allow_reactions' => true,
         'allow_mentions' => true,
@@ -108,11 +108,35 @@ class ConversationRepository implements ConversationRepositoryInterface
       ]);
 
       DB::commit();
+
       return $conversation->load(['members.user', 'settings']);
     } catch (Exception $e) {
       DB::rollBack();
       Log::error('Failed to create conversation: ' . $e->getMessage());
-      return null;
+      throw $e;
+    }
+  }
+
+  /**
+   * Generate a unique conversation key.
+   * Ví dụ: cho "direct" thì tạo t_1_2, cho "group" thì tạo uuid ngẫu nhiên.
+   */
+  protected function generateConversationKey(array $data): string
+  {
+    if ($data['type'] === Conversation::TYPE_DIRECT && !empty($data['members'])) {
+      $ids = collect($data['members'])
+        ->merge([Auth::id()])
+        ->unique()
+        ->sort()
+        ->values();
+
+      return 't_' . $ids->join('_');
+    } else if ($data['type'] === Conversation::TYPE_GROUP) {
+      // Group types
+      return 'g_' . uniqid();
+    } else {
+      // Channel types
+      return 'c_' . uniqid();
     }
   }
 

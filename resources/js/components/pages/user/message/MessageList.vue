@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, watch, nextTick, onMounted } from 'vue';
 import type { Message } from '@/types/model';
-import { useAuthStore } from '@/stores/authStore';
 import { messageService } from '@/services/message-service';
+import MessageItem from './MessageItem.vue';
 
 const props = defineProps<{
   conversationId: number | null;
@@ -18,7 +18,7 @@ const hasMore = ref(true);
 const page = ref(1);
 const chatContainer = ref<HTMLDivElement | null>(null);
 
-// Get messages
+// ===== Get messages =====
 const fetchMessages = async (loadMore = false) => {
   if (!props.conversationId) return;
   if (loadingOlder.value || (!hasMore.value && loadMore)) return;
@@ -27,7 +27,7 @@ const fetchMessages = async (loadMore = false) => {
   const res = await messageService.getList({
     conversation_id: props.conversationId,
     page: page.value,
-    per_page: 10,
+    per_page: 20,
   });
 
   const newMsgs = res.data.data.reverse();
@@ -48,7 +48,7 @@ const fetchMessages = async (loadMore = false) => {
   loadingOlder.value = false;
 };
 
-// Scroll to bottom
+// ===== Scroll to bottom =====
 const scrollToBottom = ({ instant = false } = {}) => {
   const el = chatContainer.value;
   if (!el) return;
@@ -62,7 +62,7 @@ const scrollToBottom = ({ instant = false } = {}) => {
   emit('scroll-bottom');
 };
 
-// Handle scroll to load older messages
+// ===== Scroll to load older =====
 const handleScroll = async (e: Event) => {
   const el = e.target as HTMLElement;
   if (el.scrollTop <= 100 && hasMore.value && !loadingOlder.value) {
@@ -71,14 +71,14 @@ const handleScroll = async (e: Event) => {
   }
 };
 
-// Add a new message
+// ===== Add message =====
 const addMessage = async (msg: Message) => {
   messages.value.push(msg);
   await nextTick();
   scrollToBottom();
 };
 
-// Expose addMessage method to parent
+// Expose to parent
 defineExpose({ addMessage });
 
 watch(
@@ -106,18 +106,7 @@ onMounted(() => {
     <div v-if="loadingOlder" class="text-center text-sm text-gray-400 mb-2">Đang tải tin nhắn cũ...</div>
 
     <transition-group name="fade-up" tag="div" class="space-y-1">
-      <div
-        v-for="message in messages"
-        :key="message.id"
-        :class="[
-          'max-w-[70%] px-4 py-2 rounded-2xl text-sm',
-          message.sender_id === useAuthStore().user?.id
-            ? 'ml-auto bg-indigo-500 text-white'
-            : 'bg-white dark:bg-[#171717] border border-gray-200 dark:border-gray-700',
-        ]"
-      >
-        {{ message.content }}
-      </div>
+      <MessageItem v-for="message in messages" :key="message.id" :message="message" />
     </transition-group>
   </main>
 </template>

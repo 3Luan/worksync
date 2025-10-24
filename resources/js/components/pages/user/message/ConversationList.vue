@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Conversation } from '@/types/model';
+import { getNameConversation } from '@/utils/message';
 
 const props = defineProps<{
   conversations: Conversation[];
@@ -23,11 +24,11 @@ const selectConversation = (c: Conversation) => emit('select', c);
       @click="selectConversation(conversation)"
     >
       <div class="relative">
-        <img :src="conversation.avatar_url || 'https://i.pravatar.cc/100?img=1'" class="w-10 h-10 rounded-full shadow-sm border border-gray-200" />
+        <img :src="conversation.avatar || 'https://i.pravatar.cc/100?img=1'" class="w-10 h-10 rounded-full shadow-sm border border-gray-200" />
         <span v-if="true" class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full" />
       </div>
       <div class="flex-1">
-        <p class="font-medium text-gray-800 dark:text-white truncate">{{ conversation.name }}</p>
+        <p class="font-medium text-gray-800 dark:text-white truncate">{{ getNameConversation(conversation) }}</p>
         <p class="text-sm text-gray-500 truncate">Nhắn tin ngay...</p>
       </div>
     </div>

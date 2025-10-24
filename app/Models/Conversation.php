@@ -14,11 +14,16 @@ class Conversation extends Model
   const ROLE_ADMIN = 0;
   const ROLE_MEMBER = 1;
 
+  // Conversation type
+  const TYPE_DIRECT = 0;
+  const TYPE_GROUP = 1;
+  const TYPE_CHANNEL = 2;
+
   protected $fillable = [
     'key',
     'type',
     'name',
-    'avatar_url',
+    'avatar',
     'description',
     'created_by',
     'last_message_id',

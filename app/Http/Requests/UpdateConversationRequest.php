@@ -15,7 +15,7 @@ class UpdateConversationRequest extends FormRequest
   {
     return [
       'name' => 'nullable|string|max:255',
-      'avatar_url' => 'nullable|url|max:255',
+      'avatar' => 'nullable|url|max:255',
       'description' => 'nullable|string|max:500',
       'is_archived' => 'nullable|boolean',
     ];
@@ -24,7 +24,7 @@ class UpdateConversationRequest extends FormRequest
   public function messages(): array
   {
     return [
-      'avatar_url.url' => 'Avatar must be a valid URL.',
+      'avatar.url' => 'Avatar must be a valid URL.',
       'description.max' => 'Description cannot exceed 500 characters.',
     ];
   }

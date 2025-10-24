@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import type { Conversation } from '@/types/model';
+import type { Conversation, ConversationMember, User } from '@/types/model';
 import { conversationService } from '@/services/conversation-service';
+import { userService } from '@/services/user-service';
 import ConversationSidebar from '@/components/pages/user/message/ConversationSidebar.vue';
 import ChatWindow from '@/components/pages/user/message/ChatWindow.vue';
 import InfoPanel from '@/components/pages/user/message/InfoPanel.vue';
+import { CONVERSATION_TYPE } from '@/constants';
+import { useAuthStore } from '@/stores/authStore';
 
 const router = useRouter();
 const route = useRoute();
@@ -17,29 +20,83 @@ const isChatOpen = ref(false);
 
 const isMobile = computed(() => window.innerWidth < 768);
 
-// Get conversations and set active friend if route has id
+// ==========================
+// 📦 FETCH CONVERSATIONS
+// ==========================
 const fetchConversations = async () => {
   try {
     const res = await conversationService.getList();
     conversations.value = res.data.data || [];
-
-    const id = Number(route.params.id);
-    if (id) {
-      const selected = conversations.value.find((c) => c.id === id);
-      if (selected) {
-        activeFriend.value = selected;
-        isChatOpen.value = true;
-      }
-    }
+    await handleRouteChange(route.params.id);
   } catch (err) {
     console.error('Failed to fetch conversations:', err);
   }
 };
 
-// Handle selecting a conversation from sidebar
+// ==========================
+// ⚙️ HANDLE ROUTE CHANGE
+// ==========================
+const handleRouteChange = async (newId: string | string[] | undefined) => {
+  const userId = Number(newId);
+  if (!userId) {
+    activeFriend.value = null;
+    isChatOpen.value = false;
+    return;
+  }
+
+  // 1️⃣ Kiểm tra xem đã có conversation với user này chưa
+  let existing = conversations.value.find((c) => c.type === CONVERSATION_TYPE.DIRECT && c.members?.some((m) => m.user_id === userId));
+
+  if (existing) {
+    activeFriend.value = existing;
+    isChatOpen.value = true;
+    return;
+  }
+
+  try {
+    const userRes = await userService.getUser({ userId });
+    const user = userRes.data as User;
+    const authUser = useAuthStore().user;
+
+    const members = [
+      { user_id: user.id, user },
+      { user_id: authUser?.id, user: authUser },
+    ] as ConversationMember[];
+
+    if (authUser?.id) {
+      const fakeConversation: Conversation = {
+        id: 0, // ID ảo
+        key: null,
+        type: CONVERSATION_TYPE.DIRECT,
+        name: user.name,
+        avatar: user.avatar,
+        last_message: null,
+        is_archived: false,
+        members: members,
+      };
+
+      conversations.value.unshift(fakeConversation);
+      activeFriend.value = fakeConversation;
+      isChatOpen.value = true;
+    }
+  } catch (err) {
+    console.error('Failed to load user info for fake conversation:', err);
+  }
+};
+
 const handleSelectConversation = (conversation: Conversation) => {
+  if (conversation.type === CONVERSATION_TYPE.DIRECT) {
+    const member = conversation.members?.find((m) => m.user_id !== useAuthStore().user?.id);
+    if (member) {
+      router.push(`/messages/${member.user_id}`);
+    } else {
+      goBackToList();
+    }
+  } else {
+    router.push(`/messages/${conversation.key}`);
+  }
+
   activeFriend.value = conversation;
-  router.push(`/messages/${conversation.id}`);
   isChatOpen.value = true;
 };
 
@@ -49,29 +106,28 @@ const goBackToList = () => {
   activeFriend.value = null;
 };
 
-// Watch for route changes to update active friend
+const handleConversationCreated = (conversation: Conversation) => {
+  const index = conversations.value.findIndex((c) => c.id === 0);
+  if (index !== -1) {
+    conversations.value[index] = conversation;
+  } else {
+    conversations.value.unshift(conversation);
+  }
+};
+
 watch(
   () => route.params.id,
-  (newId) => {
-    const id = Number(newId);
-    if (id && conversations.value.length > 0) {
-      const selected = conversations.value.find((c) => c.id === id);
-      activeFriend.value = selected || null;
-      if (selected) isChatOpen.value = true;
-    } else {
-      activeFriend.value = null;
-    }
+  async (newId) => {
+    await handleRouteChange(newId);
   },
 );
 
 onMounted(async () => {
   await fetchConversations();
 
-  const id = Number(route.params.id);
-
   if (window.innerWidth >= 768) {
     isChatOpen.value = true;
-  } else if (id) {
+  } else if (route.params.id) {
     isChatOpen.value = true;
   }
 
@@ -93,6 +149,7 @@ onMounted(async () => {
       :isMobile="isMobile"
       :isChatOpen="isChatOpen"
       :activeFriendId="activeFriend?.id"
+      :conversations="conversations"
       @update:isChatOpen="isChatOpen = $event"
       @selectConversation="handleSelectConversation"
     />
@@ -104,19 +161,10 @@ onMounted(async () => {
       :activeFriend="activeFriend"
       @openInfo="showInfoPanel = true"
       @back="goBackToList"
+      @conversation-created="handleConversationCreated"
     />
 
     <!-- Info Panel -->
     <InfoPanel :show="showInfoPanel" :isMobile="isMobile" :activeFriend="activeFriend" @close="showInfoPanel = false" />
   </div>
 </template>
-
-<style scoped>
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(120, 120, 120, 0.3);
-  border-radius: 3px;
-}
-</style>
