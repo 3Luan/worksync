@@ -1,55 +1,48 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { onMounted, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import type { Conversation, ConversationMember, User } from '@/types/model';
 import { conversationService } from '@/services/conversation-service';
 import { userService } from '@/services/user-service';
-import ConversationSidebar from '@/components/pages/user/message/ConversationSidebar.vue';
+import ConversationSidebar from '@/components/pages/user/conversation/ConversationSidebar.vue';
 import ChatWindow from '@/components/pages/user/message/ChatWindow.vue';
 import InfoPanel from '@/components/pages/user/message/InfoPanel.vue';
 import { CONVERSATION_TYPE } from '@/constants';
 import { useAuthStore } from '@/stores/authStore';
+import ChatEmpty from '@/components/pages/user/message/ChatEmpty.vue';
+import { useGlobalStore } from '@/stores/globalStore';
+import { useChatStore } from '@/stores/chatStore';
 
-const router = useRouter();
 const route = useRoute();
+const globalStore = useGlobalStore();
+const chatStore = useChatStore();
 
-const conversations = ref<Conversation[]>([]);
-const activeFriend = ref<Conversation | null>(null);
-const showInfoPanel = ref(false);
-const isChatOpen = ref(false);
-
-const isMobile = computed(() => window.innerWidth < 768);
-
-// ==========================
-// 📦 FETCH CONVERSATIONS
-// ==========================
+// Get conversations
 const fetchConversations = async () => {
   try {
     const res = await conversationService.getList();
-    conversations.value = res.data.data || [];
+    chatStore.setConversations(res.data.data);
     await handleRouteChange(route.params.id);
   } catch (err) {
     console.error('Failed to fetch conversations:', err);
   }
 };
 
-// ==========================
-// ⚙️ HANDLE ROUTE CHANGE
-// ==========================
+// Handle route change
 const handleRouteChange = async (newId: string | string[] | undefined) => {
   const userId = Number(newId);
   if (!userId) {
-    activeFriend.value = null;
-    isChatOpen.value = false;
+    chatStore.activeConversation = null;
+    chatStore.isChatOpen = false;
     return;
   }
 
-  // 1️⃣ Kiểm tra xem đã có conversation với user này chưa
-  let existing = conversations.value.find((c) => c.type === CONVERSATION_TYPE.DIRECT && c.members?.some((m) => m.user_id === userId));
+  // Check if conversation with this user already exists
+  let existing = chatStore.conversations.find((c) => c.type === CONVERSATION_TYPE.DIRECT && c.members?.some((m) => m.user_id === userId));
 
   if (existing) {
-    activeFriend.value = existing;
-    isChatOpen.value = true;
+    chatStore.activeConversation = existing;
+    chatStore.isChatOpen = true;
     return;
   }
 
@@ -65,7 +58,7 @@ const handleRouteChange = async (newId: string | string[] | undefined) => {
 
     if (authUser?.id) {
       const fakeConversation: Conversation = {
-        id: 0, // ID ảo
+        id: 0, // temporary ID
         key: null,
         type: CONVERSATION_TYPE.DIRECT,
         name: user.name,
@@ -75,43 +68,12 @@ const handleRouteChange = async (newId: string | string[] | undefined) => {
         members: members,
       };
 
-      conversations.value.unshift(fakeConversation);
-      activeFriend.value = fakeConversation;
-      isChatOpen.value = true;
+      chatStore.conversations.unshift(fakeConversation);
+      chatStore.activeConversation = fakeConversation;
+      chatStore.isChatOpen = true;
     }
   } catch (err) {
     console.error('Failed to load user info for fake conversation:', err);
-  }
-};
-
-const handleSelectConversation = (conversation: Conversation) => {
-  if (conversation.type === CONVERSATION_TYPE.DIRECT) {
-    const member = conversation.members?.find((m) => m.user_id !== useAuthStore().user?.id);
-    if (member) {
-      router.push(`/messages/${member.user_id}`);
-    } else {
-      goBackToList();
-    }
-  } else {
-    router.push(`/messages/${conversation.key}`);
-  }
-
-  activeFriend.value = conversation;
-  isChatOpen.value = true;
-};
-
-const goBackToList = () => {
-  router.push('/messages');
-  isChatOpen.value = false;
-  activeFriend.value = null;
-};
-
-const handleConversationCreated = (conversation: Conversation) => {
-  const index = conversations.value.findIndex((c) => c.id === 0);
-  if (index !== -1) {
-    conversations.value[index] = conversation;
-  } else {
-    conversations.value.unshift(conversation);
   }
 };
 
@@ -126,17 +88,17 @@ onMounted(async () => {
   await fetchConversations();
 
   if (window.innerWidth >= 768) {
-    isChatOpen.value = true;
+    chatStore.isChatOpen = true;
   } else if (route.params.id) {
-    isChatOpen.value = true;
+    chatStore.isChatOpen = true;
   }
 
   window.addEventListener('resize', () => {
     const hasId = !!route.params.id;
     if (window.innerWidth >= 768) {
-      isChatOpen.value = true;
+      chatStore.isChatOpen = true;
     } else {
-      isChatOpen.value = hasId;
+      chatStore.isChatOpen = hasId;
     }
   });
 });
@@ -145,26 +107,15 @@ onMounted(async () => {
 <template>
   <div class="flex h-[calc(100vh-56px)] bg-gray-50 dark:bg-[#171717] rounded-lg overflow-hidden relative">
     <!-- Sidebar -->
-    <ConversationSidebar
-      :isMobile="isMobile"
-      :isChatOpen="isChatOpen"
-      :activeFriendId="activeFriend?.id"
-      :conversations="conversations"
-      @update:isChatOpen="isChatOpen = $event"
-      @selectConversation="handleSelectConversation"
-    />
+    <ConversationSidebar />
 
     <!-- Chat Window -->
-    <ChatWindow
-      v-if="activeFriend && (isChatOpen || !isMobile)"
-      :isMobile="isMobile"
-      :activeFriend="activeFriend"
-      @openInfo="showInfoPanel = true"
-      @back="goBackToList"
-      @conversation-created="handleConversationCreated"
-    />
+    <ChatWindow v-if="chatStore.activeConversation && (chatStore.isChatOpen || !globalStore.isMobileView)" />
+
+    <!-- Empty State -->
+    <ChatEmpty v-if="!chatStore.activeConversation && (chatStore.isChatOpen || !globalStore.isMobileView)" />
 
     <!-- Info Panel -->
-    <InfoPanel :show="showInfoPanel" :isMobile="isMobile" :activeFriend="activeFriend" @close="showInfoPanel = false" />
+    <InfoPanel />
   </div>
 </template>

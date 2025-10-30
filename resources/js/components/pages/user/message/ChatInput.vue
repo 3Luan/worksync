@@ -1,20 +1,19 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { nextTick, ref } from 'vue';
 import { Send, Smile } from 'lucide-vue-next';
 import { messageService } from '@/services/message-service';
-import type { Conversation, Message } from '@/types/model';
+import type { Conversation } from '@/types/model';
 import { conversationService } from '@/services/conversation-service';
 import { CONVERSATION_TYPE } from '@/constants';
+import { useChatStore } from '@/stores/chatStore';
+import { useChat } from '@/composables/useChat';
 
 const props = defineProps<{
   conversation: Conversation | null;
 }>();
 
-const emit = defineEmits<{
-  (e: 'message-sent', message: Message): void;
-  // create conversation if not exist
-  (e: 'conversation-created', conversation: Conversation): void;
-}>();
+const chatStore = useChatStore();
+const { scrollToBottom } = useChat();
 
 const input = ref('');
 
@@ -28,9 +27,10 @@ const sendMessage = async () => {
       type: CONVERSATION_TYPE.DIRECT,
       members: props.conversation?.members?.map((member) => member.user_id) || [],
     });
-
-    emit('conversation-created', response.data);
     conversationId = response.data.id;
+    if (conversationId) {
+      await chatStore.replaceTemporaryConversation(response.data);
+    }
   }
 
   if (!input.value.trim() || !conversationId) return;
@@ -42,8 +42,13 @@ const sendMessage = async () => {
   });
 
   const newMessage = res.data;
-  emit('message-sent', newMessage);
+  chatStore.addMessage(newMessage);
   input.value = '';
+
+  // Scroll to bottom
+  await nextTick();
+  const container = document.querySelector('.chat-scroll-container') as HTMLDivElement;
+  scrollToBottom({ container });
 };
 </script>
 

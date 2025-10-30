@@ -24,16 +24,14 @@ class ConversationRepository implements ConversationRepositoryInterface
     try {
       $query = Conversation::query()
         ->with(['members.user', 'lastMessage.sender'])
+        ->whereHas('members', function ($q) {
+          $q->where('user_id', Auth::id());
+        })
         ->orderBy('updated_at', 'desc');
+
 
       if ($request->filled('type')) {
         $query->where('type', $request->type);
-      }
-
-      if ($request->filled('user_id')) {
-        $query->whereHas('members', function ($q) use ($request) {
-          $q->where('user_id', $request->user_id);
-        });
       }
 
       if ($request->filled('search')) {

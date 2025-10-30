@@ -2,14 +2,14 @@
 import { ref, watch } from 'vue';
 import { Search } from 'lucide-vue-next';
 
-const emit = defineEmits<{
-  (e: 'search', value: string): void;
-}>();
-
 const input = ref('');
 
+const handleSearch = (query: string) => {
+  console.log('search: ', query);
+};
+
 watch(input, (val) => {
-  emit('search', val);
+  handleSearch(val);
 });
 </script>
 

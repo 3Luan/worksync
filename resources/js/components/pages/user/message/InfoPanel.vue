@@ -1,38 +1,36 @@
 <script setup lang="ts">
 import { X, ArrowLeft } from 'lucide-vue-next';
-import type { Conversation } from '@/types/model';
+import { useGlobalStore } from '@/stores/globalStore';
+import { useChatStore } from '@/stores/chatStore';
+import { useChat } from '@/composables/useChat';
+import { getAvatarConversation, getNameConversation } from '@/utils/message';
+import { AVATAR_DEFAULT } from '@/constants/imageConst';
 
-const props = defineProps<{
-  show: boolean;
-  isMobile: boolean;
-  activeFriend: Conversation | null;
-}>();
-
-const emit = defineEmits<{
-  (e: 'close'): void;
-}>();
+const globalStore = useGlobalStore();
+const chatStore = useChatStore();
+const { closePanelInfo } = useChat();
 </script>
 
 <template>
   <transition name="">
     <aside
-      v-if="show"
+      v-if="chatStore.isPanelInfoOpen && chatStore.activeConversation"
       class="absolute md:static right-0 top-0 h-full w-full md:w-1/4 border-l border-gray-200 dark:border-gray-700 bg-white dark:bg-[#171717] flex flex-col z-20"
     >
       <!-- Header -->
       <div class="h-16 flex justify-between items-center p-5 border-b border-gray-200 dark:border-gray-700">
         <div class="flex items-center gap-2">
-          <ArrowLeft v-if="isMobile" class="w-5 h-5 cursor-pointer hover:text-indigo-500" @click="emit('close')" />
+          <ArrowLeft v-if="globalStore.isMobileView" class="w-5 h-5 cursor-pointer hover:text-indigo-500" @click="closePanelInfo" />
           <h1 class="font-semibold text-gray-800 dark:text-white">Thông tin đoạn chat</h1>
         </div>
-        <X v-if="!isMobile" class="w-5 h-5 cursor-pointer hover:text-indigo-500" @click="emit('close')" />
+        <X v-if="!globalStore.isMobileView" class="w-5 h-5 cursor-pointer hover:text-indigo-500" @click="closePanelInfo" />
       </div>
 
       <!-- Content -->
       <div class="flex flex-col items-center text-center p-6 space-y-3">
-        <img :src="activeFriend?.avatar || 'https://i.pravatar.cc/100?img=3'" class="w-20 h-20 rounded-full border shadow-sm" />
+        <img :src="getAvatarConversation(chatStore.activeConversation) || AVATAR_DEFAULT" class="w-20 h-20 rounded-full border shadow-sm" />
         <h3 class="font-semibold text-lg text-gray-800 dark:text-white">
-          {{ activeFriend?.name }}
+          {{ getNameConversation(chatStore.activeConversation) }}
         </h3>
         <p class="text-sm text-gray-500">Đang hoạt động</p>
       </div>

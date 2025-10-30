@@ -1,4 +1,3 @@
-<!-- src/components/chat/ChatMessageItem.vue -->
 <script setup lang="ts">
 import type { Message } from '@/types/model';
 import { useAuthStore } from '@/stores/authStore';
