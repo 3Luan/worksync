@@ -1,44 +1,42 @@
 <script setup lang="ts">
-import type { Message } from '@/types/model';
+import type { MessageGroupItem } from '@/types/model';
 import { useAuthStore } from '@/stores/authStore';
 import { computed } from 'vue';
-import { format } from 'date-fns';
-import { vi } from 'date-fns/locale';
 
 const props = defineProps<{
-  message: Message;
+  messageGroup: MessageGroupItem;
 }>();
 
 const auth = useAuthStore();
-const isMine = computed(() => props.message.sender_id === auth.user?.id);
-
-const time = computed(() => {
-  if (!props.message.created_at) return '';
-  try {
-    return format(new Date(props.message.created_at), 'HH:mm', { locale: vi });
-  } catch {
-    return '';
-  }
-});
+const isMine = computed(() => props.messageGroup.message.sender_id === auth.user?.id);
 </script>
 
 <template>
-  <div class="flex w-full" :class="isMine ? 'justify-end' : 'justify-start'">
+  <div class="flex" :class="[isMine ? 'justify-end' : 'justify-start', messageGroup.isFirstInGroup ? 'mt-2' : 'mt-[1px]']">
     <div
       :class="[
-        'relative px-4 py-2 rounded-2xl text-sm shadow-sm',
-        'min-w-[60px] max-w-[80%] break-all leading-relaxed overflow-hidden whitespace-pre-wrap',
-        isMine
-          ? 'bg-indigo-500 text-white rounded-br-sm'
-          : 'bg-gray-100 dark:bg-[#1f1f1f] text-gray-800 dark:text-gray-100 rounded-bl-sm border border-gray-200 dark:border-gray-700',
-      ]"
-      role="message"
-    >
-      <p class="whitespace-pre-line">{{ message.content }}</p>
+        'px-3 py-2 max-w-[60%] break-words transition-all',
+        isMine ? 'bg-indigo-500 text-white dark:bg-indigo-600' : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white',
 
-      <span v-if="time" class="absolute bottom-0 right-2 text-[10px] text-gray-300 dark:text-gray-500 translate-y-full mt-0.5">
-        {{ time }}
-      </span>
+        // Border logic
+        messageGroup.isFirstInGroup && messageGroup.isLastInGroup
+          ? 'rounded-3xl'
+          : messageGroup.isFirstInGroup
+            ? isMine
+              ? 'rounded-3xl rounded-br-md'
+              : 'rounded-3xl rounded-bl-md'
+            : messageGroup.isLastInGroup
+              ? isMine
+                ? 'rounded-3xl rounded-tr-md'
+                : 'rounded-3xl rounded-tl-md'
+              : isMine
+                ? 'rounded-md rounded-l-3xl'
+                : 'rounded-md rounded-r-3xl',
+
+        isMine ? 'ml-auto' : 'mr-auto',
+      ]"
+    >
+      {{ messageGroup.message.content }}
     </div>
   </div>
 </template>

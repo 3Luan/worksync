@@ -10,6 +10,7 @@ use App\Models\Message;
 use App\Repositories\Message\MessageRepositoryInterface;
 use App\Services\LanguageService;
 use App\Constants\HttpStatus;
+use App\Events\MessageSent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -77,6 +78,8 @@ class MessageController extends ApiController
       $message = $this->messageRepository->create($validated);
 
       DB::commit();
+
+      event(new MessageSent($message));
 
       return $this->successResponse([
         'message' => $this->languageService->trans('message.create_success'),

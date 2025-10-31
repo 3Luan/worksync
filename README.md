@@ -46,6 +46,11 @@ yarn dev
 yarn prod
 ```
 
+## Queue
+```
+php artisan queue:work
+```
+
 ## Add xdebug into launch.json (VSCode)
 ```
 {
