@@ -1,25 +1,41 @@
 <script setup lang="ts">
-import { ref, watch, nextTick, onMounted } from 'vue';
+import { ref, watch, nextTick, onMounted, computed } from 'vue';
 import { messageService } from '@/services/message-service';
-import MessageItem from './MessageItem.vue';
-import MessageSkeleton from './MessageSkeleton.vue';
 import { useChatStore } from '@/stores/chatStore';
 import { useChat } from '@/composables/useChat';
+import { format, isToday, isYesterday } from 'date-fns';
+import { useAuthStore } from '@/stores/authStore';
+import MessageItem from './MessageItem.vue';
+import { MessageGroupItem } from '@/types/model';
+import MessageSkeleton from './MessageSkeleton.vue';
 
-const props = defineProps<{
-  conversationId: number | null;
-}>();
+// Props
+const props = defineProps<{ conversationId: number | null }>();
 
+// Store & composables
 const chatStore = useChatStore();
+const authStore = useAuthStore();
 const { scrollToBottom } = useChat();
 
+// Refs
+const chatContainer = ref<HTMLDivElement | null>(null);
 const loadingOlder = ref(false);
 const hasMore = ref(true);
 const page = ref(1);
-const chatContainer = ref<HTMLDivElement | null>(null);
 const initialLoading = ref(true);
 
-// Get messages
+const currentUserId = computed(() => authStore.user?.id);
+
+// Helpers format date/time
+const formatMessageTime = (date: string | Date) => format(new Date(date), 'HH:mm');
+const formatMessageDate = (date: string | Date) => {
+  const d = new Date(date);
+  if (isToday(d)) return 'Hôm nay';
+  if (isYesterday(d)) return 'Hôm qua';
+  return format(d, 'dd/MM/yyyy');
+};
+
+// Fetch messages
 const fetchMessages = async (loadMore = false) => {
   if (!props.conversationId) return;
   if (loadingOlder.value || (!hasMore.value && loadMore)) return;
@@ -52,7 +68,7 @@ const fetchMessages = async (loadMore = false) => {
   initialLoading.value = false;
 };
 
-// Scroll to load older
+// Scroll top để load older messages
 const handleScroll = async (e: Event) => {
   const el = e.target as HTMLElement;
   if (el.scrollTop <= 100 && hasMore.value && !loadingOlder.value) {
@@ -61,6 +77,7 @@ const handleScroll = async (e: Event) => {
   }
 };
 
+// Watch conversation
 watch(
   () => props.conversationId,
   async (newId) => {
@@ -79,14 +96,58 @@ watch(
 onMounted(() => {
   if (props.conversationId) fetchMessages();
 });
+
+// Group messages + border logic
+const groupedMessages = computed(() => {
+  const msgs = chatStore.messages;
+  const result: Array<MessageGroupItem> = [];
+
+  let lastDate = '';
+
+  for (let i = 0; i < msgs.length; i++) {
+    const msg = msgs[i];
+    const msgDate = formatMessageDate(msg.created_at);
+    const showDate = msgDate !== lastDate;
+    lastDate = msgDate;
+
+    // ---- Xác định nhóm ----
+    const prev = msgs[i - 1];
+    const next = msgs[i + 1];
+
+    // Cùng người gửi và trong 10 phút thì mới coi là cùng nhóm
+    const sameAsPrev =
+      prev &&
+      prev.sender_id === msg.sender_id &&
+      formatMessageDate(prev.created_at) === msgDate &&
+      (new Date(msg.created_at).getTime() - new Date(prev.created_at).getTime()) / 1000 / 60 < 10;
+
+    const sameAsNext =
+      next &&
+      next.sender_id === msg.sender_id &&
+      formatMessageDate(next.created_at) === msgDate &&
+      (new Date(next.created_at).getTime() - new Date(msg.created_at).getTime()) / 1000 / 60 < 10;
+
+    const isFirstInGroup = !sameAsPrev;
+    const isLastInGroup = !sameAsNext;
+
+    // ---- Hiển thị giờ ----
+    let showTime = isLastInGroup;
+
+    result.push({ message: msg, showTime, showDate, isFirstInGroup, isLastInGroup });
+  }
+
+  return result;
+});
 </script>
 
 <template>
   <main ref="chatContainer" class="chat-scroll-container flex-1 overflow-y-auto p-4 space-y-3" @scroll.passive="handleScroll">
+    <!-- Loading -->
     <div v-if="initialLoading" class="space-y-4">
       <MessageSkeleton v-for="i in 10" :key="i" />
     </div>
 
+    <!-- Loading older messages -->
     <div v-else>
       <div v-if="loadingOlder" class="flex justify-center my-3">
         <div class="flex items-center space-x-1 bg-gray-100 dark:bg-gray-800 px-3 py-2 rounded-2xl shadow-sm">
@@ -95,25 +156,36 @@ onMounted(() => {
           <span class="w-2 h-2 bg-gray-300 rounded-full animate-bounce"></span>
         </div>
       </div>
-      <transition-group name="fade-up" tag="div" class="space-y-1" appear>
-        <MessageItem v-for="message in chatStore.messages" :key="message.id" :message="message" />
-      </transition-group>
+
+      <!-- Messages -->
+      <div v-for="item in groupedMessages" :key="item.message.id">
+        <!-- Date separator -->
+        <div v-if="item.showDate" class="text-center text-gray-500 dark:text-gray-400 my-2 text-sm">
+          {{ formatMessageDate(item.message.created_at) }}
+        </div>
+
+        <!-- Message item -->
+        <MessageItem :messageGroup="item" />
+
+        <!-- Time -->
+        <div
+          v-if="item.showTime"
+          class="text-xs text-gray-400 dark:text-gray-500 mt-1"
+          :class="item.message.sender_id === currentUserId ? 'text-right mr-1' : 'text-left ml-1'"
+        >
+          {{ formatMessageTime(item.message.created_at) }}
+        </div>
+      </div>
     </div>
   </main>
 </template>
+
 <style scoped>
-.fade-up-enter-active,
-.fade-up-leave-active {
-  transition: all 0.3s ease;
+.chat-scroll-container::-webkit-scrollbar {
+  width: 6px;
 }
-
-.fade-up-enter-from {
-  opacity: 0;
-  transform: translateY(8px);
-}
-
-.fade-up-leave-to {
-  opacity: 0;
-  transform: translateY(-8px);
+.chat-scroll-container::-webkit-scrollbar-thumb {
+  background: rgba(120, 120, 120, 0.3);
+  border-radius: 3px;
 }
 </style>

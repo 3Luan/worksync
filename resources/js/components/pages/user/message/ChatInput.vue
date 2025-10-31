@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, ref } from 'vue';
+import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import { Send, Smile } from 'lucide-vue-next';
 import { messageService } from '@/services/message-service';
 import type { Conversation } from '@/types/model';
@@ -50,6 +50,22 @@ const sendMessage = async () => {
   const container = document.querySelector('.chat-scroll-container') as HTMLDivElement;
   scrollToBottom({ container });
 };
+
+onMounted(() => {
+  if (!props.conversation?.id) return;
+
+  console.log('Subscribing to conversation', props.conversation.id);
+
+  window.Echo.channel(`conversation.${props.conversation.id}`).listen('.message.sent', (e: any) => {
+    console.log('Realtime message received:', e.message.content);
+  });
+});
+
+onBeforeUnmount(() => {
+  if (props.conversation?.id) {
+    window.Echo.leave(`conversation.${props.conversation.id}`);
+  }
+});
 </script>
 
 <template>

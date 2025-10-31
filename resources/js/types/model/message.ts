@@ -23,3 +23,11 @@ export interface Message {
   reads?: MessageRead[];
   visibility?: MessageVisibility[];
 }
+
+export interface MessageGroupItem {
+  message: Message;
+  isFirstInGroup: boolean;
+  isLastInGroup: boolean;
+  showTime: boolean;
+  showDate: boolean;
+}

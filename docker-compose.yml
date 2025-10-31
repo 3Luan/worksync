@@ -69,6 +69,23 @@ services:
     networks:
       - sail
 
+  # The Reverb Server (for WebSockets)
+  reverb:
+    container_name: "${APP_NAME}_reverb"
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+    command: php artisan reverb:start
+    ports:
+      - "6001:8080"
+    networks:
+      - sail
+    depends_on:
+      - app
+
 networks:
   sail:
 
