@@ -7,15 +7,19 @@ import { userService } from '@/services/user-service';
 import ConversationSidebar from '@/components/pages/user/conversation/ConversationSidebar.vue';
 import ChatWindow from '@/components/pages/user/message/ChatWindow.vue';
 import InfoPanel from '@/components/pages/user/message/InfoPanel.vue';
-import { CONVERSATION_TYPE } from '@/constants';
+import { CONVERSATION_TYPE, MESSAGE_STATUS } from '@/constants';
 import { useAuthStore } from '@/stores/authStore';
 import ChatEmpty from '@/components/pages/user/message/ChatEmpty.vue';
 import { useGlobalStore } from '@/stores/globalStore';
 import { useChatStore } from '@/stores/chatStore';
+import { messageService } from '@/services/message-service';
 
 const route = useRoute();
 const globalStore = useGlobalStore();
 const chatStore = useChatStore();
+
+
+
 
 // Get conversations
 const fetchConversations = async () => {
@@ -63,7 +67,7 @@ const handleRouteChange = async (newId: string | string[] | undefined) => {
         type: CONVERSATION_TYPE.DIRECT,
         name: user.name,
         avatar: user.avatar,
-        last_message: null,
+        // last_message: null,
         is_archived: false,
         members: members,
       };
@@ -77,6 +81,31 @@ const handleRouteChange = async (newId: string | string[] | undefined) => {
   }
 };
 
+
+const markMessagesAsDelivered = async (conversationId: number) => {
+  if(!conversationId) return;
+  await conversationService.markMessagesAsDelivered(conversationId);
+  chatStore.updateMessageStatus(conversationId, MESSAGE_STATUS.DELIVERED);
+  console.log("đã nhận: ", conversationId);
+};
+
+// all
+const markAllMessagesAsDelivered = async () => {
+  await conversationService.markAllMessagesAsDelivered();
+  chatStore.updateMessageDeliveryStatusAllConversations();
+  console.log("đã nhận all");
+};
+
+// watch khi có thay đổi conversations
+watch(
+  () => chatStore.conversations,
+  (newConversations) => {
+    console.log("Conversations đã thay đổi:", newConversations);
+  },
+  {immediate: true}
+);
+
+
 watch(
   () => route.params.id,
   async (newId) => {
@@ -86,6 +115,19 @@ watch(
 
 onMounted(async () => {
   await fetchConversations();
+  await markAllMessagesAsDelivered();
+  const authStore = useAuthStore();
+
+  const userChannel = window.Echo.private(`user.${authStore.user?.id}`);
+
+  // Lắng nghe khi có tin nhắn mới ở bất kỳ conversation nào
+  userChannel.listen('.message.sent', async (event: any) => {
+    console.log('📨 Có tin nhắn mới gửi tới bạn:', event);
+
+    // Cập nhật conversation list (ví dụ unread +1, cập nhật last_message)
+    chatStore.addMessageToConversation(event.message.conversation_id, event.message);
+    await markMessagesAsDelivered(event.message.conversation_id);
+  });
 
   if (window.innerWidth >= 768) {
     chatStore.isChatOpen = true;

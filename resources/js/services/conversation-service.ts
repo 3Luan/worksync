@@ -109,4 +109,26 @@ export const conversationService = {
   async updateSettings(conversationId: number, data: Partial<ConversationSetting>): Promise<ApiResponse<any>> {
     return baseResponseApi(() => conversationAPI.updateSettings(conversationId, data), $t('common.updateConversationSettingsError'));
   },
+
+  /**
+   * Mark messages as delivered in a conversation
+   */
+  async markMessagesAsDelivered(conversationId: number): Promise<ApiResponse<any>> {
+    return baseResponseApi(() => conversationAPI.markMessagesAsDelivered(conversationId), $t('common.markMessagesAsDeliveredError'));
+  },
+
+  /**
+   * Mark all messages as delivered for current user
+   */
+  async markAllMessagesAsDelivered(): Promise<ApiResponse<any>> {
+    return baseResponseApi(() => conversationAPI.markAllMessagesAsDelivered(), $t('common.markAllMessagesAsDeliveredError'));
+  },
+
+  /**
+   * Mark messages as seen in a conversation
+   */
+  async markMessagesAsSeen(conversationId: number): Promise<ApiResponse<any>> {
+    return baseResponseApi(() => conversationAPI.markMessagesAsSeen(conversationId), $t('common.markMessagesAsSeenError'));
+  },
+
 };

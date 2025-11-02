@@ -5,6 +5,7 @@ namespace App\Repositories\Conversation;
 use App\Models\Conversation;
 use App\Models\ConversationMember;
 use App\Models\ConversationSetting;
+use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -328,6 +329,84 @@ class ConversationRepository implements ConversationRepositoryInterface
       return true;
     } catch (Exception $e) {
       Log::error('Failed to update conversation settings: ' . $e->getMessage());
+      return false;
+    }
+  }
+
+  /**
+   * Mark all messages as delivered to a user in a conversation.
+   * 
+   * @param int $conversationId
+   * @return bool
+   */
+  public function markMessagesAsDelivered(int $conversationId)
+  {
+    try {
+      $userId = Auth::id();
+      // update tất cả tin nhắn của conversation đó nếu sender khác userId và status == 'sent' thành 'delivered'
+      Message::where('conversation_id', $conversationId)
+        ->where('sender_id', '!=', $userId)
+        ->where('status', Message::STATUS_SENT)
+        ->update(['status' => Message::STATUS_DELIVERED]);
+
+      return true;
+    } catch (Exception $e) {
+      Log::error('Failed to mark messages as delivered: ' . $e->getMessage());
+      return false;
+    }
+  }
+
+  /** 
+   * Mark all messages as delivered by a user on all conversations.
+   * 
+   * @return array | bool
+   */
+  public function markAllMessagesAsDelivered()
+  {
+      try {
+          $userId = Auth::id();
+
+          // Lấy danh sách conversation_id của tin nhắn sẽ được cập nhật
+          $conversationIds = Message::where('sender_id', '!=', $userId)
+              ->where('status', Message::STATUS_SENT)
+              ->distinct()
+              ->pluck('conversation_id')
+              ->toArray();
+
+          // Cập nhật trạng thái
+          Message::where('sender_id', '!=', $userId)
+              ->where('status', Message::STATUS_SENT)
+              ->update([
+                  'status' => Message::STATUS_DELIVERED,
+              ]);
+
+          return $conversationIds;
+      } catch (Exception $e) {
+          Log::error('Failed to mark all messages as delivered: ' . $e->getMessage());
+          return false;
+      }
+  }
+
+
+  /**
+   * Mark all messages as seen by a user on a specific conversation.
+   * 
+   * @param int $conversationId
+   * @return bool
+   */
+  public function markMessagesAsSeen(int $conversationId)
+  {
+    try {
+      $userId = Auth::id();
+      // update tất cả tin nhắn của conversation đó nếu sender khác userId và status != 'failed' thành 'seen'
+      Message::where('conversation_id', $conversationId)
+        ->where('sender_id', '!=', $userId)
+        ->where('status', '!=', Message::STATUS_FAILED)
+        ->update(['status' => Message::STATUS_SEEN]);
+
+        return true;
+    } catch (Exception $e) {
+      Log::error('Failed to mark messages as seen: ' . $e->getMessage());
       return false;
     }
   }

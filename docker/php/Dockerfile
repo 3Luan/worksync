@@ -5,7 +5,7 @@ FROM php:8.2-fpm
 RUN apt-get update && apt-get install -y \
     apt-transport-https apt-utils build-essential curl git unzip zlib1g-dev \
     libpng-dev libjpeg-dev libfreetype6-dev libzip-dev libicu-dev locales \
-    && docker-php-ext-install bcmath gd zip pdo_mysql mysqli \
+    && docker-php-ext-install bcmath gd zip pdo_mysql mysqli pcntl \
     && pecl install xdebug && docker-php-ext-enable xdebug \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 

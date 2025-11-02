@@ -1,9 +1,9 @@
-version: "3"
+version: '3'
 
 services:
   # The Application Server
   app:
-    container_name: "${APP_NAME}_app"
+    container_name: '${APP_NAME}_app'
     build:
       context: .
       dockerfile: docker/php/Dockerfile
@@ -18,14 +18,14 @@ services:
 
   # The Web Server (Nginx)
   web:
-    container_name: "${APP_NAME}_web"
+    container_name: '${APP_NAME}_web'
     build:
       context: ./docker/web/
       dockerfile: web.dockerfile
     working_dir: /var/www/html
     # restart: always
     environment:
-      TZ: "Asia/Ho_Chi_Minh"
+      TZ: 'Asia/Ho_Chi_Minh'
     volumes:
       - .:/var/www/html
     ports:
@@ -37,7 +37,7 @@ services:
 
   # The Node Server (for Vite)
   node:
-    container_name: "${APP_NAME}_node"
+    container_name: '${APP_NAME}_node'
     image: node:20.19.0
     working_dir: /var/www/html
     # restart: always
@@ -53,19 +53,35 @@ services:
 
   # The Database Server (MySQL)
   database:
-    container_name: "${APP_NAME}_database"
+    container_name: '${APP_NAME}_database'
     image: mysql:8.0.34
     # restart: always
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_ROOT_USER: ${DB_USERNAME}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-      TZ: "Asia/Ho_Chi_Minh"
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      TZ: 'Asia/Ho_Chi_Minh'
     ports:
-      - "3301:3306"
+      - '3301:3306'
     volumes:
       - dbdata:/var/lib/mysql
+    networks:
+      - sail
+
+  reverb:
+    container_name: '${APP_NAME}_reverb'
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    working_dir: /var/www/html
+    command: php artisan reverb:start --host=0.0.0.0 --port=8080
+    ports:
+      - '8080:8080'
+    depends_on:
+      - app
+    volumes:
+      - .:/var/www/html
     networks:
       - sail
 

@@ -57,6 +57,11 @@ instance.interceptors.request.use(
   async (config) => {
     config.headers['X-Language'] = localToken.get(LOCAL_STORAGE_LANG) || Language.vi;
 
+    // Attach Socket ID for broadcasting
+    if (window.Echo && typeof window.Echo.socketId === 'function') {
+      config.headers['X-Socket-Id'] = window.Echo.socketId() || '';
+    }
+
     if (config.url === API_LOGIN_PATH) return config;
 
     let token = localToken.get(LOCAL_STORAGE_AUTH_TOKEN);

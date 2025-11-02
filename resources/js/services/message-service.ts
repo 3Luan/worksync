@@ -1,4 +1,4 @@
-import type { ApiResponse } from '@/types/api';
+import type { ApiResponse, CreateMessagePayload } from '@/types/api';
 import { baseResponseApi } from '@/utils/api-utils';
 import { $t } from '@/utils/i18n';
 import { messageAPI } from '@/apis/message';
@@ -22,7 +22,7 @@ export const messageService = {
   /**
    * Send a new message
    */
-  async create(data: { conversation_id: number; content: string; type: number; reply_to_id?: number | null; attachments?: any[] }): Promise<ApiResponse<any>> {
+  async create(data: CreateMessagePayload): Promise<ApiResponse<any>> {
     return baseResponseApi(() => messageAPI.create(data), $t('common.sendMessageError'));
   },
 
@@ -55,10 +55,17 @@ export const messageService = {
   },
 
   /**
-   * Mark message as read
+   * Mark message as delivered
    */
-  async markAsRead(messageId: number): Promise<ApiResponse<any>> {
-    return baseResponseApi(() => messageAPI.markAsRead(messageId), $t('common.markAsReadError'));
+  async markAsDelivered(messageId: number): Promise<ApiResponse<any>> {
+    return baseResponseApi(() => messageAPI.markAsDelivered(messageId), $t('common.markAsDeliveredError'));
+  },
+
+  /**
+   * Mark message as seen
+   */
+  async markAsSeen(messageId: number): Promise<ApiResponse<any>> {
+    return baseResponseApi(() => messageAPI.markAsSeen(messageId), $t('common.markAsSeenError'));
   },
 
   /**
