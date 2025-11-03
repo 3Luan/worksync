@@ -11,5 +11,6 @@ Broadcast::channel('conversation.{id}', function ($user, $id) {
 });
 
 Broadcast::channel('user.{id}', function ($user, $id) {
+  Log::info("User channel accessed by user ID: {$user->id} for channel ID: {$id}");
   return (int) $user->id === (int) $id;
 });

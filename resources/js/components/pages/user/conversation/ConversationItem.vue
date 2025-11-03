@@ -17,6 +17,8 @@ const chatStore = useChatStore();
 const { closeChat, openChat } = useChat();
 
 const handleSelectConversation = (conversation: Conversation) => {
+  console.log(conversation);
+  
   if (conversation.type === CONVERSATION_TYPE.DIRECT) {
     const member = conversation.members?.find((m) => m.user_id !== useAuthStore().user?.id);
     if (member) {
@@ -52,10 +54,17 @@ const formatTime = (time: string) => format(new Date(time), 'HH:mm', { locale: v
         {{ getNameConversation(conversation) }}
       </p>
 
-      <p v-if="conversation.last_message?.content" class="text-sm text-gray-500 dark:text-gray-400 truncate">
+      <!-- if conversation.unread_count thì content tô đậm và hiện số lượng -->
+      <p v-if="conversation.unread_count" class="font-medium text-gray-800 dark:text-white">
+        {{ conversation.last_message?.content }}
+        <span class="ml-2 inline-block bg-red-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
+          {{ conversation.unread_count }}
+        </span>
+      </p>
+      <p v-if="conversation.last_message?.content && !conversation.unread_count" class="text-sm text-gray-500 dark:text-gray-400 truncate">
         {{ conversation.last_message.content }}
       </p>
-      <p v-else class="text-sm text-gray-400 italic">Nhắn tin ngay...</p>
+      <!-- <p v-else class="text-sm text-gray-400 italic">Nhắn tin ngay...</p> -->
     </div>
 
     <!-- Optional time -->

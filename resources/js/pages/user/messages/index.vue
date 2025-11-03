@@ -12,10 +12,12 @@ import { useAuthStore } from '@/stores/authStore';
 import ChatEmpty from '@/components/pages/user/message/ChatEmpty.vue';
 import { useGlobalStore } from '@/stores/globalStore';
 import { useChatStore } from '@/stores/chatStore';
+import { getEcho } from '@/echo';
 
 const route = useRoute();
 const globalStore = useGlobalStore();
 const chatStore = useChatStore();
+const echo = getEcho();
 
 // Get conversations
 const fetchConversations = async () => {
@@ -103,14 +105,17 @@ onMounted(async () => {
   await markAllMessagesAsDelivered();
   const authStore = useAuthStore();
 
-  const userChannel = window.Echo.private(`user.${authStore.user?.id}`);
+  if(echo){
+    const userChannel = echo.private(`user.${authStore.user?.id}`);
 
-  // Lắng nghe khi có tin nhắn mới ở bất kỳ conversation nào
-  userChannel.listen('.message.sent', async (event: any) => {
-    console.log('Có tin nhắn mới gửi tới bạn:', event);
-    chatStore.addMessageToConversation(event.message.conversation_id, event.message);
-    await markMessagesAsDelivered(event.message.conversation_id);
-  });
+    // Lắng nghe khi có tin nhắn mới ở bất kỳ conversation nào
+    userChannel.listen('.message.sent', async (event: any) => {
+      console.log('Có tin nhắn mới gửi tới bạn:', event);
+      chatStore.addMessageToConversation(event.message.conversation_id, event.message);
+      await markMessagesAsDelivered(event.message.conversation_id);
+    });
+  }
+  
 
   if (window.innerWidth >= 768) {
     chatStore.isChatOpen = true;

@@ -19,6 +19,7 @@ const chatStore = useChatStore();
 const authStore = useAuthStore();
 const { scrollToBottom } = useChat();
 
+const echo = getEcho();
 const input = ref('');
 
 // Send message
@@ -103,7 +104,6 @@ const sendMessage = async () => {
     input.value = '';
   }
 };
-const auth = useAuthStore();
 
 onMounted(() => {
   if (!props.conversation?.id) return;
@@ -157,12 +157,16 @@ onMounted(() => {
   }
 });
 
-onUnmounted(() => {
-  if (props.conversation?.id) {
-    const channelName = `conversation.${props.conversation.id}`;
-    window.Echo.leave(channelName);
-  }
-});
+// onUnmounted(() => {
+//   if (props.conversation?.id) {
+//     if (echo) {
+//       console.log("leave");
+      
+//       const channelName = `conversation.${props.conversation.id}`;
+//       echo.leave(channelName);
+//     }
+//   }
+// });
 </script>
 
 <template>
