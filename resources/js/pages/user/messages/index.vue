@@ -12,14 +12,10 @@ import { useAuthStore } from '@/stores/authStore';
 import ChatEmpty from '@/components/pages/user/message/ChatEmpty.vue';
 import { useGlobalStore } from '@/stores/globalStore';
 import { useChatStore } from '@/stores/chatStore';
-import { messageService } from '@/services/message-service';
 
 const route = useRoute();
 const globalStore = useGlobalStore();
 const chatStore = useChatStore();
-
-
-
 
 // Get conversations
 const fetchConversations = async () => {
@@ -81,30 +77,19 @@ const handleRouteChange = async (newId: string | string[] | undefined) => {
   }
 };
 
-
 const markMessagesAsDelivered = async (conversationId: number) => {
-  if(!conversationId) return;
+  if (!conversationId) return;
   await conversationService.markMessagesAsDelivered(conversationId);
   chatStore.updateMessageStatus(conversationId, MESSAGE_STATUS.DELIVERED);
-  console.log("đã nhận: ", conversationId);
+  console.log('đã nhận: ', conversationId);
 };
 
 // all
 const markAllMessagesAsDelivered = async () => {
   await conversationService.markAllMessagesAsDelivered();
   chatStore.updateMessageDeliveryStatusAllConversations();
-  console.log("đã nhận all");
+  console.log('đã nhận all');
 };
-
-// watch khi có thay đổi conversations
-watch(
-  () => chatStore.conversations,
-  (newConversations) => {
-    console.log("Conversations đã thay đổi:", newConversations);
-  },
-  {immediate: true}
-);
-
 
 watch(
   () => route.params.id,
@@ -122,9 +107,7 @@ onMounted(async () => {
 
   // Lắng nghe khi có tin nhắn mới ở bất kỳ conversation nào
   userChannel.listen('.message.sent', async (event: any) => {
-    console.log('📨 Có tin nhắn mới gửi tới bạn:', event);
-
-    // Cập nhật conversation list (ví dụ unread +1, cập nhật last_message)
+    console.log('Có tin nhắn mới gửi tới bạn:', event);
     chatStore.addMessageToConversation(event.message.conversation_id, event.message);
     await markMessagesAsDelivered(event.message.conversation_id);
   });

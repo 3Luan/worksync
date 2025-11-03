@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 class Conversation extends Model
 {
@@ -59,4 +60,21 @@ class Conversation extends Model
   {
     return $this->hasMany(PinnedMessage::class);
   }
+
+  public function lastUnreadMessage()
+  {
+    $userId = Auth::id();
+
+    return $this->hasOne(Message::class)
+      ->where('sender_id', '<>', $userId)
+      ->whereNotIn('id', function ($sub) use ($userId) {
+        $sub->select('message_id')
+          ->from('message_reads')
+          ->where('user_id', $userId);
+      })
+      ->orderBy('created_at', 'asc');
+  }
+
+
+
 }

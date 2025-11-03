@@ -1,8 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import type { Conversation, Message, MessageStatus, User } from '@/types/model';
-import { useAuthStore } from './authStore';
-import { is } from 'date-fns/locale';
+import type { Conversation, Message, MessageStatus } from '@/types/model';
 import { MESSAGE_STATUS } from '@/constants';
 
 export const useChatStore = defineStore('chat', () => {
@@ -87,30 +85,40 @@ export const useChatStore = defineStore('chat', () => {
 
   const updateMessageStatus = (conversation_id: number, status: MessageStatus) => {
     // update full list messages of conversation to status
-    messages.value = messages.value.map((m) => {
-      if (m.conversation_id === conversation_id) {
-        if(status === MESSAGE_STATUS.DELIVERED){
-          if(m.status === MESSAGE_STATUS.SENT){
-            return {
-              ...m,
-              status,
-            };
-          }
-        } else if (status === MESSAGE_STATUS.SEEN){
-          return {
-            ...m,
-            status,
-          };
+    messages.value = messages.value.map((message) => {
+      if (message.conversation_id === conversation_id) {
+        switch (message.status) {
+          case MESSAGE_STATUS.SENT:
+            if (status === MESSAGE_STATUS.DELIVERED) {
+              return {
+                ...message,
+                status,
+              };
+            }
+            break;
+          case MESSAGE_STATUS.DELIVERED:
+            if (status === MESSAGE_STATUS.SEEN) {
+              return {
+                ...message,
+                status,
+              };
+            }
+            break;
+          case MESSAGE_STATUS.FAILED:
+            break;
+
+          default:
+            break;
         }
       }
-      return m;
+      return message;
     });
   };
 
   const updateMessageDeliveryStatusAllConversations = () => {
     // update full list messages of all conversations to status
     messages.value = messages.value.map((m) => {
-      if(m.status === MESSAGE_STATUS.SENT){
+      if (m.status === MESSAGE_STATUS.SENT) {
         return {
           ...m,
           status: MESSAGE_STATUS.DELIVERED,
@@ -124,7 +132,7 @@ export const useChatStore = defineStore('chat', () => {
   //   console.log('Cập nhật tin nhắn cuối cùng trong cuộc hội thoại:', message);
   //   const conversation = conversations.value.find((c) => c.id === conversationId);
   //   if (conversation) {
-      
+
   //     conversation.last_message = message;
   //     updateConversation(conversation);
   //   }

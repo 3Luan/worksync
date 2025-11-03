@@ -20,4 +20,6 @@ export interface Conversation {
   is_archived?: boolean;
   members?: ConversationMember[];
   settings?: ConversationSetting;
+  unread_count?: number;
+  last_unread_message?: Message;
 }

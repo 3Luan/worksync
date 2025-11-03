@@ -8,6 +8,7 @@ import { APP_URL } from '@/constants/url';
 import { authService } from '@/services/auth-service';
 import { Auth, User } from '@/types/model';
 import { isAccountantRole, isAdminRole, isLeaderRole, isStaffRole } from '@/utils/role';
+import { initEcho } from '@/echo';
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(JSON.parse(localStorage.getItem('user') || 'null'));
@@ -23,6 +24,10 @@ export const useAuthStore = defineStore('auth', () => {
   const isStaff = computed(() => isStaffRole(user.value?.role));
   const isLeader = computed(() => isLeaderRole(user.value?.role));
   const currentUser = () => JSON.parse(localStorage.getItem('user') || 'null');
+
+  if (token.value && user.value) {
+    initEcho(token.value);
+  }
 
   async function handleLogin(credentials: { email: string; password: string }) {
     try {

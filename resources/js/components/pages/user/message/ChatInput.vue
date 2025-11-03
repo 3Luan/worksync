@@ -9,6 +9,7 @@ import { useChatStore } from '@/stores/chatStore';
 import { useChat } from '@/composables/useChat';
 import { CreateMessagePayload } from '@/types/api';
 import { useAuthStore } from '@/stores/authStore';
+import { getEcho } from '@/echo';
 
 const props = defineProps<{
   conversation: Conversation | null;
@@ -41,7 +42,7 @@ const sendMessage = async () => {
 
   if (!conversationId) return;
 
-  // 1️⃣ Tạo message tạm (trạng thái "đang gửi")
+  // Tạo message tạm (trạng thái "đang gửi")
   const tempId = Date.now(); // number
   const tempMessage: Message = {
     id: tempId,
@@ -70,9 +71,9 @@ const sendMessage = async () => {
   const container = document.querySelector('.chat-scroll-container') as HTMLDivElement;
   scrollToBottom({ container });
 
-  // 2️⃣ Gửi message thật qua API
+  // Gửi message thật qua API
   try {
-    const payload : CreateMessagePayload = {
+    const payload: CreateMessagePayload = {
       conversation_id: conversationId,
       content: input.value,
       type: MESSAGE_TYPE.TEXT,
@@ -86,73 +87,74 @@ const sendMessage = async () => {
       status: MESSAGE_STATUS.SENT,
     };
 
-    // 3️⃣ Thay tin tạm bằng tin thật (chuyển sang "đã gửi")
+    // Nếu thành công → thay thế message tạm bằng message thật
     setTimeout(() => {
       chatStore.replaceMessage(tempId, newMessage);
-    }, 300);
-
+    }, 500);
   } catch (error) {
     console.log(error);
-    
-    // 4️⃣ Nếu lỗi → chuyển sang "LỖI"
+
+    // Nếu lỗi → chuyển sang "LỖI"
     chatStore.replaceMessage(tempId, {
       ...tempMessage,
       status: MESSAGE_STATUS.FAILED,
     });
   } finally {
-    // Dọn input
     input.value = '';
   }
 };
+const auth = useAuthStore();
 
 onMounted(() => {
   if (!props.conversation?.id) return;
+  const echo = getEcho();
 
-  const channelName = `conversation.${props.conversation.id}`;
-  const channel = window.Echo.private(channelName);
+  if (echo) {
+    const channelName = `conversation.${props.conversation.id}`;
+    const channel = echo.private(channelName);
 
-  // 📨 Khi nhận được tin nhắn mới từ người khác
-  channel.listen('.message.sent', async (event: any)  => {
-    const message = event.message;
+    // Listen for event message.sent
+    channel.listen('.message.sent', async (event: any) => {
+      const message = event.message;
 
-    // Nếu là tin mình gửi thì bỏ qua (vì đã hiển thị local)
-    if (message.sender_id === authStore.user?.id) return;
+      // Nếu là tin mình gửi thì bỏ qua
+      if (message.sender_id === authStore.user?.id) return;
 
-    console.log("đã tới", message);
-    
-    chatStore.addMessage(message);
-    await conversationService.markMessagesAsDelivered(props.conversation!.id);
-    chatStore.addMessageToConversation(message.conversation_id, message);
+      console.log('message.sent: ', event);
 
-    // Cuộn xuống cuối cùng
-    nextTick(() => {
-      const container = document.querySelector('.chat-scroll-container') as HTMLDivElement;
-      scrollToBottom({ container });
+      chatStore.addMessage(message);
+      await conversationService.markMessagesAsDelivered(props.conversation!.id);
+      chatStore.addMessageToConversation(message.conversation_id, message);
+
+      nextTick(() => {
+        const container = document.querySelector('.chat-scroll-container') as HTMLDivElement;
+        scrollToBottom({ container });
+      });
     });
-  });
 
-  // deli
-  channel.listen('.message.delivered', (event: any) => {
-    setTimeout(() => {
-      console.log('A đã nhận', event);
-      chatStore.updateMessageStatus(event.conversation_id, MESSAGE_STATUS.DELIVERED);
-    }, 1000);
-  });
+    channel.listen('.message.delivered', (event: any) => {
+      setTimeout(() => {
+        console.log('message.delivered: ', event);
+        chatStore.updateMessageStatus(event.conversation_id, MESSAGE_STATUS.DELIVERED);
+      }, 1000);
+    });
 
-  // Khi có event "message.seen"
-  channel.listen('.message.seen', (event: any) => {
-    if(event.user_id === authStore.user?.id) return;
-    setTimeout(() => {
-      console.log("A đã xem", event);
-      chatStore.updateMessageStatus(event.conversation_id, MESSAGE_STATUS.SEEN);
-    }, 1000);
-  });
+    // Listen for event message.seen
+    channel.listen('.message.seen', (event: any) => {
+      if (event.user_id === authStore.user?.id) return;
 
-  // ⚠️ Khi có event "message.failed"
-  channel.listen('.message.failed', (event: any) => {
-    console.log('Gửi thất bại', event);
-    chatStore.updateMessageStatus(event.conversation_id, MESSAGE_STATUS.FAILED);
-  });
+      setTimeout(() => {
+        console.log('message.seen: ', event);
+        chatStore.updateMessageStatus(event.conversation_id, MESSAGE_STATUS.SEEN);
+      }, 1500);
+    });
+
+    // Listen for event message.failed
+    channel.listen('.message.failed', (event: any) => {
+      console.log('message.failed: ', event);
+      chatStore.updateMessageStatus(event.conversation_id, MESSAGE_STATUS.FAILED);
+    });
+  }
 });
 
 onUnmounted(() => {
@@ -161,7 +163,6 @@ onUnmounted(() => {
     window.Echo.leave(channelName);
   }
 });
-
 </script>
 
 <template>

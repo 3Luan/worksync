@@ -28,18 +28,11 @@ const initialLoading = ref(true);
 
 // Helpers format date/time
 const formatMessageTime = (date: string | Date) => format(new Date(date), 'HH:mm');
-// const formatMessageDate = (date: string | Date) => {
-//   const d = new Date(date);
-//   if (isToday(d)) return 'Hôm nay';
-//   if (isYesterday(d)) return 'Hôm qua';
-//   return format(d, 'dd/MM/yyyy');
-// };
-
-const formatMessageDate = (dateStr: string) => {
-  if (!dateStr) return '';
-  const date = new Date(dateStr);
-  if (isNaN(date.getTime())) return ''; // tránh lỗi
-  return format(date, 'HH:mm', { locale: vi });
+const formatMessageDate = (date: string | Date) => {
+  const d = new Date(date);
+  if (isToday(d)) return 'Hôm nay';
+  if (isYesterday(d)) return 'Hôm qua';
+  return format(d, 'dd/MM/yyyy');
 };
 
 // Fetch messages
@@ -92,11 +85,11 @@ const markMessagesAsSeen = async () => {
 watch(
   () => chatStore.messages.length,
   () => {
-    if((chatStore.activeConversation?.id === props.conversationId)){
+    if (chatStore.activeConversation?.id === props.conversationId) {
       markMessagesAsSeen();
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 // Watch conversation
@@ -116,7 +109,7 @@ watch(
 );
 
 onMounted(() => {
-  if (props.conversationId){
+  if (props.conversationId) {
     fetchMessages();
     markMessagesAsSeen();
   }
@@ -128,7 +121,6 @@ const groupedMessages = computed(() => {
   const result: Array<MessageGroupItem> = [];
 
   let lastDate = '';
-  let lastTimeShownAt: Date | null = null;
 
   for (let i = 0; i < msgs.length; i++) {
     const msg = msgs[i];
@@ -154,20 +146,16 @@ const groupedMessages = computed(() => {
     const isFirstInGroup = !sameAsPrev;
     const isLastInGroup = !sameAsNext;
 
+    // Hiển thị thời gian nếu cách tin nhắn TRƯỚC đó >= 10 phút
     let showTime = false;
-    const msgTime = new Date(msg.created_at);
-
-    if (!lastTimeShownAt) {
+    if (i === 0) {
+      // Tin đầu tiên luôn hiển thị thời gian
       showTime = true;
     } else {
-      const diffMinutes = (msgTime.getTime() - lastTimeShownAt.getTime()) / 1000 / 60;
-      if (diffMinutes >= 10) {
-        showTime = true;
-      }
-    }
-
-    if (showTime) {
-      lastTimeShownAt = msgTime;
+      const prevTime = new Date(msgs[i - 1].created_at).getTime();
+      const currTime = new Date(msg.created_at).getTime();
+      const diff = (currTime - prevTime) / 1000 / 60; // phút
+      if (diff >= 10) showTime = true;
     }
 
     result.push({ message: msg, showDate, showTime, isFirstInGroup, isLastInGroup });
@@ -175,8 +163,6 @@ const groupedMessages = computed(() => {
 
   return result;
 });
-
-
 </script>
 
 <template>
@@ -199,15 +185,12 @@ const groupedMessages = computed(() => {
       <!-- Messages -->
       <div v-for="item in groupedMessages" :key="item.message.id">
         <!-- Date separator -->
-        <!-- <div v-if="item.showDate" class="text-center text-gray-500 dark:text-gray-400 my-2 text-sm">
+        <div v-if="item.showDate" class="text-center text-gray-500 dark:text-gray-400 my-2 text-sm">
           {{ formatMessageDate(item.message.created_at) }}
-        </div> -->
+        </div>
 
         <!-- Time -->
-        <div
-          v-if="item.showTime"
-          class="text-xs text-gray-400 dark:text-gray-500 mt-1 text-center"
-        >
+        <div v-if="item.showTime" class="text-xs text-gray-400 dark:text-gray-500 mt-1 text-center">
           {{ formatMessageTime(item.message.created_at) }}
         </div>
 
