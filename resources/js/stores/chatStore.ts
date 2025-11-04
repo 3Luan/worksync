@@ -88,16 +88,16 @@ export const useChatStore = defineStore('chat', () => {
     messages.value = messages.value.map((message) => {
       if (message.conversation_id === conversation_id) {
         switch (message.status) {
-          case MESSAGE_STATUS.SENT:
-            if (status === MESSAGE_STATUS.DELIVERED) {
+          case MESSAGE_STATUS.DELIVERED:
+            if (status === MESSAGE_STATUS.SEEN) {
               return {
                 ...message,
                 status,
               };
             }
             break;
-          case MESSAGE_STATUS.DELIVERED:
-            if (status === MESSAGE_STATUS.SEEN) {
+          case MESSAGE_STATUS.SENT:
+            if (status === MESSAGE_STATUS.DELIVERED && message.status === MESSAGE_STATUS.SENT) {
               return {
                 ...message,
                 status,

@@ -11,12 +11,14 @@ import { vi } from 'date-fns/locale';
 import { MESSAGE_STATUS } from '@/constants';
 import { useAuthStore } from '@/stores/authStore';
 import { conversationService } from '@/services/conversation-service';
+import { getEcho } from '@/echo';
 
 // Props
 const props = defineProps<{ conversationId: number | null }>();
 
 // Store & composables
 const chatStore = useChatStore();
+const authStore = useAuthStore();
 const { scrollToBottom } = useChat();
 
 // Refs
@@ -110,8 +112,31 @@ watch(
 
 onMounted(() => {
   if (props.conversationId) {
-    fetchMessages();
-    markMessagesAsSeen();
+   
+    // markMessagesAsSeen();
+
+  //   const echo = getEcho();
+  //   if (echo) {
+  //     const channelName = `conversation.${props.conversationId}`;
+  //     const channel = echo.private(channelName);
+
+  //     // Listen for event message.delivered
+  //     channel.listen('.message.delivered', (event: any) => {
+  //       setTimeout(() => {
+  //         console.log('message.delivered: ', event);
+  //         chatStore.updateMessageStatus(event.conversation_id, MESSAGE_STATUS.DELIVERED);
+  //       }, 1000);
+  //     });
+
+  //     // Listen for event message.seen
+  //     channel.listen('.message.seen', (event: any) => {
+  //       if (event.user_id === authStore.user?.id) return;
+  //       setTimeout(() => {
+  //         console.log('message.seen: ', event);
+  //         chatStore.updateMessageStatus(event.conversation_id, MESSAGE_STATUS.SEEN);
+  //       }, 1500);
+  //     });
+  //   }
   }
 });
 

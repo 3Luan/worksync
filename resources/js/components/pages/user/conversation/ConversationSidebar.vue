@@ -3,9 +3,49 @@ import ConversationSearch from './ConversationSearch.vue';
 import ConversationList from './ConversationList.vue';
 import { useChatStore } from '@/stores/chatStore';
 import { useGlobalStore } from '@/stores/globalStore';
+import { onMounted, onUnmounted, watch } from 'vue';
+import { conversationService } from '@/services/conversation-service';
+import { MESSAGE_STATUS } from '@/constants';
+import { getEcho } from '@/echo';
+import { useAuthStore } from '@/stores/authStore';
+import { useRoute } from 'vue-router';
 
 const chatStore = useChatStore();
+const authStore = useAuthStore();
 const globalStore = useGlobalStore();
+const route = useRoute();
+
+const markMessagesAsDelivered = async (conversationId: number) => {
+  if (!conversationId) return;
+  await conversationService.markMessagesAsDelivered(conversationId);
+  chatStore.updateMessageStatus(conversationId, MESSAGE_STATUS.DELIVERED);
+  console.log('đã nhận: ', conversationId);
+};
+
+// all
+const markAllMessagesAsDelivered = async () => {
+  await conversationService.markAllMessagesAsDelivered();
+  chatStore.updateMessageDeliveryStatusAllConversations();
+  console.log('đã nhận all');
+};
+
+onMounted( async () => {
+  markAllMessagesAsDelivered();
+
+  const echo = getEcho();
+  if (echo) {
+    const userChannel = echo.private(`user.${authStore.user?.id}`);
+
+    // Listen for event message.sent for user
+    userChannel.listen('.message.sent', async (event: any) => {
+      if(route.path === '/messages') {
+        console.log('message.sent for user:', event);
+        chatStore.addMessageToConversation(event.message.conversation_id, event.message);
+        await markMessagesAsDelivered(event.message.conversation_id);
+      }
+    });
+  }
+});
 </script>
 
 <template>

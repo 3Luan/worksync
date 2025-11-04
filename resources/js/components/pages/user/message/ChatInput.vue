@@ -157,16 +157,15 @@ onMounted(() => {
   }
 });
 
-// onUnmounted(() => {
-//   if (props.conversation?.id) {
-//     if (echo) {
-//       console.log("leave");
-      
-//       const channelName = `conversation.${props.conversation.id}`;
-//       echo.leave(channelName);
-//     }
-//   }
-// });
+onUnmounted(() => {
+  if (props.conversation?.id) {
+    if (echo) {
+      const channelName = `conversation.${props.conversation.id}`;
+      console.log("Leave channel: ", channelName);
+      echo.leave(channelName);
+    }
+  }
+});
 </script>
 
 <template>

@@ -411,44 +411,47 @@ class ConversationRepository implements ConversationRepositoryInterface
    */
   public function markMessagesAsSeen(int $conversationId)
   {
-    try {
-      $userId = Auth::id();
+      try {
+          $userId = Auth::id();
 
-      // 🔹 Lấy danh sách ID tin nhắn chưa đọc
-      $messageIds = Message::where('conversation_id', $conversationId)
-        ->where('sender_id', '!=', $userId)
-        ->whereNotIn('id', function ($query) use ($userId) {
-          $query->select('message_id')
-            ->from('message_reads')
-            ->where('user_id', $userId);
-        })
-        ->pluck('id')
-        ->toArray();
+          // 🔹 Lấy danh sách tin nhắn chưa đọc
+          $messageIds = Message::where('conversation_id', $conversationId)
+              ->where('sender_id', '!=', $userId)
+              ->pluck('id')
+              ->toArray();
 
-      if (empty($messageIds)) {
-        return true; // Không có tin nào để cập nhật
+          if (empty($messageIds)) {
+              return true;
+          }
+
+          // 🔹 Tạo danh sách dữ liệu insert
+          $data = [];
+          $now = now();
+
+          foreach ($messageIds as $id) {
+              $data[] = [
+                  'message_id' => $id,
+                  'user_id'    => $userId,
+                  'read_at'    => $now,
+              ];
+          }
+
+          // 🔹 Ghi vào bảng message_reads, bỏ qua trùng lặp
+          MessageRead::insertOrIgnore($data);
+
+          // 🔹 Cập nhật trạng thái trong bảng messages
+          Message::whereIn('id', $messageIds)
+              ->where('status', '<', Message::STATUS_SEEN)
+              ->update(['status' => Message::STATUS_SEEN]);
+
+          // 🔹 Gửi event real-time (tùy chọn)
+          // broadcast(new \App\Events\MessageSeen($conversationId, $messageIds))->toOthers();
+
+          return true;
+      } catch (\Throwable $e) {
+          Log::error('Failed to mark messages as seen: ' . $e->getMessage());
+          return false;
       }
-
-      // 🔹 Ghi vào bảng message_reads
-      $data = array_map(function ($id) use ($userId) {
-        return [
-          'message_id' => $id,
-          'user_id' => $userId,
-          'read_at' => now(),
-        ];
-      }, $messageIds);
-
-      // \DB::table('message_reads')->insert($data);
-      MessageRead::insert($data);
-
-      // 🔹 Cập nhật trạng thái message (tuỳ bạn có giữ status không)
-      Message::whereIn('id', $messageIds)
-        ->update(['status' => Message::STATUS_SEEN]);
-
-      return true;
-    } catch (Exception $e) {
-      Log::error('Failed to mark messages as seen: ' . $e->getMessage());
-      return false;
-    }
   }
+
 }

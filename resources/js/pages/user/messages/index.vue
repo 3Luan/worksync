@@ -7,17 +7,15 @@ import { userService } from '@/services/user-service';
 import ConversationSidebar from '@/components/pages/user/conversation/ConversationSidebar.vue';
 import ChatWindow from '@/components/pages/user/message/ChatWindow.vue';
 import InfoPanel from '@/components/pages/user/message/InfoPanel.vue';
-import { CONVERSATION_TYPE, MESSAGE_STATUS } from '@/constants';
+import { CONVERSATION_TYPE } from '@/constants';
 import { useAuthStore } from '@/stores/authStore';
 import ChatEmpty from '@/components/pages/user/message/ChatEmpty.vue';
 import { useGlobalStore } from '@/stores/globalStore';
 import { useChatStore } from '@/stores/chatStore';
-import { getEcho } from '@/echo';
 
 const route = useRoute();
 const globalStore = useGlobalStore();
 const chatStore = useChatStore();
-const echo = getEcho();
 
 // Get conversations
 const fetchConversations = async () => {
@@ -79,20 +77,6 @@ const handleRouteChange = async (newId: string | string[] | undefined) => {
   }
 };
 
-const markMessagesAsDelivered = async (conversationId: number) => {
-  if (!conversationId) return;
-  await conversationService.markMessagesAsDelivered(conversationId);
-  chatStore.updateMessageStatus(conversationId, MESSAGE_STATUS.DELIVERED);
-  console.log('đã nhận: ', conversationId);
-};
-
-// all
-const markAllMessagesAsDelivered = async () => {
-  await conversationService.markAllMessagesAsDelivered();
-  chatStore.updateMessageDeliveryStatusAllConversations();
-  console.log('đã nhận all');
-};
-
 watch(
   () => route.params.id,
   async (newId) => {
@@ -102,20 +86,6 @@ watch(
 
 onMounted(async () => {
   await fetchConversations();
-  await markAllMessagesAsDelivered();
-  const authStore = useAuthStore();
-
-  if(echo){
-    const userChannel = echo.private(`user.${authStore.user?.id}`);
-
-    // Lắng nghe khi có tin nhắn mới ở bất kỳ conversation nào
-    userChannel.listen('.message.sent', async (event: any) => {
-      console.log('Có tin nhắn mới gửi tới bạn:', event);
-      chatStore.addMessageToConversation(event.message.conversation_id, event.message);
-      await markMessagesAsDelivered(event.message.conversation_id);
-    });
-  }
-  
 
   if (window.innerWidth >= 768) {
     chatStore.isChatOpen = true;
