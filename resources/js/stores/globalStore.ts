@@ -1,17 +1,9 @@
 import { defineStore } from 'pinia';
-import type { CalendarUserFilter } from '@/types/store';
 
-export const useCalendarFilterStore = defineStore('calendarFilter', {
-  state: () => ({
-    user: null as CalendarUserFilter | null,
-  }),
+export const useGlobalStore = defineStore('global', () => {
+  const isMobileView = window.innerWidth <= 768;
 
-  actions: {
-    setUser(user: CalendarUserFilter) {
-      this.user = user;
-    },
-    clearUser() {
-      this.user = null;
-    },
-  },
+  return {
+    isMobileView,
+  };
 });

@@ -15,7 +15,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar/index';
 import SidebarHeader from '@/components/ui/sidebar/SidebarHeader.vue';
-import { LOGO_GREEN, LOGO_STIKY } from '@/settings/image';
+// import { LOGO_GREEN, LOGO_STIKY } from '@/settings/image';
 import type { NavItem } from '@/types/component';
 import { ChevronRight } from 'lucide-vue-next';
 import { useRouter, useRoute } from 'vue-router';
@@ -24,6 +24,7 @@ import { nextTick, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Tooltip from '../tooltip/Tooltip.vue';
 import { useSidebarTooltip } from '@/composables/useSidebarTooltip';
+import { LOGO_WORKSYNC } from '@/constants/imageConst';
 
 const { tooltipShown, createLabelRef, measureAll } = useSidebarTooltip();
 
@@ -80,12 +81,42 @@ watch(open, async (val) => {
 </script>
 
 <template>
-  <Sidebar v-bind="props" data-sidebar-root>
+  <Sidebar v-bind="props" data-sidebar-root class="border-r transition-colors duration-300 border-b border-gray-300 dark:border-gray-600">
     <SidebarHeader>
       <Collapsible>
-        <div :class="[' w-full flex flex-row justify-center items-center py-3', { 'h-28': open }]">
-          <img :src="LOGO_GREEN" class="h-[100%] max-h-20 cursor-pointer" v-if="open" @click="() => router.push(APP_URL.ADMIN.DASHBOARD)" />
-          <img :src="LOGO_STIKY" class="min-w-[30px] w-[20%] cursor-pointer" v-else @click="() => router.push(APP_URL.ADMIN.DASHBOARD)" />
+        <div :class="[' w-full flex flex-row justify-center items-center py-1 ', { 'h-28': open }]">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="text-indigo-400 dark:text-indigo-500 drop-shadow-md h-[100%] max-h-20 cursor-pointer"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.3"
+            v-if="open"
+            @click="() => router.push(APP_URL.ADMIN.DASHBOARD)"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.73 9.73 0 01-4.28-.95L3 20l1.19-3.58A7.49 7.49 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+            />
+          </svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="text-indigo-400 dark:text-indigo-500 drop-shadow-md min-w-[30px] w-[20%] cursor-pointer"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.3"
+            v-else
+            @click="() => router.push(APP_URL.ADMIN.DASHBOARD)"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.73 9.73 0 01-4.28-.95L3 20l1.19-3.58A7.49 7.49 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+            />
+          </svg>
         </div>
       </Collapsible>
     </SidebarHeader>
@@ -158,6 +189,6 @@ watch(open, async (val) => {
         </SidebarMenu>
       </SidebarGroup>
     </SidebarContent>
-    <SidebarRail />
+    <!-- <SidebarRail /> -->
   </Sidebar>
 </template>

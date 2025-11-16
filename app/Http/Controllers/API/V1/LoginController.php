@@ -31,7 +31,7 @@ class LoginController extends ApiController
    * @param  \Illuminate\Http\Request  $request
    * @return \Illuminate\Http\JsonResponse
    */
-  public function logins(Request $request)
+  public function login(Request $request)
   {
     try {
       $credentials = $request->only('email', 'password');

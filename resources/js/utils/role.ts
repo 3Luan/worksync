@@ -91,13 +91,8 @@ export const isUserPath = (fullPath: string) => {
 export const rootRedirect = () => {
   const user = getUser();
   if (user) {
-    if (isAdminRole(user.role)) {
-      return ENTRY_URL.ADMIN;
-    } else if (isAccountantRole(user.role)) {
-      return ENTRY_URL.DASHBOARD;
-    } else {
-      return ENTRY_URL.USER;
-    }
+    if (isAdminRole(user.role)) return ENTRY_URL.ADMIN;
+    return ENTRY_URL.USER;
   }
   return ENTRY_URL.AUTH;
 };

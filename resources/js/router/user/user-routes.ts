@@ -3,7 +3,7 @@ import { APP_ROUTE_NAME } from '@/constants/url';
 
 const userRoute = [
   {
-    path: '/',
+    path: '/home',
     name: 'home',
     component: () => import('@/layouts/UserLayout.vue'),
     meta: {
@@ -12,21 +12,13 @@ const userRoute = [
     },
     children: [
       {
-        path: '/dashboard',
-        name: APP_ROUTE_NAME.USER.DASHBOARD,
-        component: () => import('@/pages/user/dashboard/index.vue'),
-        meta: {
-          title: 'common.dashboard',
-        },
-      },
-      {
-        path: '/users',
+        path: '/home',
         name: APP_ROUTE_NAME.USER.INDEX,
-        component: () => import('@/pages/admin/users/index.vue'),
+        component: () => import('@/pages/user/home/index.vue'),
         meta: {
-          title: 'user.employeeList',
-          breadcrumb: 'user.employeeList',
-          requiredRoles: [ROLE.ACCOUNTANT],
+          title: 'user.home',
+          breadcrumb: 'user.home',
+          // requiredRoles: [ROLE.ACCOUNTANT],
         },
       },
       {
@@ -36,6 +28,32 @@ const userRoute = [
         meta: {
           title: 'auth.changePassword',
         },
+      },
+      {
+        path: '/profile',
+        name: APP_ROUTE_NAME.USER.PROFILE,
+        component: () => import('@/pages/user/profile/index.vue'),
+        meta: {
+          title: 'user.profile',
+          breadcrumb: 'user.profile',
+        },
+      },
+      {
+        path: '/messages',
+        name: APP_ROUTE_NAME.USER.MESSAGES,
+        component: () => import('@/pages/user/messages/index.vue'),
+        meta: {
+          title: 'user.messages',
+          breadcrumb: 'user.messages',
+        },
+        children: [
+          {
+            path: ':id',
+            name: APP_ROUTE_NAME.USER.MESSAGE_DETAIL,
+            component: () => import('@/pages/user/messages/index.vue'),
+            props: true,
+          },
+        ],
       },
     ],
   },

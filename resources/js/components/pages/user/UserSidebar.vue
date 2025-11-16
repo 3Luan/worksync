@@ -4,18 +4,9 @@ import { useRoute } from 'vue-router';
 import {
   LayoutDashboard,
   Clock,
-  CalendarDays,
   SendHorizontal,
   ChevronRight,
-  Scaling,
-  CheckSquare,
-  Calendar,
-  CalendarHeart,
-  ListX,
   Contact,
-  CalendarPlus2,
-  ListStart,
-  Laptop,
 } from 'lucide-vue-next';
 import { ROLE, ROLE_STAFF } from '@/constants/index';
 import { APP_ROUTE_NAME } from '@/constants/url';

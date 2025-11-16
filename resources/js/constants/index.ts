@@ -17,8 +17,13 @@ export const PAGINATION_INFO_DEFAULT = {
 
 // ===== User Status =====
 export const USER_STATUS = Object.freeze({
-  ACTIVE: 1,
   INACTIVE: 0,
+  ACTIVE: 1,
+});
+
+export const USER_PRESENCE = Object.freeze({
+  OFFLINE: 0,
+  ONLINE: 1,
 });
 
 export const USER_STATUS_MAP = {
@@ -103,12 +108,10 @@ export const ROLE = Object.freeze({
   ADMIN: 0,
   STAFF: 1,
   LEADER: 2,
-  ACCOUNTANT: 3
+  ACCOUNTANT: 3,
 });
 
-export const ROLE_STAFF = [
-  ROLE.LEADER, ROLE.STAFF, ROLE.ACCOUNTANT
-];
+export const ROLE_STAFF = [ROLE.LEADER, ROLE.STAFF, ROLE.ACCOUNTANT];
 
 export const USER_ROLE_MAP = {
   [ROLE.ADMIN]: 'common.admin',
@@ -122,6 +125,85 @@ export const ROLE_OPTIONS = new Set([
   { label: 'common.leader', value: ROLE.LEADER },
   { label: 'common.admin', value: ROLE.ADMIN },
   { label: 'common.accountant', value: ROLE.ACCOUNTANT },
+]);
+
+// ===== Conversation Types =====
+export const CONVERSATION_TYPE = Object.freeze({
+  DIRECT: 0,
+  GROUP: 1,
+  CHANNEL: 2,
+});
+
+export const CONVERSATION_TYPE_MAP = {
+  [CONVERSATION_TYPE.DIRECT]: 'common.direct',
+  [CONVERSATION_TYPE.GROUP]: 'common.group',
+  [CONVERSATION_TYPE.CHANNEL]: 'common.channel',
+};
+
+export const CONVERSATION_TYPE_OPTIONS = new Set([
+  { label: 'common.direct', value: CONVERSATION_TYPE.DIRECT },
+  { label: 'common.group', value: CONVERSATION_TYPE.GROUP },
+  { label: 'common.channel', value: CONVERSATION_TYPE.CHANNEL },
+]);
+
+// ===== Conversation Member Roles =====
+export const CONVERSATION_MEMBER_ROLE = Object.freeze({
+  ADMIN: 'admin',
+  MEMBER: 'member',
+});
+
+export const CONVERSATION_MEMBER_ROLE_MAP = {
+  [CONVERSATION_MEMBER_ROLE.ADMIN]: 'common.admin',
+  [CONVERSATION_MEMBER_ROLE.MEMBER]: 'common.member',
+};
+
+export const CONVERSATION_MEMBER_ROLE_OPTIONS = new Set([
+  { label: 'common.admin', value: CONVERSATION_MEMBER_ROLE.ADMIN },
+  { label: 'common.member', value: CONVERSATION_MEMBER_ROLE.MEMBER },
+]);
+
+// ===== Message Log =====
+export const MESSAGE_LOG_ACTION = Object.freeze({
+  CREATE: 'create',
+  EDIT: 'edit',
+  DELETE: 'delete',
+  RESTORE: 'restore',
+  REACT: 'react',
+});
+
+export const MESSAGE_LOG_ACTION_MAP = {
+  [MESSAGE_LOG_ACTION.CREATE]: 'messageLog.createdMessage',
+  [MESSAGE_LOG_ACTION.EDIT]: 'messageLog.editedMessage',
+  [MESSAGE_LOG_ACTION.DELETE]: 'messageLog.deletedMessage',
+  [MESSAGE_LOG_ACTION.RESTORE]: 'messageLog.restoredMessage',
+  [MESSAGE_LOG_ACTION.REACT]: 'messageLog.reactedMessage',
+};
+
+export const MESSAGE_LOG_ACTION_OPTIONS = new Set([
+  { label: 'messageLog.createdMessage', value: MESSAGE_LOG_ACTION.CREATE },
+  { label: 'messageLog.editedMessage', value: MESSAGE_LOG_ACTION.EDIT },
+  { label: 'messageLog.deletedMessage', value: MESSAGE_LOG_ACTION.DELETE },
+  { label: 'messageLog.restoredMessage', value: MESSAGE_LOG_ACTION.RESTORE },
+  { label: 'messageLog.reactedMessage', value: MESSAGE_LOG_ACTION.REACT },
+]);
+
+// ===== Device Types =====
+export const DEVICE_TYPE = Object.freeze({
+  WEB: 'web',
+  ANDROID: 'android',
+  IOS: 'ios',
+});
+
+export const DEVICE_TYPE_MAP = {
+  [DEVICE_TYPE.WEB]: 'common.web',
+  [DEVICE_TYPE.ANDROID]: 'common.android',
+  [DEVICE_TYPE.IOS]: 'common.ios',
+};
+
+export const DEVICE_TYPE_OPTIONS = new Set([
+  { label: 'common.web', value: DEVICE_TYPE.WEB },
+  { label: 'common.android', value: DEVICE_TYPE.ANDROID },
+  { label: 'common.ios', value: DEVICE_TYPE.IOS },
 ]);
 
 // ===== LocalStorage Keys =====
@@ -198,7 +280,7 @@ export const ICON_TOOLTIP_MAP = {
     icon: h(CircleHelp, { class: 'text-red-500 w-5 h-5' }),
     titleTooltip: 'common.noLocationInfo',
   },
-   [LocationIconType.RemoteWork]: {
+  [LocationIconType.RemoteWork]: {
     icon: h(Home, { class: 'text-blue-500 w-5 h-5' }),
     titleTooltip: 'common.remoteWork',
   },
@@ -347,7 +429,6 @@ export const STATUS_EDIT_REMOTE_WORK_DETAIL = STATUS_EDIT_REQUEST_DETAIL;
 export const TAB_CALENDAR_REMOTE_WORK = TAB_CALENDAR_REQUEST;
 export const TAB_CALENDAR_SPECIAL_REMOTE_WORK = TAB_CALENDAR_REQUEST;
 
-
 export const SPECIAL_WORK_DAY_TYPE_OPTIONS = DAY_TYPE_OPTIONS;
 export const CONFIRM_DIALOG_SPECIAL_WORK = CONFIRM_DIALOG_REQUEST('SpecialWork');
 export const STATUS_EDIT_SPECIAL_WORK_DETAIL = STATUS_EDIT_REQUEST_DETAIL;
@@ -358,7 +439,7 @@ export const LOCATION_RETRY_DELAY = 10000; // 10 second
 export const MAX_LOCATION_RETRY = 3;
 export const LOCATION_MAX_AGE = 0; // Always fetch fresh location, no cache
 
-export const STATUS_EDIT_COMPENSATION_WORK_REQUEST_DETAIL = STATUS_EDIT_REQUEST_DETAIL
+export const STATUS_EDIT_COMPENSATION_WORK_REQUEST_DETAIL = STATUS_EDIT_REQUEST_DETAIL;
 
 export const DATE_FORMATS = {
   DATE: 'dd-MM-yyyy', // 29-11-2025
@@ -416,4 +497,3 @@ export const REQUEST_TYPE = {
   SPECIAL_WORK: 'SPECIAL_WORK',
   REMOTE_WORK: 'REMOTE_WORK',
 } as const;
-

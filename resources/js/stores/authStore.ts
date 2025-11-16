@@ -18,7 +18,6 @@ export const useAuthStore = defineStore('auth', () => {
   const error = ref('');
 
   const isAuthenticated = computed(() => !!token.value);
-  const fullName = computed(() => (user.value ? `${user.value.last_name} ${user.value.first_name}` : ''));
   const isAdmin = computed(() => isAdminRole(user.value?.role));
   const isAccountant = computed(() => isAccountantRole(user.value?.role));
   const isStaff = computed(() => isStaffRole(user.value?.role));
@@ -94,7 +93,6 @@ export const useAuthStore = defineStore('auth', () => {
     isLoading,
     error,
     isAuthenticated,
-    fullName,
     isAdmin,
     isAccountant,
     isStaff,

@@ -2,107 +2,87 @@
 
 namespace App\Repositories\User;
 
+use App\Models\Token;
 use App\Models\User;
 use Illuminate\Http\Request;
 
 interface UserRepositoryInterface
 {
-    /**
-     * Retrieve a list of Users based on the specified filters.
-     * @param Request $request
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function getUsers(Request $request);
+  /**
+   * Retrieve a list of Users based on the specified filters.
+   * @param Request $request
+   * @return mixed
+   */
+  public function getList(Request $request);
 
-    /**
-     * Update the specified User with validated data.
-     * @param User $user
-     * @param array $validatedData
-     */
-    public function updateUser(User $user, array $validatedData);
+  /**
+   * Find a User by their ID.
+   * @param User $user
+   * @return User|null
+   */
+  public function findById(User $user);
 
-    /**
-     * Soft delete the specified User.
-     * @param User $user
-     */
-    public function deleteUser(User $user);
+  /**
+   * Create a new User with validated data.
+   * @param array $validatedData
+   * @return User
+   */
+  public function create(array $validatedData);
 
-    /**
-     * Force delete the specified User.
-     * @param User $user
-     */
-    public function forceDeleteUser(User $user);
+  /**
+   * Update the specified User with validated data.
+   * @param User $user
+   * @param array $validatedData
+   * @return User
+   */
+  public function update(User $user, array $validatedData);
 
-    /**
-     * Restore a soft-deleted User.
-     * @param User $user
-     */
-    public function restoreUser(User $user);
+  /**
+   * Soft delete the specified User.
+   * @param User $user
+   */
+  public function delete(User $user);
 
-    /**
-     * Create new User with validated data.
-     * @param array $validatedData
-     */
-    public function createUser(array $validatedData);
+  /**
+   * Restore a soft-deleted User.
+   * @param User $user
+   * @return bool
+   */
+  public function restore(User $user);
 
-    /**
-     * Retrieve the current time card to check user status.
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function getCurrentTimeCard();
+  /**
+   * Get a list of active staff users.
+   * @return mixed
+   */
+  public function getActive(array $filters = []);
 
-    /**
-     * Get a single user by ID.
-     * @param User $user
-     * @return User
-     */
-    public function getUser(User $user);
+  /**
+   * Update user's password.
+   * @param User $user
+   * @param string $newPassword
+   * @return bool
+   */
+  public function updatePassword(User $user, string $newPassword);
 
-    /**
-     * Get a list of active staff users.
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function getActiveStaffUsers(Array $filters = []);
+  /**
+   * Send reset password link to user's email.
+   * @param Request $request
+   * @return bool
+   */
+  public function sendResetPasswordLink(Request $request);
 
-    /**
-     * Update user password.
-     * @param User $user
-     * @param string $newPassword
-     * @return bool
-     */
-    public function updatePassword(User $user, string $newPassword);
+  /**
+   * Validate reset password token.
+   * @param string $key
+   * @param string $type
+   * @return Token|null
+   */
+  public function validateToken(string $key, string $type);
 
-    /**
-     * Send reset password email
-     * @param Request $request
-     * @return array
-     */
-    public function sendResetPasswordEmail(Request $request);
-
-    /**
-     * Check valid token.
-     * @param string $key
-     * @return Token|null
-     */
-    public function checkValidToken(string $key, string $type);
-
-    /**
-     * Reset password.
-     * @param Request $request
-     * @return bool
-     */
-    public function resetPassword(Request $request);
-
-    /**
-     * Get list checkin by date.
-     * @param Request $request
-     * @return $data
-     */
-    public function getCheckinsByDate(Request $request);
-
-    /**
-     * Summary of locationAccessDenied
-     * @return void
-     */
-    public function locationAccessDenied();
+  /**
+   * Reset user's password using a valid token.
+   * @param Request $request
+   * @return bool
+   */
+  public function resetPassword(Request $request);
 }
