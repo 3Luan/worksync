@@ -66,6 +66,8 @@ const handleRouteChange = async (newId: string | string[] | undefined) => {
         // last_message: null,
         is_archived: false,
         members: members,
+        unread_count: 0,
+        last_unread_message: null,
       };
 
       chatStore.conversations.unshift(fakeConversation);

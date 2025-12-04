@@ -1,0 +1,20 @@
+FROM php:8.2-fpm AS builder
+
+# Cài đặt các extension cần thiết
+RUN apt-get update && apt-get install -y \
+    zip unzip git libzip-dev libpng-dev libjpeg-dev libfreetype6-dev \
+    && docker-php-ext-install pdo_mysql zip bcmath gd
+
+# Cài composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
+
+# Copy toàn bộ project vào Docker trước khi chạy composer
+COPY . /var/www/html
+
+# Chạy composer install
+RUN composer install --no-dev --prefer-dist --no-interaction --no-progress \
+    && php artisan config:cache \
+    && php artisan route:cache \
+    && php artisan view:cache

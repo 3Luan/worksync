@@ -43,7 +43,7 @@ const sendMessage = async () => {
 
   if (!conversationId) return;
 
-  // Tạo message tạm (trạng thái "đang gửi")
+  // Create temporary message
   const tempId = Date.now(); // number
   const tempMessage: Message = {
     id: tempId,
@@ -67,12 +67,12 @@ const sendMessage = async () => {
 
   chatStore.addMessage(tempMessage);
 
-  // Cuộn xuống dưới cùng
+  // Scroll to bottom
   await nextTick();
   const container = document.querySelector('.chat-scroll-container') as HTMLDivElement;
   scrollToBottom({ container });
 
-  // Gửi message thật qua API
+  // Send real message via API
   try {
     const payload: CreateMessagePayload = {
       conversation_id: conversationId,
@@ -88,14 +88,14 @@ const sendMessage = async () => {
       status: MESSAGE_STATUS.SENT,
     };
 
-    // Nếu thành công → thay thế message tạm bằng message thật
+    // Replace temporary message with the real one
     setTimeout(() => {
       chatStore.replaceMessage(tempId, newMessage);
     }, 500);
   } catch (error) {
     console.log(error);
 
-    // Nếu lỗi → chuyển sang "LỖI"
+    // If error occurs, change status to "FAILED"
     chatStore.replaceMessage(tempId, {
       ...tempMessage,
       status: MESSAGE_STATUS.FAILED,
@@ -117,7 +117,7 @@ onMounted(() => {
     channel.listen('.message.sent', async (event: any) => {
       const message = event.message;
 
-      // Nếu là tin mình gửi thì bỏ qua
+      // Ignore if the message is sent by the auth user
       if (message.sender_id === authStore.user?.id) return;
 
       console.log('message.sent: ', event);
@@ -132,6 +132,7 @@ onMounted(() => {
       });
     });
 
+    // Listen for event message.delivered
     channel.listen('.message.delivered', (event: any) => {
       setTimeout(() => {
         console.log('message.delivered: ', event);
@@ -142,10 +143,12 @@ onMounted(() => {
     // Listen for event message.seen
     channel.listen('.message.seen', (event: any) => {
       if (event.user_id === authStore.user?.id) return;
+      if(event.conversation_id !== props.conversation?.id) return;
 
       setTimeout(() => {
         console.log('message.seen: ', event);
         chatStore.updateMessageStatus(event.conversation_id, MESSAGE_STATUS.SEEN);
+        chatStore.updateConversationUnread(event.conversation_id);
       }, 1500);
     });
 
