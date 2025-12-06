@@ -53,8 +53,9 @@ export const useChatStore = defineStore('chat', () => {
 
   // Add a new message
   const addMessage = async (message: Message) => {
-    messages.value.push(message);
     if (activeConversation.value && activeConversation.value.id === message.conversation_id) {
+      messages.value.push(message);
+
       const updatedConversation: Conversation = {
         ...activeConversation.value,
         last_message: message,
@@ -65,13 +66,34 @@ export const useChatStore = defineStore('chat', () => {
     }
   };
 
-  // delivered
-  // const markMessageAsDelivered = (messageId: number) => {
-  //   const index = messages.value.findIndex((m) => m.id === messageId);
+  // const addMessage = async (message: Message) => {
+  // // Chỉ thêm tin nhắn nếu nó thuộc cuộc hội thoại đang mở
+  // if (activeConversation.value && message.conversation_id === activeConversation.value.id) {
+  //   messages.value.push(message);
+  // }
+
+  // // Luôn cập nhật last_message cho conversation tương ứng
+  // const index = conversations.value.findIndex((c) => c.id === message.conversation_id);
   //   if (index !== -1) {
-  //     messages.value[index].status = MESSAGE_STATUS.DELIVERED;
+  //     conversations.value[index] = {
+  //       ...conversations.value[index],
+  //       last_message: message,
+  //     };
+  //     conversations.value = [...conversations.value];
+  //   }
+
+  //   // Nếu conversation đang mở chính là conversation nhận message
+  //   if (activeConversation.value?.id === message.conversation_id) {
+  //     if (activeConversation.value) {
+  //       const updated: Conversation = {
+  //         ...activeConversation.value,
+  //         last_message: message,
+  //       };
+  //       activeConversation.value = updated;
+  //     }
   //   }
   // };
+
 
   // Replace a temporary message with the real one
   const replaceMessage = async (tempId: number, newMessage: Message) => {
@@ -83,6 +105,7 @@ export const useChatStore = defineStore('chat', () => {
     }
   };
 
+  // Update message status in a conversation
   const updateMessageStatus = (conversation_id: number, status: MessageStatus) => {
     // update full list messages of conversation to status
     messages.value = messages.value.map((message) => {
@@ -115,6 +138,7 @@ export const useChatStore = defineStore('chat', () => {
     });
   };
 
+  // Update all messages with SENT status to DELIVERED
   const updateMessageDeliveryStatusAllConversations = () => {
     // update full list messages of all conversations to status
     messages.value = messages.value.map((m) => {
@@ -128,22 +152,27 @@ export const useChatStore = defineStore('chat', () => {
     });
   };
 
-  // const addMessageToConversation = (conversationId: number, message: Message) => {
-  //   console.log('Cập nhật tin nhắn cuối cùng trong cuộc hội thoại:', message);
-  //   const conversation = conversations.value.find((c) => c.id === conversationId);
-  //   if (conversation) {
-
-  //     conversation.last_message = message;
-  //     updateConversation(conversation);
-  //   }
-  // };
-
+  // Add message to conversation's last_message and increment unread_count
   const addMessageToConversation = (conversationId: number, message: Message) => {
     const index = conversations.value.findIndex((c) => c.id === conversationId);
     if (index !== -1) {
       conversations.value[index] = {
         ...conversations.value[index],
         last_message: message,
+        unread_count: conversations.value[index].unread_count + 1,
+      };
+      conversations.value = [...conversations.value];
+    }
+  };
+
+  // Update the unread count 0 anhd last_unread_message of a conversation
+  const updateConversationUnread = (conversationId: number) => {
+    const index = conversations.value.findIndex((c) => c.id === conversationId);
+    if (index !== -1) {
+      conversations.value[index] = {
+        ...conversations.value[index],
+        unread_count: 0,
+        last_unread_message: null,
       };
       conversations.value = [...conversations.value];
     }
@@ -165,5 +194,6 @@ export const useChatStore = defineStore('chat', () => {
     updateMessageStatus,
     addMessageToConversation,
     updateMessageDeliveryStatusAllConversations,
+    updateConversationUnread,
   };
 });

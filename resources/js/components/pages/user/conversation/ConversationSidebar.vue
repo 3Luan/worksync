@@ -9,11 +9,16 @@ import { MESSAGE_STATUS } from '@/constants';
 import { getEcho } from '@/echo';
 import { useAuthStore } from '@/stores/authStore';
 import { useRoute } from 'vue-router';
+import { useChannelStore } from '@/stores/channelStore';
 
 const chatStore = useChatStore();
 const authStore = useAuthStore();
 const globalStore = useGlobalStore();
+const channelStore = useChannelStore();
+
 const route = useRoute();
+const echo = getEcho();
+let userChannel: any = null;
 
 const markMessagesAsDelivered = async (conversationId: number) => {
   if (!conversationId) return;
@@ -32,9 +37,8 @@ const markAllMessagesAsDelivered = async () => {
 onMounted( async () => {
   markAllMessagesAsDelivered();
 
-  const echo = getEcho();
   if (echo) {
-    const userChannel = echo.private(`user.${authStore.user?.id}`);
+    userChannel = channelStore.userChannel;
 
     // Listen for event message.sent for user
     userChannel.listen('.message.sent', async (event: any) => {
@@ -44,6 +48,14 @@ onMounted( async () => {
         await markMessagesAsDelivered(event.message.conversation_id);
       }
     });
+  }
+});
+
+onUnmounted(() => {
+  if (userChannel && echo) {
+    const channelName = `user.${authStore.user?.id}`;
+    console.log("Leave channel: ", channelName);
+    echo.leave(channelName);
   }
 });
 </script>

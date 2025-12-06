@@ -30,15 +30,4 @@ return [
       'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
     ],
   ],
-
-  'calendarific' => [
-    'api_key' => env('CALENDARIFIC_API_KEY'),
-    'country' => env('CALENDARIFIC_COUNTRY', 'VN'),
-    'url' => env('CALENDARIFIC_URL', 'https://calendarific.com/api/v2/holidays'),
-  ],
-
-  'reminder_time' => [
-    'hour' => env('REMINDER_TIME_SEND_EMAIL', '17:00'),
-  ],
-
 ];

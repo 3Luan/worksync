@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, nextTick, onMounted, computed } from 'vue';
+import { ref, watch, nextTick, onMounted, computed, onUnmounted } from 'vue';
 import { messageService } from '@/services/message-service';
 import { useChatStore } from '@/stores/chatStore';
 import { useChat } from '@/composables/useChat';
@@ -7,11 +7,12 @@ import { format, isToday, isYesterday } from 'date-fns';
 import MessageItem from './MessageItem.vue';
 import { MessageGroupItem } from '@/types/model';
 import MessageSkeleton from './MessageSkeleton.vue';
-import { vi } from 'date-fns/locale';
-import { MESSAGE_STATUS } from '@/constants';
-import { useAuthStore } from '@/stores/authStore';
 import { conversationService } from '@/services/conversation-service';
 import { getEcho } from '@/echo';
+import { useAuthStore } from '@/stores/authStore';
+import { useRoute } from 'vue-router';
+import { MESSAGE_STATUS } from '@/constants';
+import { useChannelStore } from '@/stores/channelStore';
 
 // Props
 const props = defineProps<{ conversationId: number | null }>();
@@ -19,6 +20,9 @@ const props = defineProps<{ conversationId: number | null }>();
 // Store & composables
 const chatStore = useChatStore();
 const authStore = useAuthStore();
+const route = useRoute();
+const channelStore = useChannelStore();
+
 const { scrollToBottom } = useChat();
 
 // Refs
@@ -27,6 +31,12 @@ const loadingOlder = ref(false);
 const hasMore = ref(true);
 const page = ref(1);
 const initialLoading = ref(true);
+
+const echo = getEcho();
+let userChannel: any = null;
+
+// Computed
+const messageIds = computed(() => chatStore.messages.map(message => message.id));
 
 // Helpers format date/time
 const formatMessageTime = (date: string | Date) => format(new Date(date), 'HH:mm');
@@ -79,67 +89,6 @@ const handleScroll = async (e: Event) => {
   }
 };
 
-const markMessagesAsSeen = async () => {
-  if (!props.conversationId) return;
-  await conversationService.markMessagesAsSeen(props.conversationId);
-};
-
-watch(
-  () => chatStore.messages.length,
-  () => {
-    if (chatStore.activeConversation?.id === props.conversationId) {
-      markMessagesAsSeen();
-    }
-  },
-  { immediate: true },
-);
-
-// Watch conversation
-watch(
-  () => props.conversationId,
-  async (newId) => {
-    if (newId) {
-      page.value = 1;
-      hasMore.value = true;
-      chatStore.setMessages([]);
-      await fetchMessages();
-    } else {
-      chatStore.setMessages([]);
-    }
-  },
-  { immediate: true },
-);
-
-onMounted(() => {
-  if (props.conversationId) {
-   
-    // markMessagesAsSeen();
-
-  //   const echo = getEcho();
-  //   if (echo) {
-  //     const channelName = `conversation.${props.conversationId}`;
-  //     const channel = echo.private(channelName);
-
-  //     // Listen for event message.delivered
-  //     channel.listen('.message.delivered', (event: any) => {
-  //       setTimeout(() => {
-  //         console.log('message.delivered: ', event);
-  //         chatStore.updateMessageStatus(event.conversation_id, MESSAGE_STATUS.DELIVERED);
-  //       }, 1000);
-  //     });
-
-  //     // Listen for event message.seen
-  //     channel.listen('.message.seen', (event: any) => {
-  //       if (event.user_id === authStore.user?.id) return;
-  //       setTimeout(() => {
-  //         console.log('message.seen: ', event);
-  //         chatStore.updateMessageStatus(event.conversation_id, MESSAGE_STATUS.SEEN);
-  //       }, 1500);
-  //     });
-  //   }
-  }
-});
-
 // Grouped messages
 const groupedMessages = computed(() => {
   const msgs = chatStore.messages;
@@ -188,6 +137,75 @@ const groupedMessages = computed(() => {
 
   return result;
 });
+
+// Mark messages as seen
+const markMessagesAsSeen = async () => {
+  if (!props.conversationId) return;
+  if (props.conversationId !== chatStore.messages[0].conversation_id) return;
+  await conversationService.markMessagesAsSeen(props.conversationId);
+};
+
+// Watch messageIds to mark as seen
+watch(messageIds, (newIds, oldIds) => {
+  if (!props.conversationId) return;
+
+  const activeConvId = chatStore.activeConversation?.id;
+  if (activeConvId !== props.conversationId) return;
+
+  if (newIds.length > oldIds.length) {
+    markMessagesAsSeen();
+  }
+});
+
+// Watch conversation
+watch(
+  () => props.conversationId,
+  async (newId) => {
+    if (newId) {
+      page.value = 1;
+      hasMore.value = true;
+      chatStore.setMessages([]);
+      await fetchMessages();
+    } else {
+      chatStore.setMessages([]);
+    }
+  },
+  { immediate: true },
+);
+
+const markMessagesAsDelivered = async (conversationId: number) => {
+  if (!conversationId) return;
+  await conversationService.markMessagesAsDelivered(conversationId);
+  chatStore.updateMessageStatus(conversationId, MESSAGE_STATUS.DELIVERED);
+  console.log('đã nhận: ', conversationId);
+};
+
+onMounted(() => {
+  if (props.conversationId) {
+    chatStore.updateConversationUnread(props.conversationId);
+  }
+
+  if (echo) {
+    userChannel = channelStore.userChannel;
+
+    // Listen for event message.sent for user
+    userChannel.listen('.message.sent', async (event: any) => {
+      if(route.params?.id && props.conversationId !== event.message.conversation_id) {
+        console.log('message.sent for user:', event);
+        chatStore.addMessageToConversation(event.message.conversation_id, event.message);
+        await markMessagesAsDelivered(event.message.conversation_id);
+      }
+    });
+  }
+});
+
+// onUnmounted(() => {
+//   if (userChannel && echo) {
+//     const channelName = `user.${authStore.user?.id}`;
+//     console.log("Leave channel: ", channelName);
+//     echo.leave(channelName);
+//   }
+// });
 </script>
 
 <template>

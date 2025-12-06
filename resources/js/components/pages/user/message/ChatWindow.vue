@@ -4,10 +4,6 @@ import MessageList from '@/components/pages/user/message/MessageList.vue';
 import ChatInput from '@/components/pages/user/message/ChatInput.vue';
 import type { Conversation } from '@/types/model';
 import { useChatStore } from '@/stores/chatStore';
-import { watch } from 'vue';
-import { MESSAGE_STATUS } from '@/constants';
-import { useAuthStore } from '@/stores/authStore';
-import { conversationService } from '@/services/conversation-service';
 
 const emit = defineEmits<{
   (e: 'conversation-created', conversation: Conversation): void;
