@@ -7,7 +7,7 @@ cp .env.example .env
 ## Docker build
 
 ```
-docker-compose build
+docker-compose build (docker compose -f docker-compose.prod.yml build --no-cache)
 docker-compose up
 ```
 
