@@ -1,3 +1,7 @@
+docker system prune -a --volumes -f
+docker exec worksync_app_prod sh -c "sed -i 's/^DB_PASSWORD=.\*/DB_PASSWORD=root/' /var/www/html/.env"
+
+
 ## Copy .env
 
 ```
