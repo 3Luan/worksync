@@ -63,9 +63,11 @@ const handleRouteChange = async (newId: string | string[] | undefined) => {
         type: CONVERSATION_TYPE.DIRECT,
         name: user.name,
         avatar: user.avatar,
-        last_message: null,
+        // last_message: null,
         is_archived: false,
         members: members,
+        unread_count: 0,
+        last_unread_message: null,
       };
 
       chatStore.conversations.unshift(fakeConversation);

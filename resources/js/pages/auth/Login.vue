@@ -24,7 +24,6 @@ const handleLogin = async () => {
       router.push('/');
     }
 
-    console.log('s:', auth.error);
   } catch (e) {
     console.error('Login error:', e);
   } finally {

@@ -124,12 +124,6 @@ return [
   ],
 
   /*
-   *Application Timeưork
-   */
-  'start_work' => env('START_WORK', '09:00:00'),
-  'end_work' => env('END_WORK', '18:00:00'),
-
-  /*
   |--------------------------------------------------------------------------
   | Administrator Email Addresses
   |--------------------------------------------------------------------------
@@ -138,27 +132,4 @@ return [
   |
   */
   'admin_email' => env('ADMIN_EMAIL', 'admin@example.com'),
-
-  /*
-  |--------------------------------------------------------------------------
-  | Seeder Configuration
-  |--------------------------------------------------------------------------
-  |
-  | These values are used when generating fake data, such as the number of
-  | users to create and the start date for records.
-  |
-  */
-  'seed_user_count' => env('SEED_USER_COUNT', 0),
-  'seed_start_date' => env('SEED_START_DATE', '2000-01-01'),
-
-  /*
-  |--------------------------------------------------------------------------
-  | wkhtmltopdf Binary Path
-  |--------------------------------------------------------------------------
-  |
-  | Absolute path to the wkhtmltopdf binary, used to generate PDF files
-  | from HTML views.
-  |
-  */
-  'wkhtmltopdf_binary' => env('WKHTMLTOPDF_BINARY', '/usr/bin/wkhtmltopdf'),
 ];

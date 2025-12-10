@@ -5,6 +5,8 @@ namespace App\Repositories\Conversation;
 use App\Models\Conversation;
 use App\Models\ConversationMember;
 use App\Models\ConversationSetting;
+use App\Models\Message;
+use App\Models\MessageRead;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,13 +24,26 @@ class ConversationRepository implements ConversationRepositoryInterface
   public function getList(Request $request)
   {
     try {
-      $query = Conversation::query()
-        ->with(['members.user', 'lastMessage.sender'])
-        ->whereHas('members', function ($q) {
-          $q->where('user_id', Auth::id());
-        })
-        ->orderBy('updated_at', 'desc');
+      $userId = Auth::id();
 
+      $query = Conversation::query()
+        ->with([
+          'members.user',
+          'lastMessage.sender',
+          'lastUnreadMessage.sender',
+        ])
+        ->whereHas('members', fn($q) => $q->where('user_id', $userId))
+        ->withCount([
+          'messages as unread_count' => function ($q) use ($userId) {
+            $q->whereNotIn('id', function ($sub) use ($userId) {
+              $sub->select('message_id')
+                ->from('message_reads')
+                ->where('user_id', $userId);
+            })
+              ->where('sender_id', '<>', $userId);
+          },
+        ])
+        ->orderBy('updated_at', 'desc');
 
       if ($request->filled('type')) {
         $query->where('type', $request->type);
@@ -48,6 +63,7 @@ class ConversationRepository implements ConversationRepositoryInterface
       return null;
     }
   }
+
 
   /**
    * Find a specific conversation.
@@ -331,4 +347,111 @@ class ConversationRepository implements ConversationRepositoryInterface
       return false;
     }
   }
+
+  /**
+   * Mark all messages as delivered to a user in a conversation.
+   *
+   * @param int $conversationId
+   * @return bool
+   */
+  public function markMessagesAsDelivered(int $conversationId)
+  {
+    try {
+      $userId = Auth::id();
+      // update tất cả tin nhắn của conversation đó nếu sender khác userId và status == 'sent' thành 'delivered'
+      Message::where('conversation_id', $conversationId)
+        ->where('sender_id', '!=', $userId)
+        ->where('status', Message::STATUS_SENT)
+        ->update(['status' => Message::STATUS_DELIVERED]);
+
+      return true;
+    } catch (Exception $e) {
+      Log::error('Failed to mark messages as delivered: ' . $e->getMessage());
+      return false;
+    }
+  }
+
+  /**
+   * Mark all messages as delivered by a user on all conversations.
+   *
+   * @return array | bool
+   */
+  public function markAllMessagesAsDelivered()
+  {
+    try {
+      $userId = Auth::id();
+
+      // Lấy danh sách conversation_id của tin nhắn sẽ được cập nhật
+      $conversationIds = Message::where('sender_id', '!=', $userId)
+        ->where('status', Message::STATUS_SENT)
+        ->distinct()
+        ->pluck('conversation_id')
+        ->toArray();
+
+      // Cập nhật trạng thái
+      Message::where('sender_id', '!=', $userId)
+        ->where('status', Message::STATUS_SENT)
+        ->update([
+          'status' => Message::STATUS_DELIVERED,
+        ]);
+
+      return $conversationIds;
+    } catch (Exception $e) {
+      Log::error('Failed to mark all messages as delivered: ' . $e->getMessage());
+      return false;
+    }
+  }
+
+
+  /**
+   * Mark all messages as seen by a user on a specific conversation.
+   *
+   * @param int $conversationId
+   * @return bool
+   */
+  public function markMessagesAsSeen(int $conversationId)
+  {
+      try {
+          $userId = Auth::id();
+
+          // 🔹 Lấy danh sách tin nhắn chưa đọc
+          $messageIds = Message::where('conversation_id', $conversationId)
+              ->where('sender_id', '!=', $userId)
+              ->pluck('id')
+              ->toArray();
+
+          if (empty($messageIds)) {
+              return true;
+          }
+
+          // 🔹 Tạo danh sách dữ liệu insert
+          $data = [];
+          $now = now();
+
+          foreach ($messageIds as $id) {
+              $data[] = [
+                  'message_id' => $id,
+                  'user_id'    => $userId,
+                  'read_at'    => $now,
+              ];
+          }
+
+          // 🔹 Ghi vào bảng message_reads, bỏ qua trùng lặp
+          MessageRead::insertOrIgnore($data);
+
+          // 🔹 Cập nhật trạng thái trong bảng messages
+          Message::whereIn('id', $messageIds)
+              ->where('status', '<', Message::STATUS_SEEN)
+              ->update(['status' => Message::STATUS_SEEN]);
+
+          // 🔹 Gửi event real-time (tùy chọn)
+          // broadcast(new \App\Events\MessageSeen($conversationId, $messageIds))->toOthers();
+
+          return true;
+      } catch (\Throwable $e) {
+          Log::error('Failed to mark messages as seen: ' . $e->getMessage());
+          return false;
+      }
+  }
+
 }

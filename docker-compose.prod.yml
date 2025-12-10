@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile.prod
+    container_name: worksync_app_prod
+    working_dir: /var/www/html
+    networks:
+      - prod
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: web.dockerfile
+    container_name: worksync_web_prod
+    ports:
+      - '8088:80'
+    networks:
+      - prod
+    depends_on:
+      - app
+    restart: unless-stopped
+
+  database:
+    image: mysql:8.0
+    container_name: worksync_db_prod
+    environment:
+      MYSQL_DATABASE: worksync
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_HOST: '%'
+    ports:
+      - '3302:3306'
+    volumes:
+      - dbdata_prod:/var/lib/mysql
+    networks:
+      - prod
+    restart: unless-stopped
+
+  reverb:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile.prod
+    container_name: worksync_reverb_prod
+    working_dir: /var/www/html
+    command: php artisan reverb:start --host=0.0.0.0 --port=8080
+    ports:
+      - '8080:8080'
+    networks:
+      - prod
+    depends_on:
+      - app
+    restart: unless-stopped
+
+networks:
+  prod:
+
+volumes:
+  dbdata_prod:

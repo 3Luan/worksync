@@ -5,5 +5,7 @@
 
   "loadLanguageError": "Cannot load language",
   "missingLocale": "Translation not found",
-  "generalError": "An error occurred, please try again later"
+  "generalError": "An error occurred, please try again later",
+  "messages": "Messages",
+  "home": "Home"
 }

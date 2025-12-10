@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Events\MessageDelivered;
+use App\Events\MessageSeen;
 use App\Http\Controllers\API\ApiController;
 use App\Http\Requests\GetMessageListRequest;
 use App\Http\Requests\CreateMessageRequest;
@@ -10,6 +12,7 @@ use App\Models\Message;
 use App\Repositories\Message\MessageRepositoryInterface;
 use App\Services\LanguageService;
 use App\Constants\HttpStatus;
+use App\Events\MessageSent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -77,6 +80,9 @@ class MessageController extends ApiController
       $message = $this->messageRepository->create($validated);
 
       DB::commit();
+
+      $receiverId = $message->conversation->members->where('user_id', '!=', $message->sender_id)->first()->user_id;
+      broadcast(new MessageSent($message, $receiverId))->toOthers();
 
       return $this->successResponse([
         'message' => $this->languageService->trans('message.create_success'),
@@ -168,24 +174,53 @@ class MessageController extends ApiController
   }
 
   /**
-   * Mark a message as read by the authenticated user.
-   * Route: /api/messages/{message}/read
-   *
+   * Mark a message as delivered to the recipient.
+   * Route: /api/messages/{message}/delivered
+   * 
    * @param Message $message
    * @return \Illuminate\Http\JsonResponse
    */
-  public function markAsRead(Message $message)
+  public function markAsDelivered(Message $message)
   {
-    $result = $this->messageRepository->markAsRead($message, Auth::id());
+    $result = $this->messageRepository->markAsDelivered($message);
 
     if ($result) {
+
+      // You can also broadcast an event here if needed
+      broadcast(new MessageDelivered($message->conversation_id, $message->id))->toOthers();
+
       return $this->successResponse([
-        'message' => $this->languageService->trans('message.read_success'),
+        'message' => $this->languageService->trans('message.delivered_success'),
       ]);
     }
 
     return $this->errorResponse([
-      'message' => $this->languageService->trans('message.read_failed'),
+      'message' => $this->languageService->trans('message.delivered_failed'),
+      'status' => HttpStatus::INTERNAL_SERVER_ERROR,
+    ]);
+  }
+
+  /**
+   * Mark a message as seen by the authenticated user.
+   * Route: /api/messages/{message}/seen
+   *
+   * @param Message $message
+   * @return \Illuminate\Http\JsonResponse
+   */
+  public function markAsSeen(Message $message)
+  {
+    $result = $this->messageRepository->markAsSeen($message, Auth::id());
+
+    if ($result) {
+
+      broadcast(new MessageSeen($message->conversation_id, $message->id))->toOthers();
+      return $this->successResponse([
+        'message' => $this->languageService->trans('message.seen_success'),
+      ]);
+    }
+
+    return $this->errorResponse([
+      'message' => $this->languageService->trans('message.seen_failed'),
       'status' => HttpStatus::INTERNAL_SERVER_ERROR,
     ]);
   }

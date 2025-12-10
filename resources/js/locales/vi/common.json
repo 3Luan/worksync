@@ -5,5 +5,7 @@
 
   "loadLanguageError": "Không thể tải ngôn ngữ",
   "missingLocale": "Không tìm thấy bản dịch",
-  "generalError": "Đã xảy ra lỗi, vui lòng thử lại sau"
+  "generalError": "Đã xảy ra lỗi, vui lòng thử lại sau",
+  "messages": "Nhắn tin",
+  "home": "Trang chủ"
 }

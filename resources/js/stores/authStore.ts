@@ -8,6 +8,7 @@ import { APP_URL } from '@/constants/url';
 import { authService } from '@/services/auth-service';
 import { Auth, User } from '@/types/model';
 import { isAccountantRole, isAdminRole, isLeaderRole, isStaffRole } from '@/utils/role';
+import { getEcho, initEcho } from '@/echo';
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(JSON.parse(localStorage.getItem('user') || 'null'));
@@ -44,6 +45,11 @@ export const useAuthStore = defineStore('auth', () => {
       const expiryTime = Date.now() + data.expires_in * 1000;
       tokenExpiry.value = expiryTime;
 
+      if (token.value && user.value) {
+        console.log("Init Echo Login");
+        initEcho(token.value);
+      }
+
       // // Save to localStorage
       localToken.set(LOCAL_STORAGE_AUTH_TOKEN, data.access_token);
       localToken.set(LOCAL_STORAGE_REFRESH_TOKEN, data.refresh_token);
@@ -71,6 +77,13 @@ export const useAuthStore = defineStore('auth', () => {
     localToken.remove(LOCAL_STORAGE_REFRESH_TOKEN);
     localToken.remove(LOCAL_STORAGE_TOKEN_EXPIRY);
     localToken.remove(LOCAL_STORAGE_USER);
+
+    const echo = getEcho();
+    // Clear Echo instance
+    if (echo) {
+      console.log("Disconnect Echo");
+      echo.disconnect();
+    }
 
     // Clear auth header
     delete axios.defaults.headers.common['Authorization'];

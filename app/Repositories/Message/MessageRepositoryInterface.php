@@ -65,13 +65,22 @@ interface MessageRepositoryInterface
   public function forceDelete(Message $message);
 
   /**
-   * Mark a message as read by a user.
+
+   * Mark a message as delivered to a user.
+   *
+   * @param Message $message
+   * @return bool
+   */
+  public function markAsDelivered(Message $message);
+
+  /**
+   * Mark a message as seen by a user.
    *
    * @param Message $message
    * @param int $userId
    * @return bool
    */
-  public function markAsRead(Message $message, int $userId);
+  public function markAsSeen(Message $message, int $userId);
 
   /**
    * Get all messages in a specific conversation.

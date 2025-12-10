@@ -1,5 +1,6 @@
 import axios from '@/utils/axios';
-import type { Message, Attachment } from '@/types/model';
+import type { Message } from '@/types/model';
+import { CreateMessagePayload } from '@/types/api';
 
 export const messageAPI = {
   getList(params?: { conversation_id?: number; page?: number; per_page?: number }) {
@@ -10,7 +11,7 @@ export const messageAPI = {
     return axios.get(`messages/${messageId}`);
   },
 
-  create(data: { conversation_id: number; content: string; type: number; reply_to_id?: number | null; attachments?: Attachment[] }) {
+  create(data: CreateMessagePayload) {
     return axios.post('messages', data);
   },
 
@@ -30,8 +31,12 @@ export const messageAPI = {
     return axios.post(`messages/${messageId}/react`, data);
   },
 
-  markAsRead(messageId: number) {
-    return axios.post(`messages/${messageId}/read`);
+  markAsDelivered(messageId: number) {
+    return axios.post(`messages/${messageId}/delivered`);
+  },
+
+  markAsSeen(messageId: number) {
+    return axios.post(`messages/${messageId}/seen`);
   },
 
   uploadAttachment(formData: FormData) {

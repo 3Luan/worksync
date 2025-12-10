@@ -16,8 +16,10 @@ export interface Conversation {
   created_at?: string;
   updated_at?: string;
   deleted_at?: string | null;
-  last_message?: Message | null;
+  last_message?: Message;
   is_archived?: boolean;
   members?: ConversationMember[];
   settings?: ConversationSetting;
+  unread_count: number | 0;
+  last_unread_message: Message | null;
 }

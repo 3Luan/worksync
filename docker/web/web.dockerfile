@@ -1,2 +1,3 @@
+# local
 FROM nginx:1.10
-ADD vhost.conf /etc/nginx/conf.d/default.conf
+ADD nginx_dev.conf /etc/nginx/conf.d/default.conf

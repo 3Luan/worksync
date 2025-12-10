@@ -25,6 +25,7 @@ class CreateMessageRequest extends FormRequest
       'conversation_id' => 'required|integer|exists:conversations,id',
       'content' => 'nullable|string|max:2000',
       'type' => 'required|integer|in:0,1,2,3,4,5',
+      'status' => 'required|integer|in:0,1,2,3',
       'parent_message_id' => 'nullable|integer|exists:messages,id',
       'forward_from_id' => 'nullable|integer|exists:messages,id',
       'attachments' => 'nullable|array',

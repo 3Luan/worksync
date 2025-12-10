@@ -206,6 +206,59 @@ export const DEVICE_TYPE_OPTIONS = new Set([
   { label: 'common.ios', value: DEVICE_TYPE.IOS },
 ]);
 
+// ===== Message Types =====
+export const MESSAGE_TYPE = Object.freeze({
+  TEXT: 0,
+  IMAGE: 1,
+  FILE: 2,
+  VIDEO: 3,
+  AUDIO: 4,
+  SYSTEM: 5,
+});
+
+export const MESSAGE_TYPE_MAP = {
+  [MESSAGE_TYPE.TEXT]: 'common.text',
+  [MESSAGE_TYPE.IMAGE]: 'common.image',
+  [MESSAGE_TYPE.FILE]: 'common.file',
+  [MESSAGE_TYPE.VIDEO]: 'common.video',
+  [MESSAGE_TYPE.AUDIO]: 'common.audio',
+  [MESSAGE_TYPE.SYSTEM]: 'common.system',
+};
+
+export const MESSAGE_TYPE_OPTIONS = new Set([
+  { label: 'common.text', value: MESSAGE_TYPE.TEXT },
+  { label: 'common.image', value: MESSAGE_TYPE.IMAGE },
+  { label: 'common.file', value: MESSAGE_TYPE.FILE },
+  { label: 'common.video', value: MESSAGE_TYPE.VIDEO },
+  { label: 'common.audio', value: MESSAGE_TYPE.AUDIO },
+  { label: 'common.system', value: MESSAGE_TYPE.SYSTEM },
+]);
+
+// ===== Message Status =====
+export const MESSAGE_STATUS = Object.freeze({
+  SENDING: 0,
+  SENT: 1,
+  DELIVERED: 2,
+  SEEN: 3,
+  FAILED: 4,
+});
+
+export const MESSAGE_STATUS_MAP = {
+  [MESSAGE_STATUS.SENDING]: 'common.sending',
+  [MESSAGE_STATUS.SENT]: 'common.sent',
+  [MESSAGE_STATUS.DELIVERED]: 'common.delivered',
+  [MESSAGE_STATUS.SEEN]: 'common.seen',
+  [MESSAGE_STATUS.FAILED]: 'common.failed',
+};
+
+export const MESSAGE_STATUS_OPTIONS = new Set([
+  { label: 'common.sending', value: MESSAGE_STATUS.SENDING },
+  { label: 'common.sent', value: MESSAGE_STATUS.SENT },
+  { label: 'common.delivered', value: MESSAGE_STATUS.DELIVERED },
+  { label: 'common.seen', value: MESSAGE_STATUS.SEEN },
+  { label: 'common.failed', value: MESSAGE_STATUS.FAILED },
+]);
+
 // ===== LocalStorage Keys =====
 export const LOCAL_STORAGE_AUTH_TOKEN = 'auth_token';
 export const LOCAL_STORAGE_REFRESH_TOKEN = 'refresh_token';

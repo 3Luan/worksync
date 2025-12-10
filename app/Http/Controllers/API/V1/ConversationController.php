@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Events\MessageDelivered;
 use App\Http\Controllers\API\ApiController;
 use App\Http\Requests\CreateConversationRequest;
 use App\Http\Requests\UpdateConversationRequest;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Constants\HttpStatus;
+use App\Events\MessageSeen;
 use Exception;
 
 class ConversationController extends ApiController
@@ -298,5 +300,86 @@ class ConversationController extends ApiController
     return $result
       ? $this->successResponse(['message' => $this->languageService->trans('conversation.update_setting_success')])
       : $this->errorResponse(['message' => $this->languageService->trans('conversation.update_setting_failed')]);
+  }
+
+  /**
+   * Mark all messages as delivered to the current user in a specific conversation.
+   * Route: POST /api/conversations/{conversation}/mark-delivered
+   */
+  public function markMessagesAsDelivered(Conversation $conversation)
+  {
+    try{
+      DB::beginTransaction();
+      $result = $this->conversationRepository->markMessagesAsDelivered($conversation->id);
+
+      if ($result){
+        DB::commit();
+        broadcast(new MessageDelivered(
+          $conversation->id,
+        ))->toOthers();
+        return $this->successResponse(['message' => $this->languageService->trans('conversation.mark_delivered_success')]);
+      }
+
+      DB::rollBack();
+      return $this->errorResponse(['message' => $this->languageService->trans('conversation.mark_delivered_failed')]);
+    }catch (Exception $e){
+      Log::error('Mark messages as delivered failed: ' . $e->getMessage());
+      return $this->errorResponse(['message' => $this->languageService->trans('conversation.mark_delivered_failed')]);
+    }
+  }
+
+  /**
+   * Mark all messages as delivered to the current user in all specific conversations.
+   * Route: POST /api/conversations/mark-all-delivered
+   */
+  public function markAllMessagesAsDelivered()
+  {
+    try{
+      DB::beginTransaction();
+      $result = $this->conversationRepository->markAllMessagesAsDelivered();
+
+      if ($result){
+        DB::commit();
+        foreach ($result as $conversationId){
+          broadcast(new MessageDelivered(
+            $conversationId,
+          ))->toOthers();
+        }
+        return $this->successResponse(['message' => $this->languageService->trans('conversation.mark_all_delivered_success')]);
+      }
+
+      DB::rollBack();
+      return $this->errorResponse(['message' => $this->languageService->trans('conversation.mark_all_delivered_failed')]);
+    }catch (Exception $e){
+      Log::error('Mark all messages as delivered failed: ' . $e->getMessage());
+      return $this->errorResponse(['message' => $this->languageService->trans('conversation.mark_all_delivered_failed')]);
+    }
+  }
+
+  /**
+   * Mark all messages as seen to a user on a specific conversation.
+   * Route: POST /api/conversations/{conversation}/mark-seen
+   */
+  public function markMessagesAsSeen(Conversation $conversation)
+  {
+    try{
+      DB::beginTransaction();
+      $result = $this->conversationRepository->markMessagesAsSeen($conversation->id);
+
+      if ($result){
+        DB::commit();
+
+        broadcast(new MessageSeen(
+          $conversation->id, Auth::id(),
+        ))->toOthers();
+        return $this->successResponse(['message' => $this->languageService->trans('conversation.mark_seen_success')]);
+      }
+
+      DB::rollBack();
+      return $this->errorResponse(['message' => $this->languageService->trans('conversation.mark_seen_failed')]);
+    }catch (Exception $e){
+      Log::error('Mark messages as seen failed: ' . $e->getMessage());
+      return $this->errorResponse(['message' => $this->languageService->trans('conversation.mark_seen_failed')]);
+    }
   }
 }

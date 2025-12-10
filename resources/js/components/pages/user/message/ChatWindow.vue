@@ -10,6 +10,7 @@ const emit = defineEmits<{
 }>();
 
 const chatStore = useChatStore();
+
 </script>
 
 <template>
