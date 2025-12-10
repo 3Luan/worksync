@@ -2,7 +2,6 @@
   "day": "1 day | {count} days",
   "month": "month",
   "year": "year",
-
   "load_language_error": "Cannot load language",
   "missing_locale": "Translation not found",
   "general_error": "An error occurred, please try again later",

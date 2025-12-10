@@ -2,7 +2,6 @@
   "day": "{count} ngày",
   "month": "tháng",
   "year": "năm",
-
   "load_language_error": "Không thể tải ngôn ngữ",
   "missing_locale": "Không tìm thấy bản dịch",
   "general_error": "Đã xảy ra lỗi, vui lòng thử lại sau",
