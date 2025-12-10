@@ -59,7 +59,7 @@ class ConversationController extends ApiController
 
   /**
    * Create a new conversation (1-1 or group)
-   * Route: POST /api/conversations
+   * Route: POST /api/conversationss
    */
   public function store(CreateConversationRequest $request)
   {

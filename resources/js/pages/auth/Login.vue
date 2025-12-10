@@ -125,4 +125,7 @@ const togglePasswordVisibility = () => {
 button {
   transition: all 0.2s ease;
 }
+button {
+  transition: all 0.2s ease;
+}
 </style>
