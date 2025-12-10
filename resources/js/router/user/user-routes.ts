@@ -1,4 +1,3 @@
-import { ROLE } from '@/constants';
 import { APP_ROUTE_NAME } from '@/constants/url';
 
 const userRoute = [
@@ -16,9 +15,8 @@ const userRoute = [
         name: APP_ROUTE_NAME.USER.INDEX,
         component: () => import('@/pages/user/home/index.vue'),
         meta: {
-          title: 'user.home',
-          breadcrumb: 'user.home',
-          // requiredRoles: [ROLE.ACCOUNTANT],
+          title: 'common.home',
+          breadcrumb: 'common.home',
         },
       },
       {
@@ -26,7 +24,7 @@ const userRoute = [
         name: APP_ROUTE_NAME.USER.UPDATE_PASSWORD,
         component: () => import('@/pages/shared/UpdatePassword.vue'),
         meta: {
-          title: 'auth.changePassword',
+          title: 'common.change_password',
         },
       },
       {
@@ -34,8 +32,8 @@ const userRoute = [
         name: APP_ROUTE_NAME.USER.PROFILE,
         component: () => import('@/pages/user/profile/index.vue'),
         meta: {
-          title: 'user.profile',
-          breadcrumb: 'user.profile',
+          title: 'common.profile',
+          breadcrumb: 'common.profile',
         },
       },
       {
@@ -43,8 +41,8 @@ const userRoute = [
         name: APP_ROUTE_NAME.USER.MESSAGES,
         component: () => import('@/pages/user/messages/index.vue'),
         meta: {
-          title: 'user.messages',
-          breadcrumb: 'user.messages',
+          title: 'common.messages',
+          breadcrumb: 'common.messages',
         },
         children: [
           {

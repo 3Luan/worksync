@@ -21,16 +21,15 @@ watch(
   () => [route.meta.title, locale.value],
   () => {
     const translatedTitle = route.meta.title ? $t(String(route.meta.title)) : 'Worksync';
-    document.title = `${translatedTitle} | Worksync App`;
+    document.title = `${translatedTitle} | Worksync`;
   },
   { immediate: true },
 );
 
 if (authStore.token && authStore.user) {
-  console.log("Init Echo");
+  console.log('Init Echo');
   initEcho(authStore.token);
 }
-
 </script>
 
 <template>

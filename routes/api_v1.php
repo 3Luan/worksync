@@ -6,6 +6,7 @@ use App\Http\Controllers\API\V1\MessageController;
 use App\Http\Controllers\API\V1\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Laravel\Reverb\Loggers\Log;
 
 /*
 |--------------------------------------------------------------------------|
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('/login', [LoginController::class, 'login']);
+Route::post('/register', [LoginController::class, 'register']);
 Route::post('/refresh_token', [LoginController::class, 'refreshToken']);
 Route::post('/forgot-password', [UserController::class, 'forgotPassword']);
 Route::get('/check-forgot-password-token', [UserController::class, 'checkForgotPasswordToken']);

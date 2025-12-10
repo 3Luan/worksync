@@ -1,7 +1,7 @@
-import { CHECKIN_ON_TIME_HOUR, DATE_FORMATS, DAY_OF_WEEK, MINUTES_IN_HOUR, TIME_SEGMENTS_FULL, TIME_SEGMENTS_SHORT } from '@/constants';
+import { DATE_FORMATS, DAY_OF_WEEK, TIME_SEGMENTS_FULL, TIME_SEGMENTS_SHORT } from '@/constants';
 import { LOCALE_MAP, LOCALIZED_DATE_FORMATS } from '@/constants/i18n';
 import { DateFormatStyle, Language, WeekdayFormat } from '@/enums';
-import { format, parse, differenceInMinutes, isValid, parseISO } from 'date-fns';
+import { format, parse, isValid, parseISO } from 'date-fns';
 import { Locale, vi } from 'date-fns/locale';
 import { DateFormatter, type DateValue, getLocalTimeZone } from '@internationalized/date';
 import { DateInput, YearMonth, YearMonthDay } from '@/types/common';
@@ -122,51 +122,6 @@ export const formatDateTime = (dateString?: string) => {
   } catch (e) {
     return dateString;
   }
-};
-
-/**
- * Checks if a given time is considered "on time" for a specific event.
- * @param time - The time string to check, in 'HH:mm' format.
- * @returns True if the time is on time, false otherwise.
- * @example
- * isOnTime('09:00'); // Returns true
- * isOnTime('10:30'); // Returns false
- */
-export const isOnTime = (time: string): boolean => {
-  if (!time) return false;
-  const [hours, minutes] = time.split(':').map(Number);
-  return hours < CHECKIN_ON_TIME_HOUR || (hours === CHECKIN_ON_TIME_HOUR && minutes <= 0);
-};
-
-/**
- * Calculates the total work hours between check-in and check-out times, excluding break times.
- * @param checkin - The check-in time string in 'HH:mm' format.
- * @param checkout - The check-out time string in 'HH:mm' format.
- * @param startBreak - The start of the break time string in 'HH:mm' format.
- * @param endBreak - The end of the break time string in 'HH:mm' format.
- * @returns The total work hours as a number, rounded to one decimal place.
- * @example
- * calculateWorkHours('09:00', '17:00', '12:00', '13:00'); // Returns 7.0
- */
-export const calculateWorkHours = ({
-  checkin,
-  checkout,
-  startBreak,
-  endBreak,
-}: {
-  checkin: string;
-  checkout: string;
-  startBreak: string;
-  endBreak: string;
-}): number => {
-  if (!checkin || !checkout) return 0;
-
-  const start = parseTimeToToday({ time: checkin });
-  const end = parseTimeToToday({ time: checkout });
-  const breakTime =
-    startBreak && endBreak ? differenceInMinutes(parseTimeToToday({ time: endBreak }), parseTimeToToday({ time: startBreak })) / MINUTES_IN_HOUR : 0;
-
-  return Number((differenceInMinutes(end, start) / MINUTES_IN_HOUR - breakTime).toFixed(1));
 };
 
 /**

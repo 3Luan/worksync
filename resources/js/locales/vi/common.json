@@ -2,10 +2,14 @@
   "day": "{count} ngày",
   "month": "tháng",
   "year": "năm",
-
-  "loadLanguageError": "Không thể tải ngôn ngữ",
-  "missingLocale": "Không tìm thấy bản dịch",
-  "generalError": "Đã xảy ra lỗi, vui lòng thử lại sau",
+  "load_language_error": "Không thể tải ngôn ngữ",
+  "missing_locale": "Không tìm thấy bản dịch",
+  "general_error": "Đã xảy ra lỗi, vui lòng thử lại sau",
   "messages": "Nhắn tin",
-  "home": "Trang chủ"
+  "home": "Trang chủ",
+  "profile": "Trang cá nhân",
+  "settings": "Cài đặt",
+  "logout": "Đăng xuất",
+  "login": "Đăng nhập",
+  "change_password": "Đổi mật khẩu"
 }

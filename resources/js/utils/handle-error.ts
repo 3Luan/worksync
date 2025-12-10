@@ -13,7 +13,7 @@ type ErrorHandlerOptions = {
 const { toast } = useToast();
 
 export function handleError(error: any, options: ErrorHandlerOptions = {}): void {
-  const { title = $t('common.error'), showToast = true, fallbackMessage = $t('common.generalError'), logToConsole = true } = options;
+  const { title = $t('common.error'), showToast = true, fallbackMessage = $t('common.general_error'), logToConsole = true } = options;
 
   let message = fallbackMessage;
 
@@ -23,22 +23,22 @@ export function handleError(error: any, options: ErrorHandlerOptions = {}): void
 
     switch (status) {
       case HttpStatusCode.BAD_REQUEST:
-        message = $t('common.invalidRequest');
+        message = $t('common.invalid_request');
         break;
       case HttpStatusCode.UNAUTHORIZED:
-        message = $t('common.sessionExpired');
+        message = $t('common.session_expired');
         break;
       case HttpStatusCode.FORBIDDEN:
-        message = $t('common.noPermission');
+        message = $t('common.no_permission');
         break;
       case HttpStatusCode.NOT_FOUND:
-        message = data?.message || $t('common.notFound');
+        message = data?.message || $t('common.not_found');
         break;
       case HttpStatusCode.UNPROCESSABLE_ENTITY:
-        message = $t('common.invalidPayload');
+        message = $t('common.invalid_payload');
         break;
       case HttpStatusCode.SERVER_ERROR:
-        message = data?.message || $t('common.systemError');
+        message = data?.message || $t('common.system_error');
         break;
       default:
         message = data?.message || fallbackMessage;

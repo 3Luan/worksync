@@ -16,7 +16,16 @@ const authRoutes: RouteRecordRaw[] = [
         name: APP_ROUTE_NAME.AUTH.LOGIN,
         component: () => import('@/pages/auth/Login.vue'),
         meta: {
-          title: 'auth.login',
+          title: 'common.login',
+          guest: true,
+        },
+      },
+      {
+        path: 'register',
+        name: APP_ROUTE_NAME.AUTH.REGISTER,
+        component: () => import('@/pages/auth/Register.vue'),
+        meta: {
+          title: 'common.register',
           guest: true,
         },
       },
@@ -25,7 +34,7 @@ const authRoutes: RouteRecordRaw[] = [
         name: APP_ROUTE_NAME.AUTH.FORGOT_PASSWORD,
         component: () => import('@/pages/auth/ForgotPassword.vue'),
         meta: {
-          title: 'auth.forgotPassword',
+          title: 'common.forgot_password',
           guest: true,
         },
       },
@@ -34,14 +43,12 @@ const authRoutes: RouteRecordRaw[] = [
         name: APP_ROUTE_NAME.AUTH.RESET_PASSWORD,
         component: () => import('@/pages/auth/ResetPassword.vue'),
         meta: {
-          title: 'auth.resetPassword',
+          title: 'common.reset_password',
           guest: true,
         },
       },
-      // Can add more auth routes here like register, forgot password, etc.
     ],
   },
-  // Redirect /login to /auth/login for convenience
   {
     path: '/login',
     redirect: APP_URL.AUTH.LOGIN,

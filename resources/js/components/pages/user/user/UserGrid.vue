@@ -57,7 +57,7 @@ onUnmounted(() => observer.value?.disconnect());
 </script>
 
 <template>
-  <div class="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+  <div class="grid gap-5 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5">
     <template v-if="loading && users.length === 0">
       <UserSkeleton v-for="n in 8" :key="n" />
     </template>
