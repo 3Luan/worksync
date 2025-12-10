@@ -46,7 +46,7 @@ const togglePasswordVisibility = () => {
 </script>
 
 <template>
-  <div>
+  <div class="p-8 bg-white dark:bg-gray-800 rounded-lg shadow-md w-full max-w-md mx-auto">
     <MessageSquare class="mx-auto mb-2 w-16 h-16 text-indigo-600" />
     <h1 class="text-xl font-bold text-center text-gray-800 dark:text-gray-100 mb-6">Chào mừng trở lại WorkSync</h1>
 

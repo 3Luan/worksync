@@ -100,6 +100,7 @@ export const useAuthStore = defineStore('auth', () => {
 
       const response = await authService.register({
         name: credentials.name,
+        username: credentials.username,
         email: credentials.email,
         password: credentials.password,
       });

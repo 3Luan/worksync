@@ -7,6 +7,7 @@ import { Eye, EyeOff, Mail, Lock, User } from 'lucide-vue-next';
 
 const router = useRouter();
 const name = ref('');
+const username = ref('');
 const email = ref('');
 const password = ref('');
 const confirmPassword = ref('');
@@ -27,6 +28,7 @@ const handleRegister = async () => {
 
     const payload = {
       name: name.value,
+      username: username.value,
       email: email.value,
       password: password.value,
     };
@@ -56,7 +58,7 @@ const toggleConfirmPasswordVisibility = () => {
 </script>
 
 <template>
-  <div>
+  <div class="p-8 bg-white dark:bg-gray-800 rounded-lg shadow-md w-full max-w-md mx-auto">
     <User class="mx-auto mb-2 w-16 h-16 text-indigo-600" />
     <h1 class="text-xl font-bold text-center text-gray-800 dark:text-gray-100 mb-6">Đăng ký WorkSync</h1>
 
@@ -69,6 +71,18 @@ const toggleConfirmPasswordVisibility = () => {
           type="text"
           required
           placeholder="Họ và tên"
+          class="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:bg-gray-900 dark:text-white"
+        />
+      </div>
+
+      <!-- Username input -->
+      <div class="relative">
+        <User class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
+        <input
+          v-model="username"
+          type="text"
+          required
+          placeholder="Tên đăng nhập"
           class="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none dark:bg-gray-900 dark:text-white"
         />
       </div>
