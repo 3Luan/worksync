@@ -7,11 +7,11 @@ import { format, isToday, isYesterday } from 'date-fns';
 import MessageItem from './MessageItem.vue';
 import { MessageGroupItem } from '@/types/model';
 import MessageSkeleton from './MessageSkeleton.vue';
-import { vi } from 'date-fns/locale';
-import { MESSAGE_STATUS } from '@/constants';
-import { useAuthStore } from '@/stores/authStore';
 import { conversationService } from '@/services/conversation-service';
-import { getEcho } from '@/echo';
+import { useAuthStore } from '@/stores/authStore';
+import { useRoute } from 'vue-router';
+import { MESSAGE_STATUS } from '@/constants';
+import { useChannelStore } from '@/stores/channelStore';
 
 // Props
 const props = defineProps<{ conversationId: number | null }>();
@@ -19,6 +19,8 @@ const props = defineProps<{ conversationId: number | null }>();
 // Store & composables
 const chatStore = useChatStore();
 const authStore = useAuthStore();
+const route = useRoute();
+const channelStore = useChannelStore();
 const { scrollToBottom } = useChat();
 
 // Refs
@@ -27,6 +29,11 @@ const loadingOlder = ref(false);
 const hasMore = ref(true);
 const page = ref(1);
 const initialLoading = ref(true);
+
+let userChannel: any = null;
+
+// Computed
+const messageIds = computed(() => chatStore.messages.map(message => message.id));
 
 // Helpers format date/time
 const formatMessageTime = (date: string | Date) => format(new Date(date), 'HH:mm');
@@ -70,7 +77,7 @@ const fetchMessages = async (loadMore = false) => {
   initialLoading.value = false;
 };
 
-// Scroll top để load older messages
+// Scroll top to load older messages
 const handleScroll = async (e: Event) => {
   const el = e.target as HTMLElement;
   if (el.scrollTop <= 100 && hasMore.value && !loadingOlder.value) {
@@ -78,67 +85,6 @@ const handleScroll = async (e: Event) => {
     await fetchMessages(true);
   }
 };
-
-const markMessagesAsSeen = async () => {
-  if (!props.conversationId) return;
-  await conversationService.markMessagesAsSeen(props.conversationId);
-};
-
-watch(
-  () => chatStore.messages.length,
-  () => {
-    if (chatStore.activeConversation?.id === props.conversationId) {
-      markMessagesAsSeen();
-    }
-  },
-  { immediate: true },
-);
-
-// Watch conversation
-watch(
-  () => props.conversationId,
-  async (newId) => {
-    if (newId) {
-      page.value = 1;
-      hasMore.value = true;
-      chatStore.setMessages([]);
-      await fetchMessages();
-    } else {
-      chatStore.setMessages([]);
-    }
-  },
-  { immediate: true },
-);
-
-onMounted(() => {
-  if (props.conversationId) {
-   
-    // markMessagesAsSeen();
-
-  //   const echo = getEcho();
-  //   if (echo) {
-  //     const channelName = `conversation.${props.conversationId}`;
-  //     const channel = echo.private(channelName);
-
-  //     // Listen for event message.delivered
-  //     channel.listen('.message.delivered', (event: any) => {
-  //       setTimeout(() => {
-  //         console.log('message.delivered: ', event);
-  //         chatStore.updateMessageStatus(event.conversation_id, MESSAGE_STATUS.DELIVERED);
-  //       }, 1000);
-  //     });
-
-  //     // Listen for event message.seen
-  //     channel.listen('.message.seen', (event: any) => {
-  //       if (event.user_id === authStore.user?.id) return;
-  //       setTimeout(() => {
-  //         console.log('message.seen: ', event);
-  //         chatStore.updateMessageStatus(event.conversation_id, MESSAGE_STATUS.SEEN);
-  //       }, 1500);
-  //     });
-  //   }
-  }
-});
 
 // Grouped messages
 const groupedMessages = computed(() => {
@@ -171,15 +117,14 @@ const groupedMessages = computed(() => {
     const isFirstInGroup = !sameAsPrev;
     const isLastInGroup = !sameAsNext;
 
-    // Hiển thị thời gian nếu cách tin nhắn TRƯỚC đó >= 10 phút
+    // Show time if the previous message is >= 10 minutes ago
     let showTime = false;
     if (i === 0) {
-      // Tin đầu tiên luôn hiển thị thời gian
       showTime = true;
     } else {
       const prevTime = new Date(msgs[i - 1].created_at).getTime();
       const currTime = new Date(msg.created_at).getTime();
-      const diff = (currTime - prevTime) / 1000 / 60; // phút
+      const diff = (currTime - prevTime) / 1000 / 60;
       if (diff >= 10) showTime = true;
     }
 
@@ -188,17 +133,88 @@ const groupedMessages = computed(() => {
 
   return result;
 });
+
+// Mark messages as seen
+const markMessagesAsSeen = async () => {
+  if (!props.conversationId) return;
+  await conversationService.markMessagesAsSeen(props.conversationId);
+};
+
+// Watch messageIds to mark as seen
+watch(messageIds, (newIds, oldIds) => {
+  if (!props.conversationId) return;
+
+  const activeConvId = chatStore.activeConversation?.id;
+  if (activeConvId !== props.conversationId) return;
+
+  if (newIds.length > oldIds.length) {
+    markMessagesAsSeen();
+  }
+});
+
+// Watch conversation change
+watch(
+  () => props.conversationId,
+  async (newId) => {
+    if (newId) {
+      page.value = 1;
+      hasMore.value = true;
+      chatStore.setMessages([]);
+      await fetchMessages();
+    } else {
+      chatStore.setMessages([]);
+    }
+  },
+  { immediate: true }
+);
+
+const markMessagesAsDelivered = async (conversationId: number) => {
+  if (!conversationId) return;
+  await conversationService.markMessagesAsDelivered(conversationId);
+  chatStore.updateMessageStatus(conversationId, MESSAGE_STATUS.DELIVERED);
+  console.log('đã nhận: ', conversationId);
+};
+
+// On mounted: Join user channel bằng useChannelStore
+onMounted(() => {
+  if (props.conversationId) {
+    chatStore.updateConversationUnread(props.conversationId);
+  }
+
+  // userChannel auto init trong store → chỉ cần lấy ra dùng
+  userChannel = channelStore.userChannel;
+
+  // Nếu reload trang quá nhanh => force join
+  if (!userChannel && authStore.user) {
+    const channelName = `user.${authStore.user.id}`;
+    userChannel = channelStore.join(channelName);
+  }
+
+  if (!userChannel) return;
+
+  userChannel.listen('.message.sent', async (event: any) => {
+    if (route.params?.id && props.conversationId !== event.message.conversation_id) {
+      console.log('message.sent for user:', event);
+      chatStore.addMessageToConversation(event.message.conversation_id, event.message);
+      await markMessagesAsDelivered(event.message.conversation_id);
+    }
+  });
+});
 </script>
 
 <template>
-  <main ref="chatContainer" class="chat-scroll-container flex-1 overflow-y-auto p-4 space-y-3" @scroll.passive="handleScroll">
+  <main
+    ref="chatContainer"
+    class="chat-scroll-container flex-1 overflow-y-auto p-4 space-y-3"
+    @scroll.passive="handleScroll"
+  >
     <!-- Loading -->
     <div v-if="initialLoading" class="space-y-4">
       <MessageSkeleton v-for="i in 10" :key="i" />
     </div>
 
-    <!-- Loading older messages -->
     <div v-else>
+      <!-- Loading older messages -->
       <div v-if="loadingOlder" class="flex justify-center my-3">
         <div class="flex items-center space-x-1 bg-gray-100 dark:bg-gray-800 px-3 py-2 rounded-2xl shadow-sm">
           <span class="w-2 h-2 bg-gray-300 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
@@ -209,17 +225,14 @@ const groupedMessages = computed(() => {
 
       <!-- Messages -->
       <div v-for="item in groupedMessages" :key="item.message.id">
-        <!-- Date separator -->
         <div v-if="item.showDate" class="text-center text-gray-500 dark:text-gray-400 my-2 text-sm">
           {{ formatMessageDate(item.message.created_at) }}
         </div>
 
-        <!-- Time -->
         <div v-if="item.showTime" class="text-xs text-gray-400 dark:text-gray-500 mt-1 text-center">
           {{ formatMessageTime(item.message.created_at) }}
         </div>
 
-        <!-- Message item -->
         <MessageItem :messageGroup="item" />
       </div>
     </div>

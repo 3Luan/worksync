@@ -5,5 +5,7 @@
 
   "loadLanguageError": "言語を読み込めません",
   "missingLocale": "翻訳が見つかりません",
-  "generalError": "エラーが発生しました。後でもう一度お試しください"
+  "generalError": "エラーが発生しました。後でもう一度お試しください",
+  "messages": "メッセージ",
+  "home": "ホーム"
 }

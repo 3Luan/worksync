@@ -17,8 +17,6 @@ const chatStore = useChatStore();
 const { closeChat, openChat } = useChat();
 
 const handleSelectConversation = (conversation: Conversation) => {
-  console.log(conversation);
-  
   if (conversation.type === CONVERSATION_TYPE.DIRECT) {
     const member = conversation.members?.find((m) => m.user_id !== useAuthStore().user?.id);
     if (member) {
