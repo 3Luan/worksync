@@ -61,4 +61,16 @@ export const conversationAPI = {
   updateSettings(conversationId: number, data: Partial<ConversationSetting>) {
     return axios.put(`conversations/${conversationId}/settings`, data);
   },
+
+  markMessagesAsDelivered(conversationId: number) {
+    return axios.post(`conversations/${conversationId}/delivered`);
+  },
+
+  markAllMessagesAsDelivered() {
+    return axios.post(`conversations/all-delivered`);
+  },
+
+  markMessagesAsSeen(conversationId: number) {
+    return axios.post(`conversations/${conversationId}/seen`);
+  },
 };

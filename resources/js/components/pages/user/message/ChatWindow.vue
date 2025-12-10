@@ -10,6 +10,7 @@ const emit = defineEmits<{
 }>();
 
 const chatStore = useChatStore();
+
 </script>
 
 <template>
@@ -21,6 +22,6 @@ const chatStore = useChatStore();
     <MessageList ref="messageListRef" :conversationId="chatStore.activeConversation.id" class="chat-scroll" />
 
     <!-- Message Input -->
-    <ChatInput :conversation="chatStore.activeConversation" />
+    <ChatInput class="pb-safe" :conversation="chatStore.activeConversation" />
   </section>
 </template>

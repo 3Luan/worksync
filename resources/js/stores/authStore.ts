@@ -8,6 +8,8 @@ import { APP_URL } from '@/constants/url';
 import { authService } from '@/services/auth-service';
 import { Auth, User } from '@/types/model';
 import { isAccountantRole, isAdminRole, isLeaderRole, isStaffRole } from '@/utils/role';
+import { getEcho, initEcho } from '@/echo';
+import { LoginData, RegisterData } from '@/types/api';
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(JSON.parse(localStorage.getItem('user') || 'null'));
@@ -24,7 +26,7 @@ export const useAuthStore = defineStore('auth', () => {
   const isLeader = computed(() => isLeaderRole(user.value?.role));
   const currentUser = () => JSON.parse(localStorage.getItem('user') || 'null');
 
-  async function handleLogin(credentials: { email: string; password: string }) {
+  async function handleLogin(credentials: LoginData) {
     try {
       isLoading.value = true;
       error.value = '';
@@ -43,6 +45,11 @@ export const useAuthStore = defineStore('auth', () => {
       // Calculate token expiry
       const expiryTime = Date.now() + data.expires_in * 1000;
       tokenExpiry.value = expiryTime;
+
+      if (token.value && user.value) {
+        console.log('Init Echo Login');
+        initEcho(token.value);
+      }
 
       // // Save to localStorage
       localToken.set(LOCAL_STORAGE_AUTH_TOKEN, data.access_token);
@@ -72,6 +79,13 @@ export const useAuthStore = defineStore('auth', () => {
     localToken.remove(LOCAL_STORAGE_TOKEN_EXPIRY);
     localToken.remove(LOCAL_STORAGE_USER);
 
+    const echo = getEcho();
+    // Clear Echo instance
+    if (echo) {
+      console.log('Disconnect Echo');
+      echo.disconnect();
+    }
+
     // Clear auth header
     delete axios.defaults.headers.common['Authorization'];
 
@@ -79,6 +93,48 @@ export const useAuthStore = defineStore('auth', () => {
     router.push(APP_URL.AUTH.LOGIN);
   }
 
+  async function handleRegister(credentials: RegisterData) {
+    try {
+      isLoading.value = true;
+      error.value = '';
+
+      const response = await authService.register({
+        name: credentials.name,
+        username: credentials.username,
+        email: credentials.email,
+        password: credentials.password,
+      });
+      const data = response.data as Auth;
+
+      // Store auth data
+      token.value = data.access_token;
+      refreshToken.value = data.refresh_token;
+      user.value = data.user;
+
+      // Calculate token expiry
+      const expiryTime = Date.now() + data.expires_in * 1000;
+      tokenExpiry.value = expiryTime;
+
+      if (token.value && user.value) {
+        console.log('Init Echo Register');
+        initEcho(token.value);
+      }
+
+      // // Save to localStorage
+      localToken.set(LOCAL_STORAGE_AUTH_TOKEN, data.access_token);
+      localToken.set(LOCAL_STORAGE_REFRESH_TOKEN, data.refresh_token);
+      localToken.set(LOCAL_STORAGE_TOKEN_EXPIRY, expiryTime.toString());
+      localToken.set(LOCAL_STORAGE_USER, JSON.stringify(data.user));
+
+      return true;
+    } catch (err: any) {
+      console.error('Register error:', err);
+      error.value = err.response?.data?.message || 'auth.invalidRegister';
+      return false;
+    } finally {
+      isLoading.value = false;
+    }
+  }
   // Remove error message
   function removeErrorMessage() {
     error.value = '';
@@ -98,6 +154,7 @@ export const useAuthStore = defineStore('auth', () => {
     isStaff,
     isLeader,
     handleLogin,
+    handleRegister,
     handleLogout,
     removeErrorMessage,
   };

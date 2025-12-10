@@ -136,4 +136,27 @@ interface ConversationRepositoryInterface
    * @return bool
    */
   public function updateSettings(int $conversationId, array $settings);
+
+  /**
+   * Mark all message as delivered to a user on a specific conversation.
+   *
+   * @param int $conversationId
+   * @return bool
+   */
+  public function markMessagesAsDelivered(int $conversationId);
+
+  /** 
+   * Mark all message as delivered by a user on all conversation.
+   *
+   * @return array | bool
+   */
+  public function markAllMessagesAsDelivered();
+
+  /**
+   * Mark all message as seen to a user on a specific conversation.
+   *
+   * @param int $conversationId
+   * @return bool
+   */
+  public function markMessagesAsSeen(int $conversationId);
 }

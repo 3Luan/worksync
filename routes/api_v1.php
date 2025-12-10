@@ -6,6 +6,7 @@ use App\Http\Controllers\API\V1\MessageController;
 use App\Http\Controllers\API\V1\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Laravel\Reverb\Loggers\Log;
 
 /*
 |--------------------------------------------------------------------------|
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('/login', [LoginController::class, 'login']);
+Route::post('/register', [LoginController::class, 'register']);
 Route::post('/refresh_token', [LoginController::class, 'refreshToken']);
 Route::post('/forgot-password', [UserController::class, 'forgotPassword']);
 Route::get('/check-forgot-password-token', [UserController::class, 'checkForgotPasswordToken']);
@@ -53,7 +55,8 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::delete('/{message}', [MessageController::class, 'destroy']);
     Route::post('/{message}/restore', [MessageController::class, 'restore']);
     Route::post('/{message}/react', [MessageController::class, 'react']);
-    Route::post('/{message}/read', [MessageController::class, 'markAsRead']);
+    Route::post('/{message}/delivered', [MessageController::class, 'markAsDelivered']);
+    Route::post('/{message}/seen', [MessageController::class, 'markAsSeen']);
   });
 
   // Conversation API
@@ -73,6 +76,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/{conversation}/unmute', [ConversationController::class, 'unmute']);
     Route::get('/{conversation}/settings', [ConversationController::class, 'getSettings']);
     Route::put('/{conversation}/settings', [ConversationController::class, 'updateSettings']);
+    Route::post('/{conversation}/delivered', [ConversationController::class, 'markMessagesAsDelivered']);
+    Route::post('/all-delivered', [ConversationController::class, 'markAllMessagesAsDelivered']);
+    Route::post('/{conversation}/seen', [ConversationController::class, 'markMessagesAsSeen']);
   });
 
   // Admin API

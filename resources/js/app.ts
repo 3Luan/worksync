@@ -4,6 +4,7 @@ import App from './App.vue';
 import axios from 'axios';
 import router from './router/index';
 import { setupI18n } from './plugins/i18n';
+// import '@/echo.js';
 
 // Set up Axios defaults
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';

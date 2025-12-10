@@ -2,8 +2,14 @@
   "day": "1 day | {count} days",
   "month": "month",
   "year": "year",
-
-  "loadLanguageError": "Cannot load language",
-  "missingLocale": "Translation not found",
-  "generalError": "An error occurred, please try again later"
+  "load_language_error": "Cannot load language",
+  "missing_locale": "Translation not found",
+  "general_error": "An error occurred, please try again later",
+  "messages": "Messages",
+  "home": "Home",
+  "profile": "Profile",
+  "settings": "Settings",
+  "logout": "Logout",
+  "login": "Login",
+  "change_password": "Change Password"
 }

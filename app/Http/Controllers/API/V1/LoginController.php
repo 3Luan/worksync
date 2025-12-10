@@ -130,4 +130,67 @@ class LoginController extends ApiController
       return $this->serverErrorResponse($this->languageService->trans('auth.failed_refresh_token'));
     }
   }
+
+  public function register(Request $request)
+  {
+    try {
+      $validation = Validator::make($request->all(), [
+        'name' => 'required|string|max:255',
+        'username' => 'required|string|max:255|unique:users,username',
+        'email' => 'required|email|max:255|unique:users,email',
+        'password' => 'required|string|min:6',
+      ]);
+
+      if ($validation->fails()) {
+        return response()->json([
+          'message' => $this->languageService->trans('common.validation_error'),
+          'errors' => $validation->errors()
+        ], 403);
+      }
+      $user = User::create([
+        'name' => $request->name,
+        'username' => $request->username,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+      ]);
+
+      $credentials = $request->only('email', 'password');
+
+      if (!Auth::attempt($credentials)) {
+        $this->incrementAttempts($request);
+        if ($user) {
+          $password = Hash::check($request->password, $user->password);
+          if (!$password) {
+            return $this->forbiddenResponse($this->languageService->trans('auth.password_incorrect'));
+          }
+          return $this->forbiddenResponse($this->languageService->trans('auth.failed'));
+        } else {
+          return $this->forbiddenResponse($this->languageService->trans('auth.failed'));
+        }
+      } else {
+        $this->clearAttempts($request);
+        $oClient = OClient::where('password_client', 1)->first();
+        $request->request->add([
+          'grant_type' => 'password',
+          'client_id' => $oClient->id,
+          'client_secret' => $oClient->secret,
+          'username' => $request->email,
+          'password' => $request->password,
+          'scope' => '*',
+        ]);
+        $newRequest = Request::create('/oauth/token', Request::METHOD_POST);
+        $response = Route::dispatch($newRequest)->getContent();
+        $result = json_decode((string) $response, true);
+
+        $result['user'] = Auth::user();
+
+        return $this->successResponse([
+          'data' => $result
+        ]);
+      }
+    } catch (\Exception $e) {
+      Log::error('Error during registration: ' . $e->getMessage());
+      return $this->serverErrorResponse($this->languageService->trans('auth.failed_register_request'));
+    }
+  }
 }

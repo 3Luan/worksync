@@ -13,11 +13,30 @@ return [
   | a conventional file to locate the various service credentials.
   |
   */
+  /*
+  |--------------------------------------------------------------------------
+  | Third Party Services
+  |--------------------------------------------------------------------------
+  |
+  | This file is for storing the credentials for third party services such
+  | as Mailgun, Postmark, AWS and more. This file provides the de facto
+  | location for this type of information, allowing packages to have
+  | a conventional file to locate the various service credentials.
+  |
+  */
 
   'postmark' => [
     'token' => env('POSTMARK_TOKEN'),
   ],
+  'postmark' => [
+    'token' => env('POSTMARK_TOKEN'),
+  ],
 
+  'ses' => [
+    'key' => env('AWS_ACCESS_KEY_ID'),
+    'secret' => env('AWS_SECRET_ACCESS_KEY'),
+    'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+  ],
   'ses' => [
     'key' => env('AWS_ACCESS_KEY_ID'),
     'secret' => env('AWS_SECRET_ACCESS_KEY'),
@@ -30,15 +49,4 @@ return [
       'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
     ],
   ],
-
-  'calendarific' => [
-    'api_key' => env('CALENDARIFIC_API_KEY'),
-    'country' => env('CALENDARIFIC_COUNTRY', 'VN'),
-    'url' => env('CALENDARIFIC_URL', 'https://calendarific.com/api/v2/holidays'),
-  ],
-
-  'reminder_time' => [
-    'hour' => env('REMINDER_TIME_SEND_EMAIL', '17:00'),
-  ],
-
 ];
