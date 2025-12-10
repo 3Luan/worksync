@@ -107,7 +107,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex h-[calc(100vh-56px)] bg-gray-50 dark:bg-[#171717] rounded-lg overflow-hidden relative">
+  <div class="flex h-[calc(100dvh-56px)] bg-gray-50 dark:bg-[#171717] overflow-hidden relative">
     <!-- Sidebar -->
     <ConversationSidebar />
 

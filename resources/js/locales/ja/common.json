@@ -3,9 +3,14 @@
   "month": "月",
   "year": "年",
 
-  "loadLanguageError": "言語を読み込めません",
-  "missingLocale": "翻訳が見つかりません",
-  "generalError": "エラーが発生しました。後でもう一度お試しください",
+  "load_language_error": "言語を読み込めません",
+  "missing_locale": "翻訳が見つかりません",
+  "general_error": "エラーが発生しました。後でもう一度お試しください",
   "messages": "メッセージ",
-  "home": "ホーム"
+  "home": "ホーム",
+  "profile": "プロフィール",
+  "settings": "設定",
+  "logout": "ログアウト",
+  "login": "ログイン",
+  "change_password": "パスワードを変更する"
 }

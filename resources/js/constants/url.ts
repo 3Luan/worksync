@@ -26,6 +26,7 @@ export const APP_ROUTE_NAME = {
     LOGIN: 'auth.login',
     FORGOT_PASSWORD: 'auth.forgot-password',
     RESET_PASSWORD: 'auth.reset-password',
+    REGISTER: 'auth.register',
   },
   ADMIN: {
     DASHBOARD: 'admin.dashboard.index',

@@ -130,4 +130,34 @@ class LoginController extends ApiController
       return $this->serverErrorResponse($this->languageService->trans('auth.failed_refresh_token'));
     }
   }
+
+  public function register(Request $request)
+  {
+    try {
+      $validation = Validator::make($request->all(), [
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|max:255|unique:users,email',
+        'password' => 'required|string|min:6',
+      ]);
+
+      if ($validation->fails()) {
+        return response()->json([
+          'message' => $this->languageService->trans('common.validation_error'),
+          'errors' => $validation->errors()
+        ], 403);
+      }
+      $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+      ]);
+
+      return $this->successResponse([
+        'data' => $user
+      ]);
+    } catch (\Exception $e) {
+      Log::error('Error during registration: ' . $e->getMessage());
+      return $this->serverErrorResponse($this->languageService->trans('auth.failed_register_request'));
+    }
+  }
 }
