@@ -154,9 +154,40 @@ class LoginController extends ApiController
         'password' => Hash::make($request->password),
       ]);
 
-      return $this->successResponse([
-        'data' => $user
-      ]);
+      $credentials = $request->only('email', 'password');
+
+      if (!Auth::attempt($credentials)) {
+        $this->incrementAttempts($request);
+        if ($user) {
+          $password = Hash::check($request->password, $user->password);
+          if (!$password) {
+            return $this->forbiddenResponse($this->languageService->trans('auth.password_incorrect'));
+          }
+          return $this->forbiddenResponse($this->languageService->trans('auth.failed'));
+        } else {
+          return $this->forbiddenResponse($this->languageService->trans('auth.failed'));
+        }
+      } else {
+        $this->clearAttempts($request);
+        $oClient = OClient::where('password_client', 1)->first();
+        $request->request->add([
+          'grant_type' => 'password',
+          'client_id' => $oClient->id,
+          'client_secret' => $oClient->secret,
+          'username' => $request->email,
+          'password' => $request->password,
+          'scope' => '*',
+        ]);
+        $newRequest = Request::create('/oauth/token', Request::METHOD_POST);
+        $response = Route::dispatch($newRequest)->getContent();
+        $result = json_decode((string) $response, true);
+
+        $result['user'] = Auth::user();
+
+        return $this->successResponse([
+          'data' => $result
+        ]);
+      }
     } catch (\Exception $e) {
       Log::error('Error during registration: ' . $e->getMessage());
       return $this->serverErrorResponse($this->languageService->trans('auth.failed_register_request'));
