@@ -34,7 +34,9 @@ const formatTime = (time: string) => format(new Date(time), 'HH:mm', { locale: v
 <template>
   <div
     class="flex items-center gap-3 p-3 cursor-pointer rounded-xl hover:bg-indigo-50 dark:hover:bg-gray-700 transition-all duration-200 mx-2 my-1"
-    :class="{ 'bg-indigo-100 dark:bg-gray-700': chatStore.activeConversation?.id === conversation.id }"
+    :class="{
+      'bg-indigo-100 dark:bg-gray-700': chatStore.activeConversation?.id === conversation.id,
+    }"
     @click="handleSelectConversation(conversation)"
   >
     <!-- Avatar -->
@@ -43,7 +45,10 @@ const formatTime = (time: string) => format(new Date(time), 'HH:mm', { locale: v
         :src="getAvatarConversation(conversation) || AVATAR_DEFAULT"
         class="w-10 h-10 rounded-full shadow-sm border border-gray-200 dark:border-gray-800 object-cover"
       />
-      <span v-if="true" class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full" />
+      <span
+        v-if="true"
+        class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"
+      />
     </div>
 
     <!-- Info -->
@@ -52,21 +57,29 @@ const formatTime = (time: string) => format(new Date(time), 'HH:mm', { locale: v
         {{ getNameConversation(conversation) }}
       </p>
 
-      <!-- if conversation.unread_count thì content tô đậm và hiện số lượng -->
+      <!-- Last message with unread count -->
       <p v-if="conversation.unread_count" class="font-medium text-gray-800 dark:text-white">
         {{ conversation.last_message?.content }}
-        <span class="ml-2 inline-block bg-red-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
+        <span
+          class="ml-2 inline-block bg-red-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full"
+        >
           {{ conversation.unread_count }}
         </span>
       </p>
-      <p v-if="conversation.last_message?.content && !conversation.unread_count" class="text-sm text-gray-500 dark:text-gray-400 truncate">
+      <p
+        v-if="conversation.last_message?.content && !conversation.unread_count"
+        class="text-sm text-gray-500 dark:text-gray-400 truncate"
+      >
         {{ conversation.last_message.content }}
       </p>
       <!-- <p v-else class="text-sm text-gray-400 italic">Nhắn tin ngay...</p> -->
     </div>
 
     <!-- Optional time -->
-    <div v-if="conversation.last_message?.created_at" class="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap pl-1">
+    <div
+      v-if="conversation.last_message?.created_at"
+      class="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap pl-1"
+    >
       {{ formatTime(conversation.last_message.created_at) }}
     </div>
   </div>

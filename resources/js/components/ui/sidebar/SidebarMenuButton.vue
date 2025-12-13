@@ -27,7 +27,9 @@ const props = withDefaults(
 );
 
 const { state } = useSidebar();
-const isCollapsed = computed(() => (state.value === 'collapsed' ? '-top-2 -right-2' : 'top-[10px] right-0'));
+const isCollapsed = computed(() =>
+  state.value === 'collapsed' ? '-top-2 -right-2' : 'top-[10px] right-0',
+);
 const delegatedProps = computed(() => {
   const { tooltip, ...delegated } = props;
   return delegated;
@@ -35,13 +37,20 @@ const delegatedProps = computed(() => {
 </script>
 
 <template>
-  <SidebarMenuButtonChild v-if="!tooltip" v-bind="{ ...delegatedProps, ...$attrs }" class="!relative flex items-center">
+  <SidebarMenuButtonChild
+    v-if="!tooltip"
+    v-bind="{ ...delegatedProps, ...$attrs }"
+    class="!relative flex items-center"
+  >
     <slot />
     <template #badge>
       <!-- Badge Circle -->
       <span
         v-if="props.badge && Number(props.badge) > 0"
-        :class="['absolute flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-medium text-white z-[100]', isCollapsed]"
+        :class="[
+          'absolute flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-medium text-white z-[100]',
+          isCollapsed,
+        ]"
       >
         {{ formatBadge(props.badge) }}
       </span>
@@ -56,7 +65,10 @@ const delegatedProps = computed(() => {
         </SidebarMenuButtonChild>
         <span
           v-if="props.badge && Number(props.badge) > 0"
-          :class="['absolute z-[10] flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-medium text-white', isCollapsed]"
+          :class="[
+            'absolute z-[10] flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-medium text-white',
+            isCollapsed,
+          ]"
         >
           {{ formatBadge(props.badge) }}
         </span>

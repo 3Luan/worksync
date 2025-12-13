@@ -1,4 +1,3 @@
-
 import { z } from 'zod';
 
 export function getLoginSchema(t: (key: string) => string) {

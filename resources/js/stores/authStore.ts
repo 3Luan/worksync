@@ -3,7 +3,12 @@ import { ref, computed } from 'vue';
 import router from '@/router';
 import axios from '@/utils/axios';
 import localToken from '@/utils/token';
-import { LOCAL_STORAGE_AUTH_TOKEN, LOCAL_STORAGE_REFRESH_TOKEN, LOCAL_STORAGE_TOKEN_EXPIRY, LOCAL_STORAGE_USER } from '@/constants';
+import {
+  LOCAL_STORAGE_AUTH_TOKEN,
+  LOCAL_STORAGE_REFRESH_TOKEN,
+  LOCAL_STORAGE_TOKEN_EXPIRY,
+  LOCAL_STORAGE_USER,
+} from '@/constants';
 import { APP_URL } from '@/constants/url';
 import { authService } from '@/services/auth-service';
 import { Auth, User } from '@/types/model';
@@ -15,7 +20,11 @@ export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(JSON.parse(localStorage.getItem('user') || 'null'));
   const token = ref<string | null>(localStorage.getItem('auth_token'));
   const refreshToken = ref<string | null>(localStorage.getItem('refresh_token'));
-  const tokenExpiry = ref<number | null>(localStorage.getItem('token_expiry') ? parseInt(localStorage.getItem('token_expiry') || '0') : null);
+  const tokenExpiry = ref<number | null>(
+    localStorage.getItem('token_expiry')
+      ? parseInt(localStorage.getItem('token_expiry') || '0')
+      : null,
+  );
   const isLoading = ref(false);
   const error = ref('');
 

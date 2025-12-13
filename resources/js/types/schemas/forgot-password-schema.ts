@@ -1,4 +1,3 @@
-
 import { z } from 'zod';
 
 export function getForgotPasswordSchema(t: (key: string) => string) {

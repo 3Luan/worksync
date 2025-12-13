@@ -10,6 +10,7 @@ import { useChat } from '@/composables/useChat';
 import { CreateMessagePayload } from '@/types/api';
 import { useAuthStore } from '@/stores/authStore';
 import { useChannelStore } from '@/stores/channelStore';
+import EmojiPicker from '../emoji/EmojiPicker.vue';
 
 const props = defineProps<{
   conversation: Conversation | null;
@@ -19,10 +20,27 @@ const chatStore = useChatStore();
 const authStore = useAuthStore();
 const channelStore = useChannelStore();
 const { scrollToBottom } = useChat();
-
+const inputRef = ref<HTMLInputElement | null>(null);
 const input = ref('');
 
+// Channel reference
 let channel: any = null;
+
+// Insert emoji at cursor position
+const insertEmoji = (emoji: string) => {
+  if (!inputRef.value) return;
+
+  const element = inputRef.value;
+  const start = element.selectionStart ?? input.value.length;
+  const end = element.selectionEnd ?? input.value.length;
+  input.value = input.value.slice(0, start) + emoji + input.value.slice(end);
+
+  nextTick(() => {
+    const pos = start + emoji.length;
+    element.setSelectionRange(pos, pos);
+    element.focus();
+  });
+};
 
 // Join channel and setup listeners
 const setupChannel = () => {
@@ -83,15 +101,6 @@ const cleanupChannel = () => {
   channel = null;
 };
 
-// Watch conversation change
-watch(
-  () => props.conversation?.id,
-  () => {
-    cleanupChannel();
-    setupChannel();
-  }
-);
-
 // Send message
 const sendMessage = async () => {
   if (!input.value.trim()) return;
@@ -151,7 +160,7 @@ const sendMessage = async () => {
       type: MESSAGE_TYPE.TEXT,
       status: MESSAGE_STATUS.SENT,
     };
-    
+
     const res = await messageService.create(payload);
 
     chatStore.replaceMessage(tempId, {
@@ -165,6 +174,15 @@ const sendMessage = async () => {
   input.value = '';
 };
 
+// Watch conversation change
+watch(
+  () => props.conversation?.id,
+  () => {
+    cleanupChannel();
+    setupChannel();
+  },
+);
+
 // On mounted
 onMounted(setupChannel);
 
@@ -173,17 +191,26 @@ onUnmounted(cleanupChannel);
 </script>
 
 <template>
-  <footer class="p-3 bg-white dark:bg-[#1f1f1f] border-t border-gray-200 dark:border-gray-700 flex items-center gap-2 sticky bottom-0">
-    <button class="p-2 rounded-full hover:bg-indigo-50 dark:hover:bg-gray-700 transition">
-      <Smile class="w-5 h-5 text-gray-600 dark:text-gray-300" />
-    </button>
+  <footer
+    class="p-3 bg-white dark:bg-[#1f1f1f] border-t border-gray-200 dark:border-gray-700 flex items-center gap-2 sticky bottom-0"
+  >
+    <!-- Emoji -->
+    <EmojiPicker @select="insertEmoji" />
+
+    <!-- Input -->
     <input
+      ref="inputRef"
       v-model="input"
       @keyup.enter="sendMessage"
       placeholder="Nhập tin nhắn..."
       class="flex-1 p-2.5 rounded-xl border border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-indigo-500 outline-none dark:bg-[#171717] dark:text-white transition"
     />
-    <button @click="sendMessage" class="p-2 bg-indigo-500 text-white rounded-full hover:bg-indigo-600 shadow">
+
+    <!-- Send -->
+    <button
+      @click="sendMessage"
+      class="p-2 bg-indigo-500 text-white rounded-full hover:bg-indigo-600 shadow"
+    >
       <Send class="w-5 h-5" />
     </button>
   </footer>

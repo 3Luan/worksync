@@ -45,7 +45,10 @@ const refreshToken = async (): Promise<string> => {
   return response.data.data.access_token;
 };
 
-const attachTokenToRequest = (config: InternalAxiosRequestConfig, token: string | null): InternalAxiosRequestConfig => {
+const attachTokenToRequest = (
+  config: InternalAxiosRequestConfig,
+  token: string | null,
+): InternalAxiosRequestConfig => {
   if (token) {
     config.headers = config.headers || {};
     config.headers['Authorization'] = `Bearer ${token}`;

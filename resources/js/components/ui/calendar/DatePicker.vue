@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { cn } from '@/lib/utils';
-import { CalendarDate, DateFormatter, type DateValue, getLocalTimeZone } from '@internationalized/date';
+import {
+  CalendarDate,
+  DateFormatter,
+  type DateValue,
+  getLocalTimeZone,
+} from '@internationalized/date';
 import { CalendarIcon } from 'lucide-vue-next';
 import { ref, Ref, watch, computed } from 'vue';
 import Popover from '../popover/Popover.vue';
@@ -82,7 +87,13 @@ const displayDate = computed(() => {
       <PopoverTrigger as-child>
         <Button
           variant="outline"
-          :class="cn('min-w-[150px] h-[36px] justify-start px-2 font-normal custom-open-ring', !date && 'text-muted-foreground', props.classButton)"
+          :class="
+            cn(
+              'min-w-[150px] h-[36px] justify-start px-2 font-normal custom-open-ring',
+              !date && 'text-muted-foreground',
+              props.classButton,
+            )
+          "
         >
           <CalendarIcon class="text-muted-foreground" />
           {{ displayDate }}

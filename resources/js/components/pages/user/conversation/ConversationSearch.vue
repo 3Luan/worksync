@@ -14,7 +14,9 @@ watch(input, (val) => {
 </script>
 
 <template>
-  <div class="h-16 p-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between bg-white dark:bg-[#171717]">
+  <div
+    class="h-16 p-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between bg-white dark:bg-[#171717]"
+  >
     <div class="relative w-full">
       <Search class="absolute left-3 top-2.5 w-5 h-5 text-gray-400" />
       <input

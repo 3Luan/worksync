@@ -6,7 +6,13 @@ export const conversationAPI = {
     return axios.get('conversations', { params });
   },
 
-  create(data: { type: CONVERSATION_TYPE; name?: string; avatar?: string; description?: string; members: number[] }) {
+  create(data: {
+    type: CONVERSATION_TYPE;
+    name?: string;
+    avatar?: string;
+    description?: string;
+    members: number[];
+  }) {
     return axios.post('conversations', data);
   },
 

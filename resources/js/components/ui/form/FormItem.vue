@@ -13,10 +13,7 @@ provide(FORM_ITEM_INJECTION_KEY, id);
 </script>
 
 <template>
-  <div
-    data-slot="form-item"
-    :class="cn('flex flex-col gap-2', props.class)"
-  >
+  <div data-slot="form-item" :class="cn('flex flex-col gap-2', props.class)">
     <slot />
   </div>
 </template>

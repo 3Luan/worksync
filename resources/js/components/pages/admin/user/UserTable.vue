@@ -1,9 +1,5 @@
-<script setup lang="ts">
-</script>
+<script setup lang="ts"></script>
 
-<template>
-  User Table
-</template>
+<template>User Table</template>
 
-<style scoped>
-</style>
+<style scoped></style>

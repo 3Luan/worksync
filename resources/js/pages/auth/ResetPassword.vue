@@ -1,9 +1,5 @@
-<script setup lang="ts">
-</script>
+<script setup lang="ts"></script>
 
-<template>
-  Reset Password Page
-</template>
+<template>Reset Password Page</template>
 
-<style scoped>
-</style>
+<style scoped></style>

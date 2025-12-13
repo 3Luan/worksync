@@ -13,7 +13,12 @@ type ErrorHandlerOptions = {
 const { toast } = useToast();
 
 export function handleError(error: any, options: ErrorHandlerOptions = {}): void {
-  const { title = $t('common.error'), showToast = true, fallbackMessage = $t('common.general_error'), logToConsole = true } = options;
+  const {
+    title = $t('common.error'),
+    showToast = true,
+    fallbackMessage = $t('common.general_error'),
+    logToConsole = true,
+  } = options;
 
   let message = fallbackMessage;
 

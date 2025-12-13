@@ -10,16 +10,22 @@ const emit = defineEmits<{
 }>();
 
 const chatStore = useChatStore();
-
 </script>
 
 <template>
-  <section v-if="chatStore.activeConversation" class="flex-1 flex flex-col bg-white dark:bg-[#171717]">
+  <section
+    v-if="chatStore.activeConversation"
+    class="flex-1 flex flex-col bg-white dark:bg-[#171717]"
+  >
     <!-- Chat Header -->
     <ChatHeader />
 
     <!-- Message List -->
-    <MessageList ref="messageListRef" :conversationId="chatStore.activeConversation.id" class="chat-scroll" />
+    <MessageList
+      ref="messageListRef"
+      :conversationId="chatStore.activeConversation.id"
+      class="chat-scroll"
+    />
 
     <!-- Message Input -->
     <ChatInput class="pb-safe" :conversation="chatStore.activeConversation" />

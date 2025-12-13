@@ -1,7 +1,14 @@
 <template>
   <Popover v-model:open="isOpen" class="w-auto">
     <PopoverTrigger as="div">
-      <Button variant="outline" :class="[props.class, 'w-full justify-between text-left font-normal custom-focus-ring h-[36px]']" :disabled="props.disabled">
+      <Button
+        variant="outline"
+        :class="[
+          props.class,
+          'w-full justify-between text-left font-normal custom-focus-ring h-[36px]',
+        ]"
+        :disabled="props.disabled"
+      >
         <input
           ref="inputRef"
           type="text"
@@ -124,7 +131,15 @@ function validateTimeValues(timeStr: string): string {
 }
 
 function onKeyDown(e: KeyboardEvent) {
-  const allowedKeys = ['Backspace', 'Tab', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
+  const allowedKeys = [
+    'Backspace',
+    'Tab',
+    'Delete',
+    'ArrowLeft',
+    'ArrowRight',
+    'ArrowUp',
+    'ArrowDown',
+  ];
 
   const isCtrlCombo = e.ctrlKey && ['a', 'c', 'v', 'x'].includes(e.key.toLowerCase());
   const isNumberKey = /^[0-9]$/.test(e.key);

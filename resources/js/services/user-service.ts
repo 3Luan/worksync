@@ -1,4 +1,10 @@
-import type { ApiResponse, ChangePasswordParams, ForgotPasswordData, GetUsersParams, getActiveStaffUsersParams } from '@/types/api';
+import type {
+  ApiResponse,
+  ChangePasswordParams,
+  ForgotPasswordData,
+  GetUsersParams,
+  getActiveStaffUsersParams,
+} from '@/types/api';
 import { baseResponseApi } from '@/utils/api-utils';
 import type { User } from '@/types/model';
 import { $t } from '@/utils/i18n';
