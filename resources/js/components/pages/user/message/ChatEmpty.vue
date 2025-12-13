@@ -1,6 +1,8 @@
 <script setup lang="ts"></script>
 <template>
-  <div class="flex flex-1 flex-col items-center justify-center text-center p-8 text-gray-500 dark:text-gray-400 select-none relative overflow-hidden">
+  <div
+    class="flex flex-1 flex-col items-center justify-center text-center p-8 text-gray-500 dark:text-gray-400 select-none relative overflow-hidden"
+  >
     <!-- Illustration -->
     <div class="relative flex flex-col items-center space-y-6">
       <svg
@@ -20,8 +22,12 @@
 
       <!-- Text -->
       <div class="relative">
-        <h2 class="text-2xl font-semibold mb-2 text-gray-800 dark:text-gray-100">Chọn một cuộc trò chuyện để bắt đầu</h2>
-        <p class="text-sm text-gray-500 dark:text-gray-400 max-w-sm mx-auto leading-relaxed">Hãy chọn một người bạn để bắt đầu cuộc trò chuyện.</p>
+        <h2 class="text-2xl font-semibold mb-2 text-gray-800 dark:text-gray-100">
+          Chọn một cuộc trò chuyện để bắt đầu
+        </h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 max-w-sm mx-auto leading-relaxed">
+          Hãy chọn một người bạn để bắt đầu cuộc trò chuyện.
+        </p>
       </div>
     </div>
   </div>

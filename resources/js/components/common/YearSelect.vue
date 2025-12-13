@@ -1,12 +1,24 @@
 <template>
   <SelectRoot :model-value="internalValue" @update:model-value="handleValueChange">
-    <SelectTrigger :class="cn('min-w-[100px] bg-white transition-colors duration-300 border-black dark:border-gray-300 cursor-pointer', props.class)">
+    <SelectTrigger
+      :class="
+        cn(
+          'min-w-[100px] bg-white transition-colors duration-300 border-black dark:border-gray-300 cursor-pointer',
+          props.class,
+        )
+      "
+    >
       <SelectValue :placeholder="$t('common.pleaseSelect')" />
     </SelectTrigger>
     <SelectContent>
       <template v-if="yearOptions.length > 0">
         <div class="grid grid-cols-3 gap-2 max-h-[204px] overflow-y-auto p-1">
-          <SelectItem v-for="(item, index) in yearOptions" :key="item.value" :value="item.value" class="text-center cursor-pointer">
+          <SelectItem
+            v-for="(item, index) in yearOptions"
+            :key="item.value"
+            :value="item.value"
+            class="text-center cursor-pointer"
+          >
             {{ item.label }}
           </SelectItem>
         </div>
@@ -20,7 +32,14 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue';
-import { SelectRoot, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  SelectRoot,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { DEFAULT_START_YEAR, DEFAULT_YEAR_RANGE } from '@/constants';
 
@@ -67,7 +86,11 @@ const yearOptions = computed(() => {
   }
   const currentYear = new Date().getFullYear();
   const resolvedEndYear = props.endYear ?? currentYear;
-  const resolvedStartYear = props.startYear ?? (resolvedEndYear < DEFAULT_START_YEAR ? resolvedEndYear - DEFAULT_YEAR_RANGE : DEFAULT_START_YEAR);
+  const resolvedStartYear =
+    props.startYear ??
+    (resolvedEndYear < DEFAULT_START_YEAR
+      ? resolvedEndYear - DEFAULT_YEAR_RANGE
+      : DEFAULT_START_YEAR);
 
   const length = resolvedEndYear - resolvedStartYear + 1;
 

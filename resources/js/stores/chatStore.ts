@@ -94,7 +94,6 @@ export const useChatStore = defineStore('chat', () => {
   //   }
   // };
 
-
   // Replace a temporary message with the real one
   const replaceMessage = async (tempId: number, newMessage: Message) => {
     const index = messages.value.findIndex((m) => m.id === tempId);

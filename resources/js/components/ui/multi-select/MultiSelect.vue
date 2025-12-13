@@ -12,7 +12,13 @@ import {
   ComboboxItem,
   ComboboxItemIndicator,
 } from '@/components/ui/combobox';
-import { TagsInput, TagsInputInput, TagsInputItem, TagsInputItemDelete, TagsInputItemText } from '@/components/ui/tags-input';
+import {
+  TagsInput,
+  TagsInputInput,
+  TagsInputItem,
+  TagsInputItemDelete,
+  TagsInputItemText,
+} from '@/components/ui/tags-input';
 import { Check, ChevronDown, LoaderCircle } from 'lucide-vue-next';
 
 const props = defineProps<{
@@ -67,7 +73,10 @@ const onScroll = (event: Event) => {
         )
       "
     >
-      <TagsInput v-model="values" class="flex-grow flex flex-nowrap gap-2 items-center rounded-lg border-0 p-0 transition-colors duration-300 bg-transparent">
+      <TagsInput
+        v-model="values"
+        class="flex-grow flex flex-nowrap gap-2 items-center rounded-lg border-0 p-0 transition-colors duration-300 bg-transparent"
+      >
         <TagsInputItem
           v-for="(item, index) in visibleTags"
           :key="index"
@@ -80,7 +89,12 @@ const onScroll = (event: Event) => {
           <TagsInputItemDelete class="cursor-pointer" />
         </TagsInputItem>
 
-        <span v-if="remainingCount > 0" class="text-sm bg-gray-200 text-gray-600 rounded-md py-1 px-2 text-nowrap"> +{{ remainingCount }} more </span>
+        <span
+          v-if="remainingCount > 0"
+          class="text-sm bg-gray-200 text-gray-600 rounded-md py-1 px-2 text-nowrap"
+        >
+          +{{ remainingCount }} more
+        </span>
 
         <ComboboxInput v-model="searchTerm" as-child>
           <TagsInputInput
@@ -107,7 +121,9 @@ const onScroll = (event: Event) => {
             class="text-[13px] leading-none rounded-sm py-1.5 pr-2 pl-1 flex items-center relative hover:bg-accent hover:text-accent-foreground"
             :value="option"
           >
-            <ComboboxItemIndicator class="absolute left-0 w-[25px] inline-flex items-center justify-center">
+            <ComboboxItemIndicator
+              class="absolute left-0 w-[25px] inline-flex items-center justify-center"
+            >
               <Check class="h-4 w-4 text-green-600" />
             </ComboboxItemIndicator>
             <span class="text-sm">

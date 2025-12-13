@@ -30,7 +30,10 @@ const fetchUsers = async (append = false) => {
 const filteredUsers = computed(() => {
   const keyword = props.search.toLowerCase();
   return users.value.filter(
-    (u) => u.name.toLowerCase().includes(keyword) || u.username.toLowerCase().includes(keyword) || u.email.toLowerCase().includes(keyword),
+    (u) =>
+      u.name.toLowerCase().includes(keyword) ||
+      u.username.toLowerCase().includes(keyword) ||
+      u.email.toLowerCase().includes(keyword),
   );
 });
 
@@ -64,7 +67,7 @@ onUnmounted(() => observer.value?.disconnect());
 
     <UserCard v-for="user in filteredUsers" :key="user.id" :user="user" />
 
-    <div ref="loadMoreTrigger" class="h-10"></div>
+    <div ref="loadMoreTrigger" class="h-10" />
 
     <template v-if="loading && users.length > 0">
       <UserSkeleton v-for="n in 4" :key="'skeleton-' + n" />

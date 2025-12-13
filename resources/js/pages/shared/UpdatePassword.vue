@@ -1,9 +1,5 @@
-<script setup lang="ts">
-</script>
+<script setup lang="ts"></script>
 
-<template>
-  Update Password Page
-</template>
+<template>Update Password Page</template>
 
-<style scoped>
-</style>
+<style scoped></style>

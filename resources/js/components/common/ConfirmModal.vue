@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { type ButtonVariants } from '@/components/ui/button';
 import { XCircle, AlertTriangle, CheckCircle, HelpCircle, RefreshCw } from 'lucide-vue-next';
@@ -80,7 +87,8 @@ const TYPE_COLOR = {
     animation: '',
     shadow: 'shadow-sm shadow-green-500/20',
     gradient: 'bg-gradient-to-r from-transparent via-green-500/50 to-transparent',
-    customBtnClass: 'outline border-green-500 text-green-600 hover:bg-green-50 hover:border-green-600 dark:hover:bg-green-950/30',
+    customBtnClass:
+      'outline border-green-500 text-green-600 hover:bg-green-50 hover:border-green-600 dark:hover:bg-green-950/30',
   },
   YELLOW: {
     icon: 'text-yellow-500',
@@ -89,7 +97,8 @@ const TYPE_COLOR = {
     animation: '',
     shadow: 'shadow-sm shadow-yellow-500/20',
     gradient: 'bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent',
-    customBtnClass: 'outline border-yellow-500 text-yellow-600 hover:bg-yellow-50 hover:border-yellow-600 dark:hover:bg-yellow-950/30',
+    customBtnClass:
+      'outline border-yellow-500 text-yellow-600 hover:bg-yellow-50 hover:border-yellow-600 dark:hover:bg-yellow-950/30',
   },
   BLUE: {
     icon: 'text-blue-500',
@@ -98,7 +107,8 @@ const TYPE_COLOR = {
     animation: '',
     shadow: 'shadow-sm shadow-blue-500/20',
     gradient: 'bg-gradient-to-r from-transparent via-blue-500/50 to-transparent',
-    customBtnClass: 'outline border-blue-500 text-blue-600 hover:bg-blue-50 hover:border-blue-600 dark:hover:bg-blue-950/30',
+    customBtnClass:
+      'outline border-blue-500 text-blue-600 hover:bg-blue-50 hover:border-blue-600 dark:hover:bg-blue-950/30',
   },
 };
 
@@ -143,12 +153,24 @@ const sizeClasses = computed(() => {
 <template>
   <Dialog v-model:open="isOpen">
     <DialogContent
-      :class="['p-0 overflow-hidden rounded-xl border border-gray-200 w-[85%] sm:w-[500px]', sizeClasses, typeClasses.shadow, 'transition-all ease-in-out']"
+      :class="[
+        'p-0 overflow-hidden rounded-xl border border-gray-200 w-[85%] sm:w-[500px]',
+        sizeClasses,
+        typeClasses.shadow,
+        'transition-all ease-in-out',
+      ]"
     >
       <div class="flex flex-col">
         <div class="p-6 pb-4">
           <div class="flex items-center justify-start space-x-5">
-            <div :class="['flex-shrink-0 rounded-full p-3', typeClasses.bg, typeClasses.animation, 'transform transition-all ease-in-out']">
+            <div
+              :class="[
+                'flex-shrink-0 rounded-full p-3',
+                typeClasses.bg,
+                typeClasses.animation,
+                'transform transition-all ease-in-out',
+              ]"
+            >
               <component :is="iconMap[type]" :class="['size-6', typeClasses.icon]" />
             </div>
             <div class="flex pt-1">
@@ -166,19 +188,33 @@ const sizeClasses = computed(() => {
         <slot name="content" />
         <div :class="['h-px w-full', typeClasses.gradient]" />
         <DialogFooter class="bg-muted/40 backdrop-blur-[2px] p-5 flex justify-center space-x-3">
-          <Button variant="outline" size="sm" @click="handleCancel" class="transition-all duration-200 hover:scale-105 active:scale-95 m-0">
+          <Button
+            variant="outline"
+            size="sm"
+            @click="handleCancel"
+            class="transition-all duration-200 hover:scale-105 active:scale-95 m-0"
+          >
             {{ $t(cancelText) }}
           </Button>
           <Button
             v-if="isCustomButton"
-            :class="[typeClasses.customBtnClass, 'transition-all duration-200 hover:scale-105 active:scale-95']"
+            :class="[
+              typeClasses.customBtnClass,
+              'transition-all duration-200 hover:scale-105 active:scale-95',
+            ]"
             variant="outline"
             size="sm"
             @click="handleConfirm"
           >
             {{ $t(confirmText) }}
           </Button>
-          <Button v-else :variant="standardButtonVariant" size="sm" @click="handleConfirm" class="transition-all duration-200 hover:scale-105 active:scale-95">
+          <Button
+            v-else
+            :variant="standardButtonVariant"
+            size="sm"
+            @click="handleConfirm"
+            class="transition-all duration-200 hover:scale-105 active:scale-95"
+          >
             {{ $t(confirmText) }}
           </Button>
         </DialogFooter>

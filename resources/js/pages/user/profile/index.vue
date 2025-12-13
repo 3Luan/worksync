@@ -8,14 +8,20 @@ const auth = useAuthStore();
 <template>
   <div class="max-w-6xl mx-auto">
     <!-- Cover Banner -->
-    <div class="h-40 w-full bg-gray-100 rounded-xl relative overflow-hidden"></div>
+    <div class="h-40 w-full bg-gray-100 rounded-xl relative overflow-hidden" />
 
     <!-- Header -->
-    <div class="flex flex-col items-center sm:flex-row sm:items-end sm:justify-between gap-6 px-6 -mt-12 mb-8">
+    <div
+      class="flex flex-col items-center sm:flex-row sm:items-end sm:justify-between gap-6 px-6 -mt-12 mb-8"
+    >
       <div class="flex items-center gap-6">
         <div class="relative">
           <div class="w-28 h-28 rounded-full overflow-hidden ring-4 ring-white shadow-md">
-            <img src="https://i.pravatar.cc/150?img=2" alt="Avatar" class="w-full h-full object-cover" />
+            <img
+              src="https://i.pravatar.cc/150?img=2"
+              alt="Avatar"
+              class="w-full h-full object-cover"
+            />
           </div>
         </div>
         <div>
@@ -29,7 +35,7 @@ const auth = useAuthStore();
       <div class="space-y-6">
         <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
           <h2 class="font-semibold text-gray-900 mb-3">About</h2>
-          <div class="h-22"></div>
+          <div class="h-22" />
         </div>
       </div>
 
@@ -40,7 +46,9 @@ const auth = useAuthStore();
           <div class="flex flex-col items-center justify-center space-y-3">
             <ClipboardList class="w-12 h-12 text-gray-400" />
             <h3 class="font-semibold text-gray-700">We don’t have places to show here yet</h3>
-            <p class="text-sm text-gray-500 max-w-md">There are no projects or spaces you’ve worked in across the last 90 days.</p>
+            <p class="text-sm text-gray-500 max-w-md">
+              There are no projects or spaces you’ve worked in across the last 90 days.
+            </p>
           </div>
         </div>
       </div>

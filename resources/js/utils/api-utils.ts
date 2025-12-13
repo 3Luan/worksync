@@ -1,10 +1,7 @@
 import type { ApiResponse } from '@/types/api';
 import { isAxiosError } from 'axios';
 
-async function handleApiCall(
-  apiCall: () => Promise<any>,
-  errorTitle: string
-): Promise<any> {
+async function handleApiCall(apiCall: () => Promise<any>, errorTitle: string): Promise<any> {
   try {
     return await apiCall();
   } catch (error: any) {
@@ -24,7 +21,7 @@ async function handleApiCall(
 
 export async function baseResponseApi<T>(
   apiCall: () => Promise<any>,
-  errorTitle: string
+  errorTitle: string,
 ): Promise<ApiResponse<T>> {
   const response = await handleApiCall(apiCall, errorTitle);
   return response.data;
@@ -32,7 +29,7 @@ export async function baseResponseApi<T>(
 
 export async function baseBlobResponseApi<T = Blob>(
   apiCall: () => Promise<any>,
-  errorTitle: string
+  errorTitle: string,
 ): Promise<{ data: T; headers: any }> {
   const response = await handleApiCall(apiCall, errorTitle);
   return {

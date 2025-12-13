@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { cn } from '@/lib/utils';
-import { DropdownMenuSubContent, type DropdownMenuSubContentEmits, type DropdownMenuSubContentProps, useForwardPropsEmits } from 'reka-ui';
+import {
+  DropdownMenuSubContent,
+  type DropdownMenuSubContentEmits,
+  type DropdownMenuSubContentProps,
+  useForwardPropsEmits,
+} from 'reka-ui';
 import { type HTMLAttributes } from 'vue';
 
 const props = defineProps<DropdownMenuSubContentProps & { class?: HTMLAttributes['class'] }>();

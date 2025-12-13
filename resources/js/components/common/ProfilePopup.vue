@@ -1,7 +1,10 @@
 <template>
   <div class="relative" ref="menuRef">
     <!-- Avatar Button -->
-    <button @click="toggleMenu" class="flex items-center justify-center w-9 h-9 rounded-full bg-muted hover:bg-muted/70 focus:outline-none">
+    <button
+      @click="toggleMenu"
+      class="flex items-center justify-center w-9 h-9 rounded-full bg-muted hover:bg-muted/70 focus:outline-none"
+    >
       <UserIcon class="w-5 h-5 text-muted-foreground" />
     </button>
 
@@ -19,7 +22,9 @@
       >
         <div class="p-3 border-b border-gray-100 dark:border-gray-800">
           <div class="flex items-center space-x-3">
-            <div class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500">
+            <div
+              class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500"
+            >
               <UserIcon class="w-4 h-4" />
             </div>
             <div>
@@ -32,16 +37,25 @@
         </div>
 
         <div class="flex flex-col py-2">
-          <button @click="goToProfile" class="flex items-center gap-2 px-4 py-2 text-sm text-left hover:bg-muted/60 transition">
+          <button
+            @click="goToProfile"
+            class="flex items-center gap-2 px-4 py-2 text-sm text-left hover:bg-muted/60 transition"
+          >
             <UserIcon class="w-4 h-4" /> {{ $t('common.profile') }}
           </button>
-          <button @click="goToSettings" class="flex items-center gap-2 px-4 py-2 text-sm text-left hover:bg-muted/60 transition">
+          <button
+            @click="goToSettings"
+            class="flex items-center gap-2 px-4 py-2 text-sm text-left hover:bg-muted/60 transition"
+          >
             <Settings class="w-4 h-4" /> {{ $t('common.settings') }}
           </button>
         </div>
 
         <div class="border-t border-gray-100 dark:border-gray-800">
-          <button @click="logout" class="flex items-center gap-2 px-4 py-2 text-sm text-left text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 w-full">
+          <button
+            @click="logout"
+            class="flex items-center gap-2 px-4 py-2 text-sm text-left text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 w-full"
+          >
             <LogOut class="w-4 h-4" /> {{ $t('common.logout') }}
           </button>
         </div>

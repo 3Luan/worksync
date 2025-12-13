@@ -36,7 +36,13 @@ export function useChat() {
     chatStore.conversations = list;
   };
 
-  const scrollToBottom = ({ container, instant = false }: { container: HTMLDivElement | null; instant?: boolean }) => {
+  const scrollToBottom = ({
+    container,
+    instant = false,
+  }: {
+    container: HTMLDivElement | null;
+    instant?: boolean;
+  }) => {
     if (!container) return;
 
     requestAnimationFrame(() => {

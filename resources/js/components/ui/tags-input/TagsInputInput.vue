@@ -9,5 +9,10 @@ const forwardedProps = useForwardProps(props);
 </script>
 
 <template>
-  <TagsInputInput v-bind="forwardedProps" :class="cn('text-sm focus:outline-none bg-transparent transition-colors duration-300', props.class)" />
+  <TagsInputInput
+    v-bind="forwardedProps"
+    :class="
+      cn('text-sm focus:outline-none bg-transparent transition-colors duration-300', props.class)
+    "
+  />
 </template>

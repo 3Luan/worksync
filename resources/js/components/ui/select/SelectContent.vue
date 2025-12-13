@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { cn } from '@/lib/utils';
-import { SelectContent, type SelectContentEmits, type SelectContentProps, SelectPortal, SelectViewport, useForwardPropsEmits } from 'reka-ui';
+import {
+  SelectContent,
+  type SelectContentEmits,
+  type SelectContentProps,
+  SelectPortal,
+  SelectViewport,
+  useForwardPropsEmits,
+} from 'reka-ui';
 import { type HTMLAttributes } from 'vue';
 import { SelectScrollDownButton, SelectScrollUpButton } from '.';
 
@@ -8,9 +15,12 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const props = withDefaults(defineProps<SelectContentProps & { class?: HTMLAttributes['class'] }>(), {
-  position: 'popper',
-});
+const props = withDefaults(
+  defineProps<SelectContentProps & { class?: HTMLAttributes['class'] }>(),
+  {
+    position: 'popper',
+  },
+);
 const emits = defineEmits<SelectContentEmits>();
 
 const forwarded = useForwardPropsEmits(props, emits);
@@ -32,7 +42,13 @@ const forwarded = useForwardPropsEmits(props, emits);
     >
       <SelectScrollUpButton />
       <SelectViewport
-        :class="cn('p-1', position === 'popper' && 'h-[var(--reka-select-trigger-height)] w-full min-w-[var(--reka-select-trigger-width)] scroll-my-1')"
+        :class="
+          cn(
+            'p-1',
+            position === 'popper' &&
+              'h-[var(--reka-select-trigger-height)] w-full min-w-[var(--reka-select-trigger-width)] scroll-my-1',
+          )
+        "
       >
         <slot />
       </SelectViewport>

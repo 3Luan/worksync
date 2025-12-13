@@ -32,7 +32,9 @@ const props = withDefaults(
 const modelValue = defineModel<any>();
 
 const label = computed(() => {
-  return props.options.find((item: { label: string; value: any }) => item.value === modelValue.value)?.label;
+  return props.options.find(
+    (item: { label: string; value: any }) => item.value === modelValue.value,
+  )?.label;
 });
 
 const clearValue = () => {
@@ -42,7 +44,11 @@ const clearValue = () => {
 
 <template>
   <ComboboxRoot v-model="modelValue" class="relative !cursor-pointer">
-    <X v-if="clearable && modelValue" class="w-4 h-4 absolute top-1/2 right-7 -translate-y-1/2 hover:text-black text-gray-500 text-sm" @click="clearValue" />
+    <X
+      v-if="clearable && modelValue"
+      class="w-4 h-4 absolute top-1/2 right-7 -translate-y-1/2 hover:text-black text-gray-500 text-sm"
+      @click="clearValue"
+    />
     <ComboboxAnchor as-child :class="cn($props.class)">
       <ComboboxTrigger as-child>
         <Button variant="outline" class="justify-between min-w-20">
@@ -54,7 +60,10 @@ const clearValue = () => {
 
     <ComboboxList>
       <div class="relative w-full max-w-sm items-center" v-if="isSearch">
-        <ComboboxInput class="focus-visible:ring-0 border-0 rounded-none h-10" :placeholder="$t('common.searchPlaceholder')" />
+        <ComboboxInput
+          class="focus-visible:ring-0 border-0 rounded-none h-10"
+          :placeholder="$t('common.searchPlaceholder')"
+        />
         <span class="absolute start-0 inset-y-0 flex items-center justify-center px-3">
           <Search class="size-4 text-muted-foreground" />
         </span>

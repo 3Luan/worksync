@@ -16,7 +16,13 @@ import { isString } from './types';
  * formatDate(new Date(), 'dd/MM/yyyy'); // Returns the current date in 'dd/MM/yyyy' format
  * formatDate('2023-10-01'); // Returns '01-10-2023' if not pattern
  */
-export const formatDate = ({ date = new Date(), pattern = DATE_FORMATS.DATE }: { date?: DateInput; pattern?: string }): string => {
+export const formatDate = ({
+  date = new Date(),
+  pattern = DATE_FORMATS.DATE,
+}: {
+  date?: DateInput;
+  pattern?: string;
+}): string => {
   const parsed = isString(date) ? parseISO(date) : date;
   return isValid(parsed) ? format(parsed, pattern) : '';
 };
@@ -28,7 +34,8 @@ export const formatDate = ({ date = new Date(), pattern = DATE_FORMATS.DATE }: {
  * @example
  * formatDateWithSlash(new Date()); // Returns the current date in 'dd/MM/yyyy'
  */
-export const formatDateWithSlash = (date: DateInput): string => formatDate({ date, pattern: DATE_FORMATS.DATE_SLASH });
+export const formatDateWithSlash = (date: DateInput): string =>
+  formatDate({ date, pattern: DATE_FORMATS.DATE_SLASH });
 
 /**
  * Parses a time string to a Date object, assuming the time is for today.
@@ -39,7 +46,13 @@ export const formatDateWithSlash = (date: DateInput): string => formatDate({ dat
  * @example
  * parseTimeToToday('14:30', 'HH:mm'); // Returns new Date('2025-07-18T14:30:00') // if today is July 18, 2025
  */
-export const parseTimeToToday = ({ time, pattern = DATE_FORMATS.FULL_TIME }: { time: string; pattern?: string }): Date => {
+export const parseTimeToToday = ({
+  time,
+  pattern = DATE_FORMATS.FULL_TIME,
+}: {
+  time: string;
+  pattern?: string;
+}): Date => {
   return parse(time, pattern, new Date());
 };
 
@@ -74,9 +87,14 @@ export const formatTime = ({
   if (!time || time === 'null') return fallback;
 
   const parts = time.split(':');
-  if (parts.length === (pattern === DATE_FORMATS.FULL_TIME ? TIME_SEGMENTS_FULL : TIME_SEGMENTS_SHORT)) return time;
+  if (
+    parts.length === (pattern === DATE_FORMATS.FULL_TIME ? TIME_SEGMENTS_FULL : TIME_SEGMENTS_SHORT)
+  )
+    return time;
 
-  const parsed = parsePattern ? parseTimeToToday({ time, pattern: parsePattern }) : parseTimeToToday({ time });
+  const parsed = parsePattern
+    ? parseTimeToToday({ time, pattern: parsePattern })
+    : parseTimeToToday({ time });
 
   if (!isValid(parsed)) return fallback;
 
@@ -93,7 +111,12 @@ export const formatTime = ({
  * formatTimeText('14:30'); // '14:30:00'
  */
 export const formatTimeText = (time?: string): string | undefined => {
-  return formatTime({ time, pattern: DATE_FORMATS.FULL_TIME, fallback: '', parsePattern: DATE_FORMATS.TIME });
+  return formatTime({
+    time,
+    pattern: DATE_FORMATS.FULL_TIME,
+    fallback: '',
+    parsePattern: DATE_FORMATS.TIME,
+  });
 };
 
 /** * Formats a time string
@@ -228,7 +251,15 @@ export const formatDateToDbString = ({ year, month, day }: YearMonthDay): string
  * @example
  * formatDateWithSlash(new Date()); // Returns the current date in 'dd/MM/yyyy'
  */
-export function formatWeekday({ date, locale, formatStyle }: { date: Date; locale: string; formatStyle: WeekdayFormat }): string {
+export function formatWeekday({
+  date,
+  locale,
+  formatStyle,
+}: {
+  date: Date;
+  locale: string;
+  formatStyle: WeekdayFormat;
+}): string {
   const formatter = new Intl.DateTimeFormat(locale, { weekday: formatStyle });
   return formatter.format(date);
 }

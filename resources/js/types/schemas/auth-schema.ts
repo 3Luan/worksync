@@ -26,8 +26,12 @@ export function getChangePasswordSchema(t: (key: string) => string) {
 export const resetPasswordSchema = (t: (key: string) => string) => {
   return z
     .object({
-      password: z.string({ required_error: t('auth.errorConfirmPasswordMin') }).min(8, t('auth.errorNewPasswordMin')),
-      confirm_password: z.string({ required_error: t('auth.errorConfirmPasswordRequired') }).min(1, t('auth.errorConfirmPasswordMin')),
+      password: z
+        .string({ required_error: t('auth.errorConfirmPasswordMin') })
+        .min(8, t('auth.errorNewPasswordMin')),
+      confirm_password: z
+        .string({ required_error: t('auth.errorConfirmPasswordRequired') })
+        .min(1, t('auth.errorConfirmPasswordMin')),
     })
     .refine((data) => data.password === data.confirm_password, {
       message: t('auth.errorConfirmPasswordNotMatch'),

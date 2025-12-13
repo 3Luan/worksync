@@ -64,11 +64,19 @@ const updateDateRange = (value: DateRange) => {
   };
   if (value?.start) {
     const startDate = new Date(value.start);
-    updateDate.start = new CalendarDate(startDate.getFullYear(), startDate.getMonth() + 1, startDate.getDate());
+    updateDate.start = new CalendarDate(
+      startDate.getFullYear(),
+      startDate.getMonth() + 1,
+      startDate.getDate(),
+    );
   }
   if (value?.end) {
     const endDate = new Date(value.end);
-    updateDate.end = new CalendarDate(endDate.getFullYear(), endDate.getMonth() + 1, endDate.getDate());
+    updateDate.end = new CalendarDate(
+      endDate.getFullYear(),
+      endDate.getMonth() + 1,
+      endDate.getDate(),
+    );
   }
   date.value = {
     start: updateDate.start,
@@ -124,8 +132,11 @@ const removeDate = () => {
 
           <template v-if="date.start">
             <template v-if="date.end">
-              {{ formatLocalizedDate({ date: date.start, locale }) }} - {{ formatLocalizedDate({ date: date.end, locale }) }}
-              <span @click.stop="removeDate" v-if="props.allowClear"> <CircleX class="text-red-400" /> </span>
+              {{ formatLocalizedDate({ date: date.start, locale }) }} -
+              {{ formatLocalizedDate({ date: date.end, locale }) }}
+              <span @click.stop="removeDate" v-if="props.allowClear">
+                <CircleX class="text-red-400" />
+              </span>
             </template>
 
             <template v-else>
@@ -136,7 +147,13 @@ const removeDate = () => {
         </Button>
       </PopoverTrigger>
       <PopoverContent class="w-auto p-0 max-h-[350px] overflow-auto" align="start">
-        <RangeCalendar v-model="date" :number-of-months="2" initial-focus :is-date-disabled="disableDates" :locale="locale" />
+        <RangeCalendar
+          v-model="date"
+          :number-of-months="2"
+          initial-focus
+          :is-date-disabled="disableDates"
+          :locale="locale"
+        />
       </PopoverContent>
     </Popover>
   </div>

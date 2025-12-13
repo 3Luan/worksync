@@ -10,7 +10,11 @@ const forwarded = useForwardProps(props);
 </script>
 
 <template>
-  <ComboboxViewport data-slot="combobox-viewport" v-bind="forwarded" :class="cn('max-h-[300px] scroll-py-1 overflow-x-hidden overflow-y-auto', props.class)">
+  <ComboboxViewport
+    data-slot="combobox-viewport"
+    v-bind="forwarded"
+    :class="cn('max-h-[300px] scroll-py-1 overflow-x-hidden overflow-y-auto', props.class)"
+  >
     <slot />
   </ComboboxViewport>
 </template>
