@@ -4,9 +4,12 @@ import { buttonVariants } from '@/components/ui/button';
 import { CalendarCellTrigger, type CalendarCellTriggerProps, useForwardProps } from 'reka-ui';
 import { type HTMLAttributes } from 'vue';
 
-const props = withDefaults(defineProps<CalendarCellTriggerProps & { class?: HTMLAttributes['class'] }>(), {
-  as: 'button',
-});
+const props = withDefaults(
+  defineProps<CalendarCellTriggerProps & { class?: HTMLAttributes['class'] }>(),
+  {
+    as: 'button',
+  },
+);
 
 const forwardedProps = useForwardProps(props);
 </script>

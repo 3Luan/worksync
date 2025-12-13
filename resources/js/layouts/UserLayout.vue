@@ -16,7 +16,9 @@ const headerMenu = [
 <template>
   <div class="h-screen flex flex-col bg-[#FAFAFA] dark:bg-[#171717] transition-colors">
     <!-- HEADER -->
-    <header class="bg-white dark:bg-[#171717] h-14 shadow flex items-center justify-between px-4 border-b border-gray-300 dark:border-gray-700">
+    <header
+      class="bg-white dark:bg-[#171717] h-14 shadow flex items-center justify-between px-4 border-b border-gray-300 dark:border-gray-700"
+    >
       <!-- LEFT: Logo -->
       <router-link :to="{ name: APP_ROUTE_NAME.USER.INDEX }" class="flex items-center gap-3">
         <img :src="LOGO_WORKSYNC" class="w-13 h-10 object-cover" />
@@ -25,11 +27,7 @@ const headerMenu = [
 
       <!-- CENTER: Navigation -->
       <nav class="flex items-center gap-6">
-      <RouterLink
-          v-for="item in headerMenu"
-          :key="item.routeName"
-          :to="{ name: item.routeName }"
-        >
+        <RouterLink v-for="item in headerMenu" :key="item.routeName" :to="{ name: item.routeName }">
           <div
             :class="[
               'flex items-center gap-2 px-5 sm:px-7 md:px-10 py-2 rounded-md transition-all duration-200 cursor-pointer relative',
@@ -38,10 +36,10 @@ const headerMenu = [
                 : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800',
             ]"
           >
-          <span
+            <span
               v-if="$route.matched.some((m) => m.name === item.routeName)"
               class="absolute -bottom-2 left-0 w-full h-[4px] bg-blue-500 rounded-t-md"
-            ></span>
+            />
             <component :is="item.icon" class="w-6 h-6" />
           </div>
         </RouterLink>
@@ -49,7 +47,10 @@ const headerMenu = [
 
       <!-- RIGHT: Actions -->
       <div class="flex items-center gap-2">
-        <button class="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer" @click="toggleDarkMode">
+        <button
+          class="p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer"
+          @click="toggleDarkMode"
+        >
           <Sun v-if="isDark" class="h-5 w-5" />
           <Moon v-else class="h-5 w-5" />
         </button>

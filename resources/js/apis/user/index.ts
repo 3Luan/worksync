@@ -1,4 +1,9 @@
-import type { GetUsersParams, ChangePasswordParams, getActiveStaffUsersParams, ForgotPasswordData } from '@/types/api';
+import type {
+  GetUsersParams,
+  ChangePasswordParams,
+  getActiveStaffUsersParams,
+  ForgotPasswordData,
+} from '@/types/api';
 import type { User } from '@/types/model';
 import axios from '@/utils/axios';
 

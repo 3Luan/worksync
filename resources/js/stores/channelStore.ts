@@ -71,7 +71,7 @@ export const useChannelStore = defineStore('channel', () => {
       if (user) initUserChannel();
       else clearAll();
     },
-    { immediate: true }
+    { immediate: true },
   );
 
   return {

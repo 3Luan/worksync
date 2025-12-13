@@ -39,7 +39,7 @@ export const triggerDownload = (data: Blob | BlobPart, filename: string) => {
 export const downloadFileFromBlob = (
   blobData: BlobPart,
   contentDisposition?: string,
-  fallbackName = 'default.zip'
+  fallbackName = 'default.zip',
 ) => {
   const filename = getFileName(contentDisposition, fallbackName);
   triggerDownload(blobData, filename);

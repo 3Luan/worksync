@@ -1,9 +1,5 @@
-<script setup lang="ts">
-</script>
+<script setup lang="ts"></script>
 
-<template>
-  Not Found Page
-</template>
+<template>Not Found Page</template>
 
-<style scoped>
-</style>
+<style scoped></style>

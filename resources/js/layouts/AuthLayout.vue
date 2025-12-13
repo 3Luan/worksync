@@ -6,7 +6,7 @@
   >
     <div class="flex-grow flex flex-col items-center justify-center p-4">
       <div class="w-full text-center">
-        <div class="inline-flex items-center gap-2 text-primary mb-4"></div>
+        <div class="inline-flex items-center gap-2 text-primary mb-4" />
       </div>
       <router-view />
     </div>

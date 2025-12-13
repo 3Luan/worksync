@@ -14,9 +14,17 @@ const sendMessage = () => {
 </script>
 
 <template>
-  <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-sm flex flex-col items-center text-center group">
-    <img :src="user.avatar || AVATAR_DEFAULT" alt="avatar" class="w-full aspect-square object-cover transition-transform duration-300 rounded-t-lg" />
-    <h2 class="w-full px-3 font-semibold text-gray-800 dark:text-gray-100 mt-2 truncate overflow-hidden whitespace-nowrap">
+  <div
+    class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-sm flex flex-col items-center text-center group"
+  >
+    <img
+      :src="user.avatar || AVATAR_DEFAULT"
+      alt="avatar"
+      class="w-full aspect-square object-cover transition-transform duration-300 rounded-t-lg"
+    />
+    <h2
+      class="w-full px-3 font-semibold text-gray-800 dark:text-gray-100 mt-2 truncate overflow-hidden whitespace-nowrap"
+    >
       {{ user.name }}
     </h2>
     <div class="p-3 mt-2 space-y-2 w-full">

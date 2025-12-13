@@ -1,7 +1,8 @@
 import { CONVERSATION_MEMBER_ROLE } from '@/constants';
 import { User } from './user';
 
-export type ConversationMemberRole = (typeof CONVERSATION_MEMBER_ROLE)[keyof typeof CONVERSATION_MEMBER_ROLE];
+export type ConversationMemberRole =
+  (typeof CONVERSATION_MEMBER_ROLE)[keyof typeof CONVERSATION_MEMBER_ROLE];
 
 export interface ConversationMember {
   id?: number;

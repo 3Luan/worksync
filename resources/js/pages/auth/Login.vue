@@ -48,12 +48,16 @@ const togglePasswordVisibility = () => {
 <template>
   <div class="p-8 bg-white dark:bg-gray-800 rounded-lg shadow-md w-full max-w-md mx-auto">
     <MessageSquare class="mx-auto mb-2 w-16 h-16 text-indigo-600" />
-    <h1 class="text-xl font-bold text-center text-gray-800 dark:text-gray-100 mb-6">Chào mừng trở lại WorkSync</h1>
+    <h1 class="text-xl font-bold text-center text-gray-800 dark:text-gray-100 mb-6">
+      Chào mừng trở lại WorkSync
+    </h1>
 
     <form @submit.prevent="handleLogin" class="space-y-5">
       <!-- Email input -->
       <div class="relative">
-        <Mail class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
+        <Mail
+          class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500"
+        />
         <input
           v-model="email"
           type="email"
@@ -66,7 +70,9 @@ const togglePasswordVisibility = () => {
 
       <!-- Password input -->
       <div class="relative">
-        <Lock class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
+        <Lock
+          class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500"
+        />
         <input
           v-model="password"
           :type="showPassword ? 'text' : 'password'"
@@ -96,9 +102,17 @@ const togglePasswordVisibility = () => {
     </form>
 
     <div class="flex justify-between items-center mt-4 text-sm">
-      <button @click="handleForgotPassword" class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400">Quên mật khẩu?</button>
+      <button
+        @click="handleForgotPassword"
+        class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400"
+      >
+        Quên mật khẩu?
+      </button>
 
-      <router-link to="/auth/register" class="text-gray-600 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400">
+      <router-link
+        to="/auth/register"
+        class="text-gray-600 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400"
+      >
         Đăng ký tài khoản
       </router-link>
     </div>

@@ -6,7 +6,6 @@ import { useChat } from '@/composables/useChat';
 import { format, isToday, isYesterday } from 'date-fns';
 import MessageItem from './MessageItem.vue';
 import { MessageGroupItem } from '@/types/model';
-import MessageSkeleton from './MessageSkeleton.vue';
 import { conversationService } from '@/services/conversation-service';
 import { useAuthStore } from '@/stores/authStore';
 import { useRoute } from 'vue-router';
@@ -33,7 +32,7 @@ const initialLoading = ref(true);
 let userChannel: any = null;
 
 // Computed
-const messageIds = computed(() => chatStore.messages.map(message => message.id));
+const messageIds = computed(() => chatStore.messages.map((message) => message.id));
 
 // Helpers format date/time
 const formatMessageTime = (date: string | Date) => format(new Date(date), 'HH:mm');
@@ -165,7 +164,7 @@ watch(
       chatStore.setMessages([]);
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const markMessagesAsDelivered = async (conversationId: number) => {
@@ -175,16 +174,16 @@ const markMessagesAsDelivered = async (conversationId: number) => {
   console.log('đã nhận: ', conversationId);
 };
 
-// On mounted: Join user channel bằng useChannelStore
+// On mounted: Join user channel using useChannelStore
 onMounted(() => {
   if (props.conversationId) {
     chatStore.updateConversationUnread(props.conversationId);
   }
 
-  // userChannel auto init trong store → chỉ cần lấy ra dùng
+  // userChannel auto init trong store → just get it
   userChannel = channelStore.userChannel;
 
-  // Nếu reload trang quá nhanh => force join
+  // Join user channel if not joined
   if (!userChannel && authStore.user) {
     const channelName = `user.${authStore.user.id}`;
     userChannel = channelStore.join(channelName);
@@ -209,20 +208,8 @@ onMounted(() => {
     @scroll.passive="handleScroll"
   >
     <!-- Loading -->
-    <div v-if="initialLoading" class="space-y-4">
-      <MessageSkeleton v-for="i in 10" :key="i" />
-    </div>
 
-    <div v-else>
-      <!-- Loading older messages -->
-      <div v-if="loadingOlder" class="flex justify-center my-3">
-        <div class="flex items-center space-x-1 bg-gray-100 dark:bg-gray-800 px-3 py-2 rounded-2xl shadow-sm">
-          <span class="w-2 h-2 bg-gray-300 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-          <span class="w-2 h-2 bg-gray-300 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-          <span class="w-2 h-2 bg-gray-300 rounded-full animate-bounce"></span>
-        </div>
-      </div>
-
+    <div>
       <!-- Messages -->
       <div v-for="item in groupedMessages" :key="item.message.id">
         <div v-if="item.showDate" class="text-center text-gray-500 dark:text-gray-400 my-2 text-sm">

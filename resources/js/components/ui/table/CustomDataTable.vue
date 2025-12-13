@@ -1,5 +1,14 @@
 <script setup lang="ts" generic="TData">
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, PaginationTable, DataTableDropDown } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  PaginationTable,
+  DataTableDropDown,
+} from '@/components/ui/table';
 import { FlexRender, getCoreRowModel, SortingState, useVueTable } from '@tanstack/vue-table';
 import Combobox from '../combobox/Combobox.vue';
 import { nextTick, ref, watch, computed } from 'vue';
@@ -132,7 +141,10 @@ const onAction = ({ value, key }: { value: any; key: string }) => {
 const paginationText = computed(() => {
   if (!paginationValue.value || paginationValue.value.total <= 0) return '';
   const start = (paginationValue.value.page - 1) * paginationValue.value.perPage + 1;
-  const end = Math.min(paginationValue.value.page * paginationValue.value.perPage, paginationValue.value.total);
+  const end = Math.min(
+    paginationValue.value.page * paginationValue.value.perPage,
+    paginationValue.value.total,
+  );
   const total = paginationValue.value.total;
 
   return $t('common.paginationInfo', { start, end, total });
@@ -143,7 +155,11 @@ const paginationText = computed(() => {
   <div :class="['p-2 rounded-md sm:p-5', customClass]">
     <Table class="border-b mb-2" @click="handleAction">
       <TableHeader>
-        <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id" class="hover:bg-transparent dark:hover:bg-transparent text-base">
+        <TableRow
+          v-for="headerGroup in table.getHeaderGroups()"
+          :key="headerGroup.id"
+          class="hover:bg-transparent dark:hover:bg-transparent text-base"
+        >
           <TableHead
             v-for="header in headerGroup.headers"
             :key="header.id"
@@ -151,14 +167,21 @@ const paginationText = computed(() => {
             @click="
               () => {
                 const isSorted = header.column.getIsSorted();
-                const sortingData = sortingValueTable(isSorted as false | SortDirectionType, header.id);
+                const sortingData = sortingValueTable(
+                  isSorted as false | SortDirectionType,
+                  header.id,
+                );
                 if (sortingData) {
                   emits('getData', sortingData);
                 }
               }
             "
           >
-            <FlexRender v-if="!header.isPlaceholder" :render="header.column.columnDef.header" :props="header.getContext()" />
+            <FlexRender
+              v-if="!header.isPlaceholder"
+              :render="header.column.columnDef.header"
+              :props="header.getContext()"
+            />
           </TableHead>
         </TableRow>
       </TableHeader>
@@ -180,7 +203,11 @@ const paginationText = computed(() => {
             :class="config.rowClassName?.(row.original)"
           >
             <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
-              <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" class="transition-colors duration-300" />
+              <FlexRender
+                :render="cell.column.columnDef.cell"
+                :props="cell.getContext()"
+                class="transition-colors duration-300"
+              />
             </TableCell>
             <TableCell>
               <DataTableDropDown
@@ -194,7 +221,10 @@ const paginationText = computed(() => {
         </template>
         <template v-else>
           <TableRow>
-            <TableCell :colspan="config.columns.length" class="h-24 text-center text-primary transition-colors duration-300 p-8">
+            <TableCell
+              :colspan="config.columns.length"
+              class="h-24 text-center text-primary transition-colors duration-300 p-8"
+            >
               <FileSpreadsheet class="mx-auto h-12 w-12 text-gray-400" />
               <h3 class="mt-2 text-sm font-medium text-primary">{{ $t('common.noData') }}</h3>
             </TableCell>
@@ -202,13 +232,21 @@ const paginationText = computed(() => {
         </template>
       </TableBody>
     </Table>
-    <div v-if="table.getRowModel().rows?.length && paginationValue" class="flex flex-col sm:flex-row justify-between items-center w-full gap-3 sm:gap-5 mt-1">
+    <div
+      v-if="table.getRowModel().rows?.length && paginationValue"
+      class="flex flex-col sm:flex-row justify-between items-center w-full gap-3 sm:gap-5 mt-1"
+    >
       <div class="text-sm text-muted-foreground w-full sm:w-auto text-center">
         {{ paginationText }}
       </div>
       <div class="flex flex-row justify-center sm:justify-end w-full sm:w-auto gap-3 sm:gap-5">
         <PaginationTable :model-value="paginationValue" />
-        <Combobox :options="pageLengthOptions" v-model="paginationValue.perPage" :is-search="false" class="h-8 w-16 custom-open-ring dark:border-gray-300" />
+        <Combobox
+          :options="pageLengthOptions"
+          v-model="paginationValue.perPage"
+          :is-search="false"
+          class="h-8 w-16 custom-open-ring dark:border-gray-300"
+        />
       </div>
     </div>
   </div>

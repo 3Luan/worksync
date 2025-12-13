@@ -39,7 +39,10 @@ export function useSidebarTooltip() {
    */
   const createLabelRef = (key: string) => {
     return (element: Element | { $el: Element } | null) => {
-      const htmlElement = element && '$el' in element ? (element.$el as HTMLElement) : (element as HTMLElement | null);
+      const htmlElement =
+        element && '$el' in element
+          ? (element.$el as HTMLElement)
+          : (element as HTMLElement | null);
       nextTick(() => measureElement(key, htmlElement));
     };
   };

@@ -40,7 +40,8 @@ const props = withDefaults(defineProps<CustomSidebarProps>(), {
 const router = useRouter();
 const route = useRoute();
 const { t: $t } = useI18n();
-const labelOf = (item: NavItem) => (item.isTranslated ? String(item.title) : $t(String(item.title)));
+const labelOf = (item: NavItem) =>
+  item.isTranslated ? String(item.title) : $t(String(item.title));
 const keyOf = (item: NavItem) => item.routeName || String(item.title);
 
 /**
@@ -81,7 +82,11 @@ watch(open, async (val) => {
 </script>
 
 <template>
-  <Sidebar v-bind="props" data-sidebar-root class="border-r transition-colors duration-300 border-b border-gray-300 dark:border-gray-600">
+  <Sidebar
+    v-bind="props"
+    data-sidebar-root
+    class="border-r transition-colors duration-300 border-b border-gray-300 dark:border-gray-600"
+  >
     <SidebarHeader>
       <Collapsible>
         <div :class="[' w-full flex flex-row justify-center items-center py-1 ', { 'h-28': open }]">
@@ -124,7 +129,12 @@ watch(open, async (val) => {
       <SidebarGroup>
         <SidebarMenu>
           <template v-for="item in props.data" :key="keyOf(item)">
-            <Collapsible v-if="item.submenu" as-child :default-open="isAnySubItemActive(item) || isActive(item.routeName)" class="group/collapsible">
+            <Collapsible
+              v-if="item.submenu"
+              as-child
+              :default-open="isAnySubItemActive(item) || isActive(item.routeName)"
+              class="group/collapsible"
+            >
               <SidebarMenuItem>
                 <CollapsibleTrigger as-child>
                   <SidebarMenuButton
@@ -135,22 +145,45 @@ watch(open, async (val) => {
                     :disabled-tooltip="open ? !tooltipShown[keyOf(item)] : false"
                     :tooltip="labelOf(item)"
                   >
-                    <span @click="item.routeName && navigateTo(item.routeName)" class="flex items-center cursor-pointer">
-                      <component :is="item.icon" v-if="item.icon" class="mr-2 h-10 w-10 scale-125" />
-                      <span :class="['truncate max-w-[200px]', { 'font-bold': !!item.routeName && isActive(item.routeName) }]">
+                    <span
+                      @click="item.routeName && navigateTo(item.routeName)"
+                      class="flex items-center cursor-pointer"
+                    >
+                      <component
+                        :is="item.icon"
+                        v-if="item.icon"
+                        class="mr-2 h-10 w-10 scale-125"
+                      />
+                      <span
+                        :class="[
+                          'truncate max-w-[200px]',
+                          { 'font-bold': !!item.routeName && isActive(item.routeName) },
+                        ]"
+                      >
                         {{ item.isTranslated ? item.title : $t(item.title) }}
                       </span>
-                      <ChevronRight class="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                      <ChevronRight
+                        class="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
+                      />
                     </span>
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <SidebarMenuSub>
                     <SidebarMenuSubItem v-for="subItem in item.submenu" :key="keyOf(subItem)">
-                      <SidebarMenuSubButton as-child :is-active="isActive(subItem.routeName)" class="h-8">
+                      <SidebarMenuSubButton
+                        as-child
+                        :is-active="isActive(subItem.routeName)"
+                        class="h-8"
+                      >
                         <span @click="navigateTo(subItem.routeName)" class="cursor-pointer">
                           <Tooltip :title="String(subItem.title)">
-                            <span :class="['text-sm truncate max-w-[200px]', { 'font-semibold': isActive(subItem.routeName) }]">
+                            <span
+                              :class="[
+                                'text-sm truncate max-w-[200px]',
+                                { 'font-semibold': isActive(subItem.routeName) },
+                              ]"
+                            >
                               {{ subItem.title }}
                             </span>
                           </Tooltip>
@@ -171,14 +204,20 @@ watch(open, async (val) => {
                 :disabled-tooltip="open ? !tooltipShown[keyOf(item)] : false"
                 :tooltip="labelOf(item)"
               >
-                <span class="flex items-center cursor-pointer" @click="item.routeName && navigateTo(item.routeName)">
+                <span
+                  class="flex items-center cursor-pointer"
+                  @click="item.routeName && navigateTo(item.routeName)"
+                >
                   <component :is="item.icon" v-if="item.icon" class="mr-2 h-6 w-6 scale-125" />
                   <span
                     v-show="open"
                     :data-key="keyOf(item)"
                     data-ellipsis-label
                     :ref="createLabelRef(keyOf(item))"
-                    :class="['block truncate max-w-[200px]', { 'font-bold': isActive(item.routeName) }]"
+                    :class="[
+                      'block truncate max-w-[200px]',
+                      { 'font-bold': isActive(item.routeName) },
+                    ]"
                   >
                     {{ labelOf(item) }}
                   </span>

@@ -12,7 +12,9 @@ export const loadLocaleMessages = async (locale: string, i18n: I18n) => {
 
   for (const mod of SUPPORTED_MODULES) {
     try {
-      const matchKey = Object.keys(allLocaleFiles).find((path) => path.includes(`/${locale}/${mod}.json`));
+      const matchKey = Object.keys(allLocaleFiles).find((path) =>
+        path.includes(`/${locale}/${mod}.json`),
+      );
 
       if (matchKey) {
         messages[mod] = (allLocaleFiles[matchKey] as any).default;

@@ -22,7 +22,12 @@ export function valueUpdater<T extends Updater<any>>(updaterOrValue: T, ref: Ref
  * @param customClass
  * @returns
  */
-export function sortableHeader(title: string, column: any, sortedType?: SortDirectionType | null, customClass = '') {
+export function sortableHeader(
+  title: string,
+  column: any,
+  sortedType?: SortDirectionType | null,
+  customClass = '',
+) {
   let Icon = ArrowUpDown;
 
   const type = sortedType || column.getIsSorted();
@@ -43,7 +48,10 @@ export function sortableHeader(title: string, column: any, sortedType?: SortDire
   );
 }
 
-export const sortingValueTable = (isSorted: false | SortDirectionType, headerId: string): SortingType | null => {
+export const sortingValueTable = (
+  isSorted: false | SortDirectionType,
+  headerId: string,
+): SortingType | null => {
   if (isSorted) {
     return {
       sortBy: headerId,

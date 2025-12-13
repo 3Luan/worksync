@@ -24,7 +24,13 @@ const props = withDefaults(defineProps<SidebarMenuButtonProps>(), {
     data-sidebar="menu-button"
     :data-size="size"
     :data-active="isActive"
-    :class="cn(sidebarMenuButtonVariants({ variant, size }), isActive ? 'transition-all duration-300' : '', props.class)"
+    :class="
+      cn(
+        sidebarMenuButtonVariants({ variant, size }),
+        isActive ? 'transition-all duration-300' : '',
+        props.class,
+      )
+    "
     :as="as"
     :as-child="asChild"
     v-bind="$attrs"

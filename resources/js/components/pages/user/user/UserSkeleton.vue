@@ -1,9 +1,9 @@
 <template>
   <div class="bg-white dark:bg-gray-900 p-4 rounded-lg shadow animate-pulse text-center">
-    <div class="w-full aspect-square bg-gray-200 dark:bg-gray-800 rounded mb-3"></div>
-    <div class="h-4 bg-gray-200 dark:bg-gray-800 rounded w-1/2 mx-auto mb-2"></div>
-    <div class="h-8 bg-gray-200 dark:bg-gray-800 rounded w-3/4 mx-auto mt-3"></div>
-    <div class="h-8 bg-gray-200 dark:bg-gray-800 rounded w-3/4 mx-auto mt-2"></div>
+    <div class="w-full aspect-square bg-gray-200 dark:bg-gray-800 rounded mb-3" />
+    <div class="h-4 bg-gray-200 dark:bg-gray-800 rounded w-1/2 mx-auto mb-2" />
+    <div class="h-8 bg-gray-200 dark:bg-gray-800 rounded w-3/4 mx-auto mt-3" />
+    <div class="h-8 bg-gray-200 dark:bg-gray-800 rounded w-3/4 mx-auto mt-2" />
   </div>
 </template>
 

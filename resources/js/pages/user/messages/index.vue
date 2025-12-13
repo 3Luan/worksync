@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, watch } from 'vue';
+import { onMounted, onUnmounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import type { Conversation, ConversationMember, User } from '@/types/model';
 import { conversationService } from '@/services/conversation-service';
@@ -20,11 +20,14 @@ const chatStore = useChatStore();
 // Get conversations
 const fetchConversations = async () => {
   try {
+    globalStore.startLoading();
     const res = await conversationService.getList();
     chatStore.setConversations(res.data.data);
     await handleRouteChange(route.params.id);
   } catch (err) {
     console.error('Failed to fetch conversations:', err);
+  } finally {
+    globalStore.stopLoading();
   }
 };
 
@@ -38,7 +41,9 @@ const handleRouteChange = async (newId: string | string[] | undefined) => {
   }
 
   // Check if conversation with this user already exists
-  let existing = chatStore.conversations.find((c) => c.type === CONVERSATION_TYPE.DIRECT && c.members?.some((m) => m.user_id === userId));
+  let existing = chatStore.conversations.find(
+    (c) => c.type === CONVERSATION_TYPE.DIRECT && c.members?.some((m) => m.user_id === userId),
+  );
 
   if (existing) {
     chatStore.activeConversation = existing;
@@ -104,6 +109,10 @@ onMounted(async () => {
     }
   });
 });
+
+onUnmounted(() => {
+  chatStore.activeConversation = null;
+});
 </script>
 
 <template>
@@ -112,10 +121,18 @@ onMounted(async () => {
     <ConversationSidebar />
 
     <!-- Chat Window -->
-    <ChatWindow v-if="chatStore.activeConversation && (chatStore.isChatOpen || !globalStore.isMobileView)" />
+    <ChatWindow
+      v-if="chatStore.activeConversation && (chatStore.isChatOpen || !globalStore.isMobileView)"
+    />
 
     <!-- Empty State -->
-    <ChatEmpty v-if="!chatStore.activeConversation && (chatStore.isChatOpen || !globalStore.isMobileView)" />
+    <ChatEmpty
+      v-if="
+        !chatStore.activeConversation &&
+        (chatStore.isChatOpen || !globalStore.isMobileView) &&
+        !globalStore.isLoading
+      "
+    />
 
     <!-- Info Panel -->
     <InfoPanel />

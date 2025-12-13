@@ -73,7 +73,7 @@ export interface FilterSpecialWork extends FilterDateRange {
   stateId: number;
 }
 
-//  Remote Work 
+//  Remote Work
 export type FormDataRemoteWork = {
   selectedUsers?: Array<number>;
   details: EditRemoteWorkDetail[];

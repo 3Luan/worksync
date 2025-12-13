@@ -8,7 +8,11 @@ export const messageService = {
   /**
    * Get messages (optionally filter by conversation_id)
    */
-  async getList(params?: { conversation_id?: number; page?: number; per_page?: number }): Promise<ApiResponse<any>> {
+  async getList(params?: {
+    conversation_id?: number;
+    page?: number;
+    per_page?: number;
+  }): Promise<ApiResponse<any>> {
     return baseResponseApi(() => messageAPI.getList(params), $t('common.fetchMessagesError'));
   },
 
@@ -30,7 +34,10 @@ export const messageService = {
    * Update (edit) a message
    */
   async update(messageId: number, data: Partial<Message>): Promise<ApiResponse<any>> {
-    return baseResponseApi(() => messageAPI.update(messageId, data), $t('common.updateMessageError'));
+    return baseResponseApi(
+      () => messageAPI.update(messageId, data),
+      $t('common.updateMessageError'),
+    );
   },
 
   /**
@@ -51,14 +58,20 @@ export const messageService = {
    * React to a message
    */
   async react(messageId: number, emoji: string): Promise<ApiResponse<any>> {
-    return baseResponseApi(() => messageAPI.react(messageId, { emoji }), $t('common.reactMessageError'));
+    return baseResponseApi(
+      () => messageAPI.react(messageId, { emoji }),
+      $t('common.reactMessageError'),
+    );
   },
 
   /**
    * Mark message as delivered
    */
   async markAsDelivered(messageId: number): Promise<ApiResponse<any>> {
-    return baseResponseApi(() => messageAPI.markAsDelivered(messageId), $t('common.markAsDeliveredError'));
+    return baseResponseApi(
+      () => messageAPI.markAsDelivered(messageId),
+      $t('common.markAsDeliveredError'),
+    );
   },
 
   /**
@@ -72,6 +85,9 @@ export const messageService = {
    * Upload attachment (optional)
    */
   async uploadAttachment(formData: FormData): Promise<ApiResponse<any>> {
-    return baseResponseApi(() => messageAPI.uploadAttachment(formData), $t('common.uploadAttachmentError'));
+    return baseResponseApi(
+      () => messageAPI.uploadAttachment(formData),
+      $t('common.uploadAttachmentError'),
+    );
   },
 };
