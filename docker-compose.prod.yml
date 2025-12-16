@@ -17,7 +17,7 @@ services:
       dockerfile: web.dockerfile
     container_name: worksync_web_prod
     ports:
-      - '80:80'
+      - '8088:80'
     networks:
       - prod
     depends_on:
