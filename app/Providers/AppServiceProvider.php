@@ -2,16 +2,15 @@
 
 namespace App\Providers;
 
-use App\Models\Message;
 use App\Repositories\Conversation\ConversationRepository;
 use App\Repositories\Conversation\ConversationRepositoryInterface;
 use App\Repositories\Message\MessageRepository;
 use App\Repositories\Message\MessageRepositoryInterface;
 use App\Repositories\User\UserRepository;
 use App\Repositories\User\UserRepositoryInterface;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Passport;
-use URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,10 +29,9 @@ class AppServiceProvider extends ServiceProvider
    */
   public function boot(): void
   {
-    // if (config('app.env') === 'production') {
-    //   URL::forceScheme('https');
-    // }
+    if (config('app.env') === 'production') {
+      URL::forceScheme('https');
+    }
     Passport::enablePasswordGrant();
-    // TimeCard::observe(TimeCardObserver::class);
   }
 }
