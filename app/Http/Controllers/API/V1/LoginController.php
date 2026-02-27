@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\API\ApiController;
+use App\Mail\LoginNotificationMail;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -12,6 +13,7 @@ use Laravel\Passport\Client as OClient;
 use App\Http\Traits\ThrottlesAttempts;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use App\Services\LanguageService;
 
 class LoginController extends ApiController
@@ -70,6 +72,18 @@ class LoginController extends ApiController
         }
       } else {
         $this->clearAttempts($request);
+        $user = Auth::user();
+
+        try {
+          Mail::to($user->email)->send(new LoginNotificationMail(
+            $user,
+            $request->ip(),
+            $request->userAgent()
+          ));
+        } catch (\Throwable $mailException) {
+          Log::warning('Login notification email failed: ' . $mailException->getMessage());
+        }
+
         $oClient = OClient::where('password_client', 1)->first();
         $request->request->add([
           'grant_type' => 'password',
@@ -83,7 +97,7 @@ class LoginController extends ApiController
         $response = Route::dispatch($newRequest)->getContent();
         $result = json_decode((string) $response, true);
 
-        $result['user'] = Auth::user();
+        $result['user'] = $user;
 
         return $this->successResponse([
           'data' => $result
